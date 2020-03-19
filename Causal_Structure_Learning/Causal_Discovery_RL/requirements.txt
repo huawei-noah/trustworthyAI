@@ -1,0 +1,11 @@
+# py36
+numpy 
+pandas
+scikit-learn
+scipy
+networkx
+pyyaml
+pytz
+matplotlib
+rpy2
+tensoflow=1.13.1
