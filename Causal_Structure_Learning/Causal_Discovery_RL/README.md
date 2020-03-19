@@ -50,6 +50,7 @@ Jupyter notebooks are also provided to illustrate the experiment results.
 ### Detailed commands for running the experiment:
 ```
 # exp1: RL-BIC2, assuming the equal noise variances
+cd src
 python main.py  --max_length 12 \
                 --data_size 5000 \
                 --score_type BIC \
@@ -62,7 +63,7 @@ python main.py  --max_length 12 \
                 --input_dimension 64 \
                 --lambda_iter_num 1000
 ```
-```python
+```
 # exp1: RL-BIC, assuming different noise variances
 python main.py  --max_length 12 \
                 --data_size 5000 \
@@ -93,7 +94,7 @@ python main.py  --max_length 30 \
                 --input_dimension 128 \
                 --lambda_iter_num 1000
 ```
-```python                
+```                
 # exp supp: different decoders
 # default decoder_type=SingleLayerDecoder; 
 # others: TransformerDecoder, BilinearDecoder, NTNDecoder
