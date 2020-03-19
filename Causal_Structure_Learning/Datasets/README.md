@@ -1,169 +1,26 @@
-# Causal Discovery with Reinforcement Learning
-
-Codes for the paper ['Causal Discovery with Reinforcement Learning'](https://openreview.net/forum?id=S1g2skStPB) (ICLR 2020, Oral), by Shengyu Zhu, Ignvier NG, and Zhitang Chen.
-
-If you find it useful, please consider citing:
-
-```bibtex
-@inproceedings{Zhu2020Causal,
-	title={Causal discovery with reinforcement learning},
-	author={Zhu, Shengyu and Ng, Ignavier and Chen, Zhitang},
-	booktitle={International Conference on Learning Representations},
-	year={2020}
-}
-```
-## TL;DR
-
-We apply reinforcement learning to score-based causal discovery, as outlined below, and achieve promising results on both synthetic and real datasets.
-
-![](fig0.png)
-
-## Experiments
-
-### Graph Adjacency Matrix
-We find there are two uses of the meaning of the `(i,j)th` entry in the adjacency matrix:
-* **(1)** whether there is an edge from `node i` to `node j`;
-* **(2)** whether there is an edge from `node j` to `node i`. 
-
-In our experience, we find that most people adopt the use of **(1)**. In fact, **(2)** was what we used in the first working verison of the codes and and we also find it somewhat convenient in the
-implementation. In the current codes, we fix the following:
-
-* the input true graph should follows **(1)** (if not, please add command --transpose);
-* we transpose the graph adjacency matrix and the RL approach in our codes follows the graph format **(2)**;
-* all the outputs (e.g., saved graphs and plots) are transposed to be in the form of **(1)**.
-
-### Experiments in the paper
-
-* Our datasets are generated with different random seeds.
-* We do not set a particular seed for running the experiments, so the result may 
-be slightly different from the released training logs. We rerun the codes on several
-(but not all) datasets to verify the reported results. If you find a large deviation
-from the released training log, please file an issue to let us know.
-* We open source three synthetic datasets that were used in our experiments. The Sachs dataset 
-belongs to the authors, so please download the dataset by yourself 
-(we do release the training_logs with this dataset).
-* Codes for synthetic dataset generation are available [here](../Datasets). The used datasets and training logs in the paper can be found [here](https://github.com/zhushy/causal-datasets/tree/master/Causal_Discovery_RL).
-Jupyter notebooks are also provided to illustrate the experiment results.
-* You may need to install the rpy2 package when CAM pruning is used. Otherwise, simply comment the CAM pruning import codes.
+# Datasets for Causal Structure Learning
 
 
-### Detailed commands for running the experiment:
-```python
-# exp1: RL-BIC2, assuming the equal noise variances
-python main.py  --max_length 12 \
-                --data_size 5000 \
-                --score_type BIC \
-                --reg_type LR \
-                --read_data  \
-                --transpose \
-                --data_path input_data_path \
-                --lambda_flag_default \
-                --nb_epoch 20000 \
-                --input_dimension 64 \
-                --lambda_iter_num 1000
-```
-```python
-# exp1: RL-BIC, assuming different noise variances
-python main.py  --max_length 12 \
-                --data_size 5000 \
-                --score_type BIC_different_var \
-                --reg_type LR \
-                --read_data  \
-                --transpose \
-                --data_path input_data_path \
-                --lambda_flag_default \
-                --nb_epoch 20000 \
-                --input_dimension 64 \
-                --lambda_iter_num 1000
-```
-```python             
-# exp1: 30 nodes
-python main.py  --max_length 30 \
-                --data_size 5000 \
-                --score_type BIC \
-                --reg_type LR \
-                --use_bias \
-                --bias_initial_value -10 \
-                --read_data  \
-                --batch_size 128 \
-                --transpose \
-                --data_path input_data_path \
-                --lambda_flag_default \
-                --nb_epoch 40000 \
-                --input_dimension 128 \
-                --lambda_iter_num 1000
-```
-```python                
-# exp supp: different decoders
-# default decoder_type=SingleLayerDecoder; 
-# others: TransformerDecoder, BilinearDecoder, NTNDecoder
-python main.py --max_length 12 \
-                --data_size 5000 \
-                --score_type BIC \
-                --reg_type LR \
-                --decoder_type NTNDecoder \
-                --read_data  \
-                --transpose \
-                --data_path input_data_path \
-                --lambda_flag_default \
-                --nb_epoch 20000 \
-                --input_dimension 64 \
-                --lambda_iter_num 1000
-```
-```python                
-# exp2: quad with RL-BIC2
-# note: data has been processed, with first 3000 samples (out of 5000 sampels generated)
-#       according to sample L2 norms
-python main.py --max_length 10 \
-                --data_size 3000 \
-                --score_type BIC \
-                --reg_type QR \
-                --read_data  \
-                --transpose \
-                --data_path input_data_path \
-                --lambda_flag_default \
-                --nb_epoch 30000 \
-                --input_dimension 64 \
-                --lambda_iter_num 1000
-```
-```python                   
-# exp3: GPR
-python main.py --max_length 10 \
-                --data_size 1000 \
-                --score_type BIC \
-                --reg_type GPR \
-                --read_data  \
-                --normalize \
-                --data_path input_data_path/exp3_10_nodes_gp/1 \
-                --lambda_flag_default \
-                --nb_epoch 20000 \
-                --input_dimension 128 \
-                --lambda_iter_num 1000
-```
-```python   
-# exp4: sachs
-python main.py --max_length 11 \
-                --data_size 853 \
-                --score_type BIC \
-                --reg_type GPR \
-                --read_data  \
-                --use_bias \
-                --bias_initial_value -10 \
-                --normalize \
-                --data_path input_data_path/sachs \
-                --lambda_flag_default \
-                --nb_epoch 20000 \
-                --input_dimension 128 \
-                --lambda_iter_num 1000
-```
+## Synthetic datasets
+We provide codes for generating synthetic datasets used in the papers. Please see the [example notebook](examples_to_generate_synthetic_datasets.ipynb) for further details.
 
-## License
+## Real dataset
+We release a very challenging [dataset](https://github.com/zhushy/causal-datasets/tree/master/Real_Dataset) from real telecommunication networks, to find causal structures based on time series data. 
 
-This project is licensed under the  Apache License Version 2.0 - see the [LICENSE](LICENSE) file for details
+### Data format
+- **real_dataset_processed.csv**: each row counts the numbers of occurrences of the alarms (A_i,i=0,1,...,56) in 10 minutes. The rows are arranged in the time order, i.e., first 10 mins., second 10 mins., etc.
+- **true_graph.csv**: the underlying causal relationships, according to expert experience.  `(i,j)=1` implies an edge `i->j`.
 
-## Acknowledgments
+Notice: we will also release the original dataset so that you may try processing the data in your own way to find the 
+underlying causal graph. Currently we are working on a detailed description of the physical meanings and how to process the data.
 
-* The RL part of our approach is implemented based on a [Tensorflow implementation of neural combinatorial optimizer](https://github.com/MichelDeudon/neural-combinatorial-optimization-rl-tensorflow).  
-We thank the author for releasing his implementation.
-* Some evaluation metrics (such as TPR, FDR, and SHD) are computed using the codes from [NOTEARS](https://github.com/xunzheng/notears).
-* We are grateful to all the authors of the benchmark methods for releasing their codes.
+### Our methods
+We are trying some event and time series methods to tackle this problem. We are going to release our results soon, together
+with the results from several benchmark methods on this dataset. We welcome everyone to try this dataset and report the result!
+
+### Results
+
+| Methods| Precision | Recall | SHD |
+|---|---|---|---|
+| PC (with Fisher-z test)   | | |
+| ...|
