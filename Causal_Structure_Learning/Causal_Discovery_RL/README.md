@@ -48,7 +48,7 @@ Jupyter notebooks are also provided to illustrate the experiment results.
 
 
 ### Detailed commands for running the experiment:
-```python
+```
 # exp1: RL-BIC2, assuming the equal noise variances
 python main.py  --max_length 12 \
                 --data_size 5000 \
@@ -76,7 +76,7 @@ python main.py  --max_length 12 \
                 --input_dimension 64 \
                 --lambda_iter_num 1000
 ```
-```python             
+```            
 # exp1: 30 nodes
 python main.py  --max_length 30 \
                 --data_size 5000 \
@@ -110,7 +110,7 @@ python main.py --max_length 12 \
                 --input_dimension 64 \
                 --lambda_iter_num 1000
 ```
-```python                
+```                
 # exp2: quad with RL-BIC2
 # note: data has been processed, with first 3000 samples (out of 5000 sampels generated)
 #       according to sample L2 norms
@@ -126,7 +126,7 @@ python main.py --max_length 10 \
                 --input_dimension 64 \
                 --lambda_iter_num 1000
 ```
-```python                   
+```                   
 # exp3: GPR
 python main.py --max_length 10 \
                 --data_size 1000 \
@@ -140,7 +140,7 @@ python main.py --max_length 10 \
                 --input_dimension 128 \
                 --lambda_iter_num 1000
 ```
-```python   
+```   
 # exp4: sachs
 python main.py --max_length 11 \
                 --data_size 853 \
