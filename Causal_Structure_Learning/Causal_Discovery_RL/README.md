@@ -1,6 +1,6 @@
 # Causal Discovery with Reinforcement Learning
 
-Codes for the paper ['Causal Discovery with Reinforcement Learning'](https://openreview.net/forum?id=S1g2skStPB) (ICLR 2020, Oral), by Shengyu Zhu, Ignvier NG, and Zhitang Chen.
+Codes for the paper ['Causal Discovery with Reinforcement Learning'](https://openreview.net/forum?id=S1g2skStPB) (ICLR 2020, Oral), by Shengyu Zhu, Ignavier Ng, and Zhitang Chen.
 
 If you find it useful, please consider citing:
 
