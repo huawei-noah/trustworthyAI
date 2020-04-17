@@ -18,6 +18,16 @@ We apply reinforcement learning to score-based causal discovery, as outlined bel
 
 ![](fig0.png)
 
+## Setup
+
+You may check the required Python packages in `requirements.txt`. After installing the `rpy2` package, the previous codes would automatically install the R packages `CAM` and `mboost` used in our experiments. However, `CAM` is currently unavailable at `cran` (see the [notice](https://CRAN.R-project.org/package=CAM)), and here is an approach to install `CAM` from local source.
+
+* go to [the notice address](https://CRAN.R-project.org/package=CAM) and download the archived version `CAM_1.0.tar.gz`.
+* put `CAM_1.0.tar.gz` in the same folder and then run the [setup_CAM.py](setup_CAM.py) which will install the required dependencies
+* if there are additional dependencies, then simply add them in [steup_CAM.py[(setup_CAM.py).
+
+We have verified this setup in a minimal conda env with only `rpy2` package. Please file an issue if there any further questions.
+
 ## Experiments
 
 ### Graph Adjacency Matrix
