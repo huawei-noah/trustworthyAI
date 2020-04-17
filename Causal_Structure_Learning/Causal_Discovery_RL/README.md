@@ -24,9 +24,9 @@ You may check the required Python packages in `requirements.txt`. After installi
 
 * go to [the notice address](https://CRAN.R-project.org/package=CAM) and download the archived version `CAM_1.0.tar.gz`.
 * put `CAM_1.0.tar.gz` in the same folder and then run the [setup_CAM.py](setup_CAM.py) which will install the required dependencies
-* if there are additional dependencies, then simply add them in [steup_CAM.py[(setup_CAM.py).
+* if there are additional dependencies, then simply add them in [steup_CAM.py](setup_CAM.py).
 
-We have verified this setup in a minimal conda env with only `rpy2` package. Please file an issue if there any further questions.
+We have verified this setup in a minimal conda env with only `rpy2` package. Please file an issue if there are any further questions.
 
 ## Experiments
 
