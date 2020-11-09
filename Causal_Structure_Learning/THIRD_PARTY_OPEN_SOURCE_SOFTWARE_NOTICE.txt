@@ -24,6 +24,7 @@ Software: lingam (https://github.com/cdt15/lingam)
 Copyright notice: 
 Copyright (c), T.Ikeuchi, G.Haraoka, M.Ide, W.Kurebayashi, S.Shimizu
 
+
 License: MIT License
 
 Copyright (c) 2019 T.Ikeuchi, G.Haraoka, M.Ide, W.Kurebayashi, S.Shimizu
