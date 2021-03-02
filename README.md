@@ -5,6 +5,8 @@ Current projects include:
 
 - Causal Structure Learning
 
+- Causal Disentangled Repreesentation Learning
+
 ### Causal Structure Learning
 
 - **Causal_Discovery_RL**:  codes, datasets, and training logs of the experimental results for the paper
@@ -16,3 +18,9 @@ Current projects include:
     time series data. The true graph is obtained from expert knowledge. We welcome everyone to try this dataset and 
     report the result!
 - We will also release the codes of other gradient based causal structure learning methods.
+
+### Causal Disentangled Repreesentation Learning
+
+- **CausalVAE**:  codes and datasets of the experimental results for the paper
+ ['CausalVAE: Disentangled Representation Learning via Neural Structural Causal Models'](https://arxiv.org/pdf/2004.08697.pdf), CVPR, 2021. (accepted)
+- **Datasets**: Codes for generating synthetic datasets used in the paper
