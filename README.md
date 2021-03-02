@@ -19,7 +19,7 @@ Current projects include:
     report the result!
 - We will also release the codes of other gradient based causal structure learning methods.
 
-### Causal Disentangled Repreesentation Learning
+### Causal Disentangled Representation Learning
 
 - **CausalVAE**:  codes and datasets of the experimental results for the paper
  ['CausalVAE: Disentangled Representation Learning via Neural Structural Causal Models'](https://arxiv.org/pdf/2004.08697.pdf), CVPR, 2021. (accepted)
