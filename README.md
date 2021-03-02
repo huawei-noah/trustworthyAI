@@ -23,4 +23,4 @@ Current projects include:
 
 - **CausalVAE**:  codes and datasets of the experimental results for the paper
  ['CausalVAE: Disentangled Representation Learning via Neural Structural Causal Models'](https://arxiv.org/pdf/2004.08697.pdf), CVPR, 2021. (accepted)
-- **Datasets**: Codes for generating synthetic datasets used in the paper.
+- **Datasets**: codes for generating synthetic datasets used in the paper.
