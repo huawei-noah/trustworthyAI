@@ -1,4 +1,10 @@
-This is a causal image disentanglement image package. 
+# CausalVAE: Disentangled Representation Learningvia Neural Structural Causal Models.
+
+Codes for the paper ['CausalVAE: Disentangled Representation Learning via Neural Structural Causal Models'] (https://arxiv.org/pdf/2004.08697.pdf) (CVPR, 2021), by Mengyue Yang, Furui Liu, Zhitang Chen, Xinwei Shen, Jianye Hao, Jun Wang.
+
+If you find it useful, please consider cite the paper.
+
+This is a causal disentanglement image package. 
 
 # Requirement
 - python 3.7
