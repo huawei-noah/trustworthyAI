@@ -5,7 +5,7 @@ Current projects include:
 
 - Causal Structure Learning
 
-- Causal Disentangled Repreesentation Learning
+- Causal Disentangled Representation Learning
 
 ### Causal Structure Learning
 
