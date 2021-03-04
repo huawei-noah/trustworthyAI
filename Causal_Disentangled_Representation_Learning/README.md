@@ -2,7 +2,7 @@
 
 Codes for the paper ['CausalVAE: Disentangled Representation Learning via Neural Structural Causal Models'] (https://arxiv.org/pdf/2004.08697.pdf) (CVPR, 2021), by Mengyue Yang, Furui Liu, Zhitang Chen, Xinwei Shen, Jianye Hao, Jun Wang.
 
-If you find it useful, please consider cite the paper.
+If you find it useful, please consider to cite the paper.
 
 This is a causal disentanglement image package. 
 
