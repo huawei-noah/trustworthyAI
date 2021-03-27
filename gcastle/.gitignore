@@ -1,0 +1,15 @@
+# Python:
+*.pyc
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info
+dist
+build
+.idea
+
+# Specific files
+log
+web
+packages/*.tar.gz
