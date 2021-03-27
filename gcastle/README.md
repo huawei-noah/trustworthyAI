@@ -29,7 +29,7 @@ Version 1.0.0 released.
 | [RL](https://arxiv.org/abs/1906.04477) | IID | A RL-based algorithm that can work with flexible score functions (including non-smooth ones) | v1.0.0 |
 | CORL1 | IID | A RL- and order-based algorithm that improves the efficiency and scalability of previous RL-based approach | v1.0.0 |
 | CORL2 | IID | A RL- and order-based algorithm that improves the efficiency and scalability of previous RL-based approach | v1.0.0 |
-| TTPM | EVENT SEQUENCE | A causal structure learning algorithm based on traditional Hawkes process for spatio-temporal event sequences | under development. |
+| TTPM | EVENT SEQUENCE | A causal structure learning algorithm based on Topological Hawkes process for spatio-temporal event sequences | under development. |
 | HPCI | EVENT SEQUENCE | A causal structure learning algorithm based on Hawkes process and CI tests for event sequences | under development. |
 | PCTS | TS | A causal structure learning algorithm based on CI tests for time series data (time series version of the PC algorithm) | under development. |
 

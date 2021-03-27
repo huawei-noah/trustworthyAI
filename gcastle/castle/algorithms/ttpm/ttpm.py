@@ -27,7 +27,7 @@ class TTPM(BaseLearner):
     """
     TTPM Algorithm.
 
-    A causal structure learning algorithm based on traditional Hawkes process
+    A causal structure learning algorithm based on Topological Hawkes process
      for spatio-temporal event sequences.
 
     Parameters
