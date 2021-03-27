@@ -29,4 +29,4 @@ Current projects include:
 
 ### gCastle
 - It is a causal structure learning toolchain, which contains various functionality related to causal learning and evaluation.
-- Most of causal discovery algorithms in `gCastle` are gradient based, so we call it gCastle : **g**radient-based **Ca**usal **St**ructure **Le**arning pipeline.
+- Most of causal discovery algorithms in `gCastle` are gradient based, which is why we call it gCastle : **g**radient-based **Ca**usal **St**ructure **Le**arning pipeline.
