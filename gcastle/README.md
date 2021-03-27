@@ -90,7 +90,7 @@ You can visit [examples](./castle/example) to find more examples.
 
 ## Next Up & Contributing
 This is the first released version of `gCastle`, we'll be continuously complementing and optimizing the code and documentation. The following items are the main additions planned to be released in the next version (~late April 2021): 
-* A more sound documentation: including introductions to each algorithm, a guide on how to quickly design an experiment/test using the 'gCastle' tools, more easily readable APIs, etc.
+* A more sound documentation: including introductions to each algorithm, a guide on how to quickly design an experiment/test using the `gCastle` tools, more easily readable APIs, etc.
 * Extension of the algorithm library: add new algorithms including `GES`, `HPCI`, and `TTPM`, and easily configurable scripts to help learn causal structures using the corresponding algorithms.
 * Real-world datasets: add a couple of interesting time series and event sequences datasets collected from AIOPS scenarios where the true graphs are obtained based on expertise.
 
