@@ -7,7 +7,7 @@ Current projects include:
 
 - Causal Disentangled Representation Learning
 
-- gCastle
+- gCastle (or pyCastle, pCastle)
 
 ### Causal Structure Learning
 
