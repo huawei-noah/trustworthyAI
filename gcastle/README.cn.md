@@ -33,7 +33,7 @@
 | CORL1 | IID | 一种基于强化学习搜索因果序的因果发现方法 | v1.0.0 |
 | CORL2 | IID | 一种基于强化学习搜索因果序的因果发现方法 | v1.0.0 |
 | TTPM | EVENT SEQUENCE | 一种针对时空事件序列的基于时空Hawkes Process的因果结构学习算法 | 开发中 |
-| HPCI | EVENT SEQUENCE | 一种针对时序事件序列的基于Hawkes Process和CI tests的因果结构学习算法 | 开发中 |
+| [HPCI](https://arxiv.org/abs/2105.03092) | EVENT SEQUENCE | 一种针对时序事件序列的基于Hawkes Process和CI tests的因果结构学习算法 | 开发中 |
 | PCTS | TS | 一种针对时间序列数据的基于CI tests的因果结构学习算法（PC算法的时序版本） | 开发中 |
 
 
