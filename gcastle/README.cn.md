@@ -51,14 +51,11 @@
 - loguru (>= 0.5.3)
 - networkx (>= 2.5)
 - torch (>= 1.4.0)
-- tensorflow (== 1.15.0)
-
-### 获取安装包（也可直接源码安装）
-下载：[castle-1.0.0-py3-none-any.whl](./packages/gcastle-1.0.0-py3-none-any.whl)
+- tensorflow (>= 1.15.0)
 
 ### PIP安装
 ```
-pip install gcastle-1.0.0-py3-none-any.whl
+pip install gcastle
 ```
 
 ## 算法使用指导
