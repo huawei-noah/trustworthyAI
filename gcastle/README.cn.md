@@ -54,7 +54,7 @@
 - tensorflow (>= 1.15.0)
 
 ### PIP安装
-```
+```bash
 pip install gcastle
 ```
 
