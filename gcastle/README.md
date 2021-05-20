@@ -49,15 +49,12 @@ gCastle requires:
 - loguru (>= 0.5.3)
 - networkx (>= 2.5)
 - torch (>= 1.4.0)
-- tensorflow (== 1.15.0)
+- tensorflow (>= 1.15.0)
 
-
-### Obtain the installation package (installing from source code)
-Download：[castle-1.0.0-py3-none-any.whl](./packages/gcastle-1.0.0-py3-none-any.whl)
 
 ### PIP installation
-```
-pip install gcastle-1.0.0-py3-none-any.whl
+```bash
+pip install gcastle
 ```
 
 ## Usage Example (PC algorithm)
