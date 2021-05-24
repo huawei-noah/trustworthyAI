@@ -1,0 +1,6 @@
+dataset_params:
+  x_file: None  # None or .npz or .csv
+  dag_file: None  # None or .npz or .csv
+
+model_params:
+  alpha: 0.05 # Significance level

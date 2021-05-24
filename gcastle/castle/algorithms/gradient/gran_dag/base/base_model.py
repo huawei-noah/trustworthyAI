@@ -13,9 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
-import pickle
-
 import numpy as np
 import torch
 import torch.nn as nn
@@ -86,7 +83,6 @@ class BaseModel(nn.Module):
             the parameters of each variable conditional
         """
 
-        num_zero_weights = 0
         for k in range(self.hidden_num + 1):
             # apply affine operator
             if k == 0:
@@ -95,17 +91,12 @@ class BaseModel(nn.Module):
             else:
                 x = torch.einsum("tij,btj->bti", weights[k], x) + biases[k]
 
-            # count num of zeros
-            num_zero_weights += weights[k].numel() - torch.nonzero(weights[k]).size()[0]
-
             # apply non-linearity
             if k != self.hidden_num:
                 if self.nonlinear == "leaky-relu":
                     x = F.leaky_relu(x)
                 else:
                     x = torch.sigmoid(x)
-
-        self.zero_weights_ratio = num_zero_weights / float(self.numel_weights)
 
         return torch.unbind(x, 1)
 
@@ -217,26 +208,6 @@ class BaseModel(nn.Module):
                     grad_norm += torch.sum(ep.grad ** 2)
 
         return torch.sqrt(grad_norm)
-
-    def save_parameters(self, exp_path, mode="wbx"):
-        """
-
-        Parameters
-        ----------
-        exp_path : str
-            path for saving model parameters
-        mode : str
-            w=weights, b=biases, x=extra_params (order is irrelevant)
-        """
-        params = self.get_parameters(mode=mode)
-        # save
-        with open(os.path.join(exp_path, "params_"+mode), 'wb') as f:
-            pickle.dump(params, f)
-
-    def load_parameters(self, exp_path, mode="wbx"):
-        with open(os.path.join(exp_path, "params_"+mode), 'rb') as f:
-            params = pickle.load(f)
-        self.set_parameters(params, mode=mode)
 
     def get_distribution(self, density_params):
         raise NotImplementedError

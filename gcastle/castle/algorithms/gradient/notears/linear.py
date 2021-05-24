@@ -21,18 +21,36 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import logging
 import numpy as np
 import scipy.optimize as sopt
-from loguru import logger
 from scipy.special import expit as sigmoid
 
 from castle.common import BaseLearner, Tensor
+
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s %(message)s')
 
 
 class Notears(BaseLearner):
     """
     Notears Algorithm.
     A classic causal discovery algorithm based on conditional independence tests.
+
+    Parameters
+    ----------
+    lambda1: float 
+        l1 penalty parameter
+    loss_type: str 
+        l2, logistic, poisson
+    max_iter: int 
+        max num of dual ascent steps
+    h_tol: float 
+        exit if |h(w_est)| <= htol
+    rho_max: float 
+        exit if rho >= rho_max
+    w_threshold: float 
+        drop edge if |weight| < threshold
 
     Attributes
     ----------
@@ -57,9 +75,21 @@ class Notears(BaseLearner):
     >>> print(met.metrics)
     """
     
-    def __init__(self):
+    def __init__(self, lambda1=0.1, 
+                 loss_type='l2', 
+                 max_iter=100, 
+                 h_tol=1e-8, 
+                 rho_max=1e+16, 
+                 w_threshold=0.3):
 
         super().__init__()
+
+        self.lambda1 = lambda1
+        self.loss_type = loss_type
+        self.max_iter = max_iter
+        self.h_tol = h_tol
+        self.rho_max = rho_max
+        self.w_threshold = w_threshold
 
     def learn(self, data):
         """
@@ -79,11 +109,16 @@ class Notears(BaseLearner):
                             'Tensor or numpy.ndarray, but got {}'
                             .format(type(data)))
 
-        causal_matrix = self.notears_linear(X)
+        causal_matrix = self.notears_linear(X, lambda1=self.lambda1, 
+                                            loss_type=self.loss_type, 
+                                            max_iter=self.max_iter, 
+                                            h_tol=self.h_tol, 
+                                            rho_max=self.rho_max, 
+                                            w_threshold=self.w_threshold)
         self.causal_matrix = causal_matrix
 
-    def notears_linear(self, X, lambda1=0.1, loss_type='l2', max_iter=100, h_tol=1e-8, 
-                       rho_max=1e+16, w_threshold=0.3):
+    def notears_linear(self, X, lambda1, loss_type, max_iter, h_tol, 
+                       rho_max, w_threshold):
         """
         Solve min_W L(W; X) + lambda1 ‖W‖_1 s.t. h(W) = 0 using 
         augmented Lagrangian.
@@ -92,18 +127,6 @@ class Notears(BaseLearner):
         ----------
         X: np.ndarray 
             n*d sample matrix
-        lambda1: float 
-            l1 penalty parameter
-        loss_type: str 
-            l2, logistic, poisson
-        max_iter: int 
-            max num of dual ascent steps
-        h_tol: float 
-            exit if |h(w_est)| <= htol
-        rho_max: float 
-            exit if rho >= rho_max
-        w_threshold: float 
-            drop edge if |weight| < threshold
 
         Return
         ------
@@ -169,7 +192,7 @@ class Notears(BaseLearner):
         if loss_type == 'l2':
             X = X - np.mean(X, axis=0, keepdims=True)
         
-        logger.info('[start]: n={}, d={}, iter_={}, h_={}, rho_={}'.format( \
+        logging.info('[start]: n={}, d={}, iter_={}, h_={}, rho_={}'.format( \
                     n, d, max_iter, h_tol, rho_max))
 
         for i in range(max_iter):
@@ -180,7 +203,7 @@ class Notears(BaseLearner):
                 w_new = sol.x
                 h_new, _ = _h(_adj(w_new))
                 
-                logger.debug(
+                logging.info(
                     '[iter {}] h={:.3e}, loss={:.3f}, rho={:.1e}'.format( \
                     i, h_new, _func(w_est)[0], rho))
                 
@@ -197,6 +220,6 @@ class Notears(BaseLearner):
         W_est = _adj(w_est)
         W_est[np.abs(W_est) < w_threshold] = 0
 
-        logger.info('FINISHED')
+        logging.info('FINISHED')
 
         return (W_est != 0).astype(int)

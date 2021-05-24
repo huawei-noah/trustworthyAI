@@ -1,0 +1,47 @@
+dataset_params:
+  x_file: None  # None or .npz or .csv
+  dag_file: None  # None or .npz or .csv
+
+model_params:
+  encoder_type: 'TransformerEncoder' # type of encoder used
+  hidden_dim: 64 # actor LSTM num_neurons
+  num_heads: 16 # actor input embedding
+  num_stacks: 6 # actor LSTM num_neurons
+  residual: True # whether to use residual for gat encoder
+
+  decoder_type: 'SingleLayerDecoder' # type of decoder used
+  decoder_activation: 'tanh' # activation for decoder
+  decoder_hidden_dim: 16 # hidden dimension for decoder
+  use_bias: True # Whether to add bias term when calculating decoder logits
+  use_bias_constant: True # Whether to add bias term as CONSTANT when calculating decoder logits
+  bias_initial_value: False # Initial value for bias term when calculating decoder logits
+
+  batch_size: 64 # batch size for training
+  input_dimension: 64 # dimension of reshaped vector
+  normalize: True # whether the inputdata shall be normalized
+  transpose: True # whether the true graph needs transposed
+  score_type: 'BIC' # score functions
+  reg_type: 'LR' # regressor type (in combination wth score_type)
+  lambda_iter_num: 1000 # how often to update lambdas
+  lambda_flag_default: True # with set lambda parameters; true with default strategy and ignore input bounds
+  score_bd_tight: True # if bound is tight, then simply use a fixed value, rather than the adaptive one
+  lambda1_update: 1 # increasing additive lambda1
+  lambda2_update: 10 # increasing  multiplying lambda2
+  score_lower: 0.0 # lower bound on lambda1
+  score_upper: 0.0 # upper bound on lambda1
+  lambda2_lower: -1 # lower bound on lambda2
+  lambda2_upper: -1 # upper bound on lambda2
+
+  seed: 8 # seed
+  nb_epoch: 20000 # nb epoch
+  lr1_start: 0.001 # actor learning rate
+  lr1_decay_step: 5000 # lr1 decay step
+  lr1_decay_rate: 0.96 # lr1 decay rate
+  alpha: 0.99 # update factor moving average baseline
+  init_baseline: -1.0 # initial baseline - REINFORCE
+  temperature: 3.0 # pointer_net initial temperature
+  C: 10.0 # pointer_net tan clipping
+  l1_graph_reg: 0.0 # L1 graph regularization to encourage sparsity
+
+  inference_mode: True # switch to inference mode when model is trained
+  verbose: False # print detailed logging or not

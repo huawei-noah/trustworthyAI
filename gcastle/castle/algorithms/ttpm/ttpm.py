@@ -35,6 +35,19 @@ class TTPM(BaseLearner):
     topology_matrix: np.matrix
         Interpreted as an adjacency matrix to generate the graph.
         It should have two dimensions, and should be square.
+
+    delta: float, default=0.1
+            Time decaying coefficient for the exponential kernel.
+
+    epsilon: int, default=1
+        BIC penalty coefficient.
+
+    max_hop: positive int, default=6
+        The maximum considered hops in the topology,
+        when ``max_hop=1``, it is divided by nodes, regardless of topology.
+
+    penalty: str, default=BIC
+        Two optional values: 'BIC' or 'AIC'.
         
 
     Examples
@@ -45,8 +58,8 @@ class TTPM(BaseLearner):
     >>> from castle.algorithms import TTPM
     # Data Simulation for TTPM
     >>> true_causal_matrix, topology_matrix, X = load_dataset(name='thp_test')
-    >>> ttpm = TTPM(topology_matrix)
-    >>> ttpm.learn(X, max_hop=2)
+    >>> ttpm = TTPM(topology_matrix, max_hop=2)
+    >>> ttpm.learn(X)
     >>> causal_matrix = ttpm.causal_matrix
     # plot est_dag and true_dag
     >>> GraphDAG(ttpm.causal_matrix.values, true_causal_matrix)
@@ -55,7 +68,8 @@ class TTPM(BaseLearner):
     >>> ret_metrix.metrics
     """
 
-    def __init__(self, topology_matrix):
+    def __init__(self, topology_matrix, delta=0.1, epsilon=1,
+                 max_hop=6, penalty='BIC'):
         BaseLearner.__init__(self)
         assert isinstance(topology_matrix, np.ndarray),\
             'topology_matrix should be np.matrix object'
@@ -65,9 +79,13 @@ class TTPM(BaseLearner):
             'The topology_matrix should be square.'
         self._topo = nx.from_numpy_matrix(topology_matrix,
                                           create_using=nx.Graph)
+        # initialize instance variables
+        self._penalty = penalty
+        self._delta = delta
+        self._max_hop = max_hop
+        self._epsilon = epsilon
 
-    def learn(self, tensor, delta=0.1, epsilon=1,
-              max_hop=6, penalty='BIC'):
+    def learn(self, tensor, *args, **kwargs):
         """
         Set up and run the TTPM algorithm.
 
@@ -82,19 +100,6 @@ class TTPM(BaseLearner):
                 event: event name (type).
                 timestamp: occurrence timestamp of event, i.e., '1615962101.0'.
                 node: topological node where the event happened.
-
-        delta: float, default=0.1
-            Time decaying coefficient for the exponential kernel.
-
-        epsilon: int, default=1
-            BIC penalty coefficient.
-
-        max_hop: positive int, default=6
-            The maximum considered hops in the topology,
-            when ``max_hop=1``, it is divided by nodes, regardless of topology.
-
-        penalty: str, default=BIC
-            Two optional values: 'BIC' or 'AIC'.
         """
 
         # data type judgment
@@ -109,12 +114,8 @@ class TTPM(BaseLearner):
                     "The data tensor should contain column with name {}".format(
                         col))
 
-        if penalty != 'BIC' and penalty != 'AIC':
-            raise ValueError(
-                "The penalty's value should be BIC or AIC.")
-
         # initialize needed values
-        self._start_init(tensor, epsilon, delta, max_hop, penalty)
+        self._start_init(tensor)
 
         # Generate causal matrix (DAG)
         _, raw_causal_matrix = self._hill_climb()
@@ -122,7 +123,7 @@ class TTPM(BaseLearner):
                                            index=self._matrix_names,
                                            columns=self._matrix_names)
 
-    def _start_init(self, tensor, epsilon, delta, max_hop, penalty):
+    def _start_init(self, tensor):
         """
         Generates some required initial values.
         """
@@ -136,12 +137,6 @@ class TTPM(BaseLearner):
 
         tensor = tensor.sort_values(['node', 'timestamp'])
         self.tensor = tensor[tensor['node'].isin(self._topo.nodes)]
-
-        # initialize instance variables
-        self._penalty = penalty
-        self._delta = delta
-        self._max_hop = max_hop
-        self._epsilon = epsilon
 
         # calculate considered events
         self._event_names = np.array(list(set(self.tensor['event'])))
@@ -163,10 +158,10 @@ class TTPM(BaseLearner):
         self._max_s_t = tensor['timestamp'].max()
         self._min_s_t = tensor['timestamp'].min()
 
-        for k in tqdm(range(max_hop)):
+        for k in tqdm(range(self._max_hop)):
             self._decay_effects[:, k] = tensor.groupby('event').apply(
                 lambda i: ((((1 - np.exp(
-                    -delta * (self._max_s_t - i['timestamp']))) / delta)
+                    -self._delta * (self._max_s_t - i['timestamp']))) / self._delta)
                             * i['times']) * i['node'].apply(
                     lambda j: len(self._k_hop_neibors(j, k)))).sum())
         # |V|x|T|
@@ -375,11 +370,13 @@ class TTPM(BaseLearner):
             return l_init - (len(self._event_names)
                              + self._epsilon * edge_mat.sum()
                              * self._max_hop), alpha, mu
-        if self._penalty == 'BIC':
+        elif self._penalty == 'BIC':
             return l_init - (len(self._event_names)
                              + self._epsilon * edge_mat.sum()
                              * self._max_hop) * np.log(
                 self.tensor['times'].sum()) / 2, alpha, mu
+        else:
+            raise ValueError("The penalty's value should be BIC or AIC.")
 
     def _one_step_change_iterator(self, edge_mat):
 

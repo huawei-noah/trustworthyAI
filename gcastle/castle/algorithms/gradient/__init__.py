@@ -19,7 +19,7 @@ from .notears.nonlinear import NotearsSob
 from .notears.low_rank import NotearsLowRank
 from .notears.golem import GOLEM
 
-from .gran_dag.gran_dag import GraN_DAG, Parameters
+from .gran_dag.gran_dag import GraN_DAG
 from .graph_auto_encoder.gae import GAE
 from .masked_csl.mcsl import MCSL
 
