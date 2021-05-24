@@ -1,0 +1,11 @@
+dataset_params:
+  x_file: None  # None or .npz or .csv
+  dag_file: None  # None or .npz or .csv
+
+model_params:
+  lambda1: 0.1  # l1 penalty parameter
+  loss_type: 'l2'  # l2, logistic, poisson
+  max_iter: 100  # max num of dual ascent steps
+  h_tol: !!float 1e-8  # exit if |h(w_est)| <= htol
+  rho_max: !!float 1e+16  # exit if rho >= rho_max
+  w_threshold: 0.3  # drop edge if |weight| < threshold

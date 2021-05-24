@@ -50,7 +50,7 @@ class CORL2(BaseLearner):
     >>> from castle.metrics import MetricsDAG
     >>> true_dag, X = load_dataset(name='iid_test')
     >>> n = CORL2()
-    >>> n.learn(X, dag=true_dag)
+    >>> n.learn(X)
     >>> GraphDAG(n.causal_matrix, true_dag)
     >>> met = MetricsDAG(n.causal_matrix, true_dag)
     >>> print(met.metrics)

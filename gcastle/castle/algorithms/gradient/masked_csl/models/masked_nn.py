@@ -13,14 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import logging
 from tensorflow.keras.layers import Dense, LeakyReLU
-
 from .masked_model import MaskedModel
 
 
 class MaskedNN(MaskedModel):
-    _logger = logging.getLogger(__name__)
 
     def _forward(self, x):
         for _ in range(self.num_hidden_layers):    # Hidden layer

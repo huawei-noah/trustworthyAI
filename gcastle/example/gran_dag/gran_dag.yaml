@@ -1,0 +1,33 @@
+dataset_params:
+  x_file: None  # None or .npz or .csv
+  dag_file: None  # None or .npz or .csv
+
+model_params:
+  input_dim: 10 # number of variable, X.shape[1]
+  hidden_num: 2 # number of hidden layers
+  hidden_dim: 10  # number of dimension per hidden layer
+  lr: 0.001 # learning rate
+  iterations: 100000  # times of iteration
+  batch_size: 64  # batch size of per training of NN
+  model_name: 'NonLinGaussANM' # name of model, 'NonlinearGauss' or 'NonlinearGaussANM'
+  nonlinear: 'leaky-relu' # name of Nonlinear activation function
+  optimizer: 'rmsprop'  # Method of optimize
+  h_threshold: !!float 1e-8   # constrained threshold
+  gpu: False  # whether use gpu
+
+  pns: False  # variable number or neighbors number used in the pns
+  pns_thresh: 0.75
+  num_neighbors: None
+
+  normalize: False  # whether normalize data
+  precision: False  # whether use Double precision
+  random_seed: 42
+  jac_thresh: True
+  lambda_init: 0.0
+  mu_init: 0.001
+  omega_lambda: 0.0001
+  omega_mu: 0.9
+  stop_crit_win: 100
+  edge_clamp_range: 0.0001
+  norm_prod: 'paths'
+  square_prod: False

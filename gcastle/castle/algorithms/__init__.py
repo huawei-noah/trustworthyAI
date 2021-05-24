@@ -22,7 +22,7 @@ from .gradient import NotearsMLP
 from .gradient import NotearsSob
 from .gradient import NotearsLowRank
 from .gradient import GOLEM
-from .gradient import GraN_DAG, Parameters
+from .gradient import GraN_DAG
 from .gradient import GAE
 from .gradient import MCSL
 from .gradient import RL

@@ -13,47 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import math
 from copy import deepcopy
 from itertools import combinations
 import numpy as np
-import pandas as pd
-from scipy.stats import norm
 
 from castle.common import BaseLearner, Tensor
-
-
-def gauss_test(r, n, k, alpha):
-    """Gaussian test by Fisher's z-transform for pc algorithms.
-
-    Parameters
-    ----------
-    r: float
-        Correlation coefficient or partial correlation coefficient.
-    n: int
-        The number of samples.
-    k: int
-        The number of controlled variables.
-    alpha: float
-        Significance level.
-
-    Returns
-    -------
-    out: 0 or 1
-        if p >= alpha then reject h0, return 0 else return 1
-    """
-
-    cut_at = 0.99999
-    r = min(cut_at, max(-1 * cut_at, r))  # make r between -1 and 1
-    # Fisher’s z-transform
-    res = math.sqrt(n - k - 3) * .5 * math.log1p((2 * r) / (1 - r))
-    # p-value H0: r == 0 H1: r != 0
-    p = 2 * (1 - norm.cdf(abs(res)))
-
-    if p >= alpha:
-        return 0
-    else:
-        return 1
+from castle.common.independence_tests import CI_Test
 
 
 class PC(BaseLearner):
@@ -63,11 +28,16 @@ class PC(BaseLearner):
 
     Reference: https://www.jmlr.org/papers/volume8/kalisch07a/kalisch07a.pdf
 
+    Parameters
+    ----------
+    alpha: float, default 0.05
+        Significance level.
+    ci_test : str
+        ci_test method
+
     Attributes
     ----------
-    n_samples : int
-        Number of samples.
-    causal_matrix : numpy.ndarray
+    causal_matrix : array
         Learned causal structure matrix.
 
     Examples
@@ -84,283 +54,223 @@ class PC(BaseLearner):
     >>> print(met.metrics)
     """
 
-    def __init__(self):
+    def __init__(self, alpha=0.05, ci_test='gauss'):
 
         super(PC, self).__init__()
+        self.alpha = alpha
+        self.causal_matrix = None
+        self.ci_test = ci_test
 
-    def learn(self, data, test_method=gauss_test, alpha=0.05):
+    def learn(self, data, **kwargs):
         """Set up and run the PC algorithm.
 
         Parameters
         ----------
-        data: numpy.ndarray or Tensor
+        data: array or Tensor
             Training data.
-        test_method: function
-            The approach of conditional independent hypothesis test.
-        alpha: float
-            Significance level.
         """
 
         if isinstance(data, np.ndarray):
-            data = pd.DataFrame(data)
+            data = data
         elif isinstance(data, Tensor):
-            data = pd.DataFrame(data.data)
+            data = data.data
         else:
             raise TypeError('The type of tensor must be '
-                            'Tensor or numpy.ndarray, but got {}'
+                            'Tensor or array, but got {}.'
                             .format(type(data)))
-
-        self.n_samples = data.shape[0]
-        # Calculate the correlation coefficient in all variables.
-        corr = data.corr()
-
         # Generating an undirected skeleton matrix
-        skeleton, sep_set = self._cal_skeleton(corr_matrix=corr,
-                                               test_method=test_method,
-                                               alpha=alpha)
-
+        skeleton, sep_set = FindSkeleton.origin_pc(data=data, alpha=self.alpha,
+                                                   ci_test=self.ci_test)
         # Generating an causal matrix (DAG)
-        self._causal_matrix = self._cal_cpdag(skeleton,
-                                              sep_set).astype(int).values
+        self._causal_matrix = orient(skeleton, sep_set).astype(int)
 
-    def _cal_skeleton(self, corr_matrix, test_method, alpha):
-        """Generate an undirected skeleton matrix.
 
-        Parameters
-        ----------
-        corr_matrix: pandas.DataFrame
-            Correlation coefficient matrix of all variables.
-            Shape is d * d, where d is the number of variables.
-        test_method: function
-            The approach of conditional independent hypothesis test.
-        alpha: float
-            Significance level.
+class FindSkeleton(object):
+    """Contains multiple methods for finding skeleton"""
 
-        Return
-        ------
-        skeleton_matrix: pandas.DataFrame
-        sep_set: dict, d-separation sets
-            The key is two variables '(x, y)' to test,
-            the value is set that the elements make x and y conditional
-            independent.
-        """
+    @staticmethod
+    def origin_pc(data, alpha=0.05, ci_test='gauss'):
+        """Origin PC-algorithm for learns a skeleton graph
 
-        sep_set = {}
-        skeleton = deepcopy(corr_matrix)
-        variables = list(skeleton.columns)
-        for i, label in enumerate(variables):
-            skeleton.iloc[i, i] = 0
-        k = 0
-        # if k == 0, test the correlation coefficient
-        # if k == 1, test the first order partial correlation coefficient
-        # ...
-        ij = list(combinations(corr_matrix.columns, 2))
-        while k <= len(variables) - 2:
-            for i, j in ij:
-                if k == 0:
-                    r = corr_matrix.loc[i, j]
-                    bool = test_method(r=r, n=self.n_samples,
-                                       k=k, alpha=alpha)
-                    skeleton.loc[i, j] = skeleton.loc[j, i] = bool
-                    if not bool:
-                        sep_set[(i, j)] = []
-                else:
-                    if skeleton.loc[i, j] == 0:
-                        continue
-                    else:
-                        # combined sub_matrix
-                        sub_v = deepcopy(variables)
-                        sub_v.remove(i)
-                        sub_v.remove(j)
-                        a = []
-                        for ks in combinations(sub_v, k):
-                            sub = [i, j]
-                            for s in ks:
-                                sub.append(s)
-                            sub_corr = corr_matrix.loc[sub, sub]
-                            # inverse matrix
-                            PM = np.linalg.inv(sub_corr)
-                            r = -1 * PM[0, 1] / math.sqrt(
-                                abs(PM[0, 0] * PM[1, 1]))
-                            bool = test_method(r=r, n=self.n_samples,
-                                               k=k, alpha=alpha)
-                            if not bool:
-                                a.extend(ks)
-                            if a:
-                                skeleton.loc[i, j] = skeleton.loc[j, i] = 0
-                                sep_set[(i, j)] = a
-                                # break # Don't break if you want to check all ks.
-                            else:
-                                skeleton.loc[i, j] = skeleton.loc[j, i] = 1
-            k += 1
-        return skeleton, sep_set
-
-    def _cal_cpdag(self, skeleton_matrix, sep_set):
-        """Extend the skeleton to a CPDAG.
-
-        Pre-processing rule:
-        for all pairs of nonadjacent variables (i, j) with common neighbour k do
-            if k not in sep_set(i, j) then
-                Replace i——k——j in skeleton by i——>k<——j
+        It learns a skeleton graph which contains only undirected edges
+        from data. This is the original version of the PC-algorithm for the
+        skeleton.
 
         Parameters
         ----------
-        skeleton_matrix: pandas.DataFrame
-        sep_set: dict，d-separation sets
-            The key is two variables '(x, y)' to test,
-            the value is set that the elements make x and y conditional
-            independent.
+        data : array, (n_samples, n_features)
+            Dataset with a set of variables V
+        alpha : float, default 0.05
+            significant level
+        ci_test : str
+            ci_test method
 
         Returns
         -------
-        out: pandas.DataFrame
-            A matrix of CPDAG.
+        skeleton : array
+            The undirected graph
+        seq_set : dict
+            Separation sets
+            Such as key is (x, y), then value is a set of other variables
+            not contains x and y.
         """
 
-        pdag = deepcopy(skeleton_matrix)
-        # pre-processing
-        for ij in sep_set.keys():
-            i, j = ij
-            all_k = [x for x in pdag.columns if x not in ij]
-            for k in all_k:
-                if pdag.loc[i, k] + pdag.loc[k, i] != 0 \
-                        and pdag.loc[k, j] + pdag.loc[j, k] != 0:
-                    if k not in sep_set[ij]:
-                        if pdag.loc[i, k] + pdag.loc[k, i] == 2:
-                           pdag.loc[k, i] = 0
-                        if pdag.loc[j, k] + pdag.loc[k, j] == 2:
-                           pdag.loc[k, j] = 0
-        pdag = self._rule_1(pdag=pdag)
-        pdag = self._rule_2(pdag=pdag)
-        pdag = self._rule_3(pdag=pdag, sep_set=sep_set)
-        pdag = self._rule_4(pdag=pdag, sep_set=sep_set)
+        n_features = data.shape[1]
+        skeleton = np.ones((n_features, n_features)) - np.eye(n_features)
+        nodes = list(range(n_features))
+        sep_set = {}
+        k = 0
+        while k <= n_features - 2:
+            for i, j in combinations(nodes, 2):
+                if k == 0:
+                    if ci_test == 'gauss':
+                        p_value = CI_Test.gauss_test(data, i, j, ctrl_var=[])
+                    else:
+                        raise ValueError('Unknown ci_test method, please check '
+                                         f'the parameter {ci_test}.')
+                    if p_value >= alpha:
+                        skeleton[i, j] = skeleton[j, i] = 0
+                        sep_set[(i, j)] = []
+                    else:
+                        pass
+                else:
+                    if skeleton[i, j] == 0:
+                        continue
+                    other_nodes = deepcopy(nodes)
+                    other_nodes.remove(i)
+                    other_nodes.remove(j)
+                    s = []
+                    for ctrl_var in combinations(other_nodes, k):
+                        ctrl_var = list(ctrl_var)
+                        if ci_test == 'gauss':
+                            p_value = CI_Test.gauss_test(data, i, j, ctrl_var)
+                        else:
+                            raise ValueError('Unknown ci_test method, please check '
+                                             f'the parameter {ci_test}.')
+                        if p_value >= alpha:
+                            s.extend(ctrl_var)
+                        if s:
+                            skeleton[i, j] = skeleton[j, i] = 0
+                            sep_set[(i, j)] = s
+                            break
+            k += 1
 
-        return pdag
+        return skeleton, sep_set
 
-    def _rule_1(self, pdag):
+
+def orient(skeleton, sep_set):
+    """Extending the Skeleton to the Equivalence Class
+
+    it orients the undirected edges to form an equivalence class of DAGs.
+
+    Parameters
+    ----------
+    skeleton : array
+        The undirected graph
+    sep_set : dict
+        separation sets
+        if key is (x, y), then value is a set of other variables
+        not contains x and y
+
+    Returns
+    -------
+    out : array
+        An equivalence class of DAGs can be uniquely described
+        by a completed partially directed acyclic graph (CPDAG)
+        which includes both directed and undirected edges.
+    """
+
+    def _rule_1(cpdag):
         """Rule_1
 
         Orient i——j into i——>j whenever there is an arrow k——>i
         such that k and j are nonadjacent.
-
-        Parameters
-        ----------
-        pdag: pandas.DataFrame
-
-        Returns
-        -------
-        out: pandas.DataFrame, pdag
         """
 
-        ind = list(combinations(pdag.columns, 2))
+        columns = list(range(cpdag.shape[1]))
+        ind = list(combinations(columns, 2))
         for ij in sorted(ind, key=lambda x: (x[1], x[0])):
             # Iteration every (i, j)
             i, j = ij
-            if pdag.loc[i, j] * pdag.loc[j, i] == 0:
+            if cpdag[i, j] * cpdag[j, i] == 0:
                 continue
             # search i——j
             else:
-                all_k = [x for x in pdag.columns if x not in ij]
+                all_k = [x for x in columns if x not in ij]
                 for k in all_k:
-                    if pdag.loc[k, i] == 1 and pdag.loc[i, k] == 0 \
-                            and pdag.loc[k, j] + pdag.loc[j, k] == 0:
-                        pdag.loc[j, i] = 0
-        return pdag
+                    if cpdag[k, i] == 1 and cpdag[i, k] == 0 \
+                            and cpdag[k, j] + cpdag[j, k] == 0:
+                        cpdag[j, i] = 0
+        return cpdag
 
-    def _rule_2(self, pdag):
+    def _rule_2(cpdag):
         """Rule_2
 
         Orient i——j into i——>j whenever there is a chain i——>k——>j.
-
-        Parameters
-        ----------
-        pdag: pandas.DataFrame
-
-        Returns
-        -------
-        out: pandas.DataFrame, pdag
         """
-        ind = list(combinations(pdag.columns, 2))
+
+        columns = list(range(cpdag.shape[1]))
+        ind = list(combinations(columns, 2))
         for ij in sorted(ind, key=lambda x: (x[1], x[0])):
             # Iteration every (i, j)
             i, j = ij
-            if pdag.loc[i, j] * pdag.loc[j, i] == 0:
+            if cpdag[i, j] * cpdag[j, i] == 0:
                 continue
             # search i——j
             else:
-                all_k = [x for x in pdag.columns if x not in ij]
+                all_k = [x for x in columns if x not in ij]
                 for k in all_k:
-                    if pdag.loc[i, k] ==1 and pdag.loc[k, i] == 0 \
-                            and pdag.loc[k, j] ==1 \
-                            and pdag.loc[j, k] == 0:
-                        pdag.loc[j, i] = 0
-        return pdag
+                    if cpdag[i, k] == 1 and cpdag[k, i] == 0 \
+                            and cpdag[k, j] == 1 \
+                            and cpdag[j, k] == 0:
+                        cpdag[j, i] = 0
+        return cpdag
 
-    def _rule_3(self, pdag, sep_set=None):
+    def _rule_3(cpdag, sep_set=None):
         """Rule_3
 
         Orient i——j into i——>j
         whenever there are two chains i——k——>j and i——l——>j
         such that k and l are non-adjacent.
-
-        Parameters
-        ----------
-        pdag: pandas.DataFrame
-        sep_set: dict，d-separation sets
-            The key is two variables '(x, y)' to test,
-            the value is set that the elements make x and y conditional
-            independent.
-
-        Returns
-        -------
-        out: pandas.DataFrame, pdag
         """
-        ind = list(combinations(pdag.columns, 2))
+
+        columns = list(range(cpdag.shape[1]))
+        ind = list(combinations(columns, 2))
         for ij in sorted(ind, key=lambda x: (x[1], x[0])):
             # Iteration every (i, j)
             i, j = ij
-            if pdag.loc[i, j] * pdag.loc[j, i] == 0:
+            if cpdag[i, j] * cpdag[j, i] == 0:
                 continue
             # search i——j
             else:
-                for kl in sep_set.keys(): # k and l are nonadjacent.
+                for kl in sep_set.keys():  # k and l are nonadjacent.
                     k, l = kl
                     # if i——k——>j and  i——l——>j
-                    if pdag.loc[i, k] == 1 \
-                            and pdag.loc[k, i] == 1 \
-                            and pdag.loc[k, j] == 1 \
-                            and pdag.loc[j, k] == 0 \
-                            and pdag.loc[i, l] == 1 \
-                            and pdag.loc[l, i] == 1 \
-                            and pdag.loc[l, j] == 1 \
-                            and pdag.loc[j, l] == 0:
-                        pdag.loc[j, i] = 0
-        return pdag
+                    if cpdag[i, k] == 1 \
+                            and cpdag[k, i] == 1 \
+                            and cpdag[k, j] == 1 \
+                            and cpdag[j, k] == 0 \
+                            and cpdag[i, l] == 1 \
+                            and cpdag[l, i] == 1 \
+                            and cpdag[l, j] == 1 \
+                            and cpdag[j, l] == 0:
+                        cpdag[j, i] = 0
+        return cpdag
 
-    def _rule_4(self, pdag, sep_set=None):
+    def _rule_4(cpdag, sep_set=None):
         """Rule_4
 
         Orient i——j into i——>j
         whenever there are two chains i——k——>l and k——>l——>j
         such that k and j are non-adjacent.
-
-        Parameters
-        ----------
-        pdag: pandas.DataFrame
-        sep_set: dict，d-separation sets
-            The key is two variables '(x, y)' to test,
-            the value is set that the elements make x and y conditional
-            independent.
-
-        Returns
-        -------
-        out: pandas.DataFrame, pdag
         """
-        ind = list(combinations(pdag.columns, 2))
+
+        columns = list(range(cpdag.shape[1]))
+        ind = list(combinations(columns, 2))
         for ij in sorted(ind, key=lambda x: (x[1], x[0])):
             # Iteration every (i, j)
             i, j = ij
-            if pdag.loc[i, j] * pdag.loc[j, i] == 0:
+            if cpdag[i, j] * cpdag[j, i] == 0:
                 continue
             # search i——j
             else:
@@ -371,14 +281,35 @@ class PC(BaseLearner):
                         kj = list(kj)
                         kj.remove(j)
                         k = kj[0]
-                        ls = [x for x in pdag.columns
-                              if x not in [i, j, k]]
+                        ls = [x for x in columns if x not in [i, j, k]]
                         for l in ls:
-                            if pdag.loc[k, l] == 1 \
-                                    and pdag.loc[l, k] == 0 \
-                                    and pdag.loc[i, k] == 1 \
-                                    and pdag.loc[k, i] == 1 \
-                                    and pdag.loc[l, j] == 1 \
-                                    and pdag.loc[j, l] == 0:
-                                pdag.loc[j, i] = 0
-        return pdag
+                            if cpdag[k, l] == 1 \
+                                    and cpdag[l, k] == 0 \
+                                    and cpdag[i, k] == 1 \
+                                    and cpdag[k, i] == 1 \
+                                    and cpdag[l, j] == 1 \
+                                    and cpdag[j, l] == 0:
+                                cpdag[j, i] = 0
+        return cpdag
+
+    columns = list(range(skeleton.shape[1]))
+    cpdag = deepcopy(skeleton)
+    # pre-processing
+    for ij in sep_set.keys():
+        i, j = ij
+        all_k = [x for x in columns if x not in ij]
+        for k in all_k:
+            if cpdag[i, k] + cpdag[k, i] != 0 \
+                    and cpdag[k, j] + cpdag[j, k] != 0:
+                if k not in sep_set[ij]:
+                    if cpdag[i, k] + cpdag[k, i] == 2:
+                        cpdag[k, i] = 0
+                    if cpdag[j, k] + cpdag[k, j] == 2:
+                        cpdag[k, j] = 0
+    cpdag = _rule_1(cpdag=cpdag)
+    cpdag = _rule_2(cpdag=cpdag)
+    cpdag = _rule_3(cpdag=cpdag, sep_set=sep_set)
+    cpdag = _rule_4(cpdag=cpdag, sep_set=sep_set)
+
+    return cpdag
+

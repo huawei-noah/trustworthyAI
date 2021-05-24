@@ -28,54 +28,49 @@ from castle.common import BaseLearner, Tensor
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 
-class Parameters(object):
-    def __init__(
-            # other settings
-            self, use_gpu:'bool' = False,
-            seed: 'int' = 1230,
-            graph_thres: 'float' = 0.5,
-            # model parameters
-            model_type:'str' = 'MaskedNN',
-            num_hidden_layers:'int' = 4,
-            hidden_size:'int'=16,
-            l1_graph_penalty:'float' = 2e-3,
-            use_float64:'bool' = False,
-            # training parameters
-            learning_rate:'float' = 3e-2,
-            max_iter:'int' = 25,
-            iter_step:'int' = 1000,
-            init_iter:'int' = 2,
-            h_tol:'float' = 1e-10,
-            init_rho:'float' = 1e-5,
-            rho_thres:'float' = 1e14,
-            h_thres:'float' = 0.25,
-            rho_multiply:'float' = 10,
-            temperature:'float' = 0.2
-            ):
-        self.seed = seed
-        self.use_gpu = use_gpu
-        self.graph_thres=graph_thres
-        self.model_type=model_type
-        self.num_hidden_layers=num_hidden_layers
-        self.hidden_size=hidden_size
-        self.l1_graph_penalty=l1_graph_penalty
-        self.use_float64=use_float64
-        self.learning_rate=learning_rate
-        self.max_iter=max_iter
-        self.iter_step=iter_step
-        self.init_iter=init_iter
-        self.h_tol=h_tol
-        self.init_rho=init_rho
-        self.rho_thres=rho_thres
-        self.h_thres=h_thres
-        self.rho_multiply=rho_multiply
-        self.temperature=temperature
-
-
 class MCSL(BaseLearner):
     """
     MCSL Algorithm.
     A classic causal discovery algorithm based on conditional independence tests.
+
+    Parameters
+    ----------
+    use_gpu: bool
+        Whether or not to use GPU
+    seed: int
+        Reproducibility
+    graph_thres: float
+        Threshold to filter out small values in graph
+    model_type: str
+        Model type to use [MaskedNN, MaskedQuadraticRegression]
+    num_hidden_layers: int
+        Number of hidden layers for NN
+    hidden_size: int
+        Hidden size for NN layers
+    l1_graph_penalty: float
+        L1 penalty for sparse graph. Set to 0 to disable
+    use_float64: bool
+        Whether to use tf.float64 or tf.float32 during training
+    learning_rate: float
+        Learning rate
+    max_iter: int
+        Number of iterations for optimization problem
+    iter_step: int
+        Number of steps for each iteration
+    init_iter: int
+        Initial iteration to disallow early stopping
+    h_tol: float
+        Tolerance of optimization problem
+    init_rho: float
+        Initial value for rho
+    rho_thres: float
+        Threshold for rho
+    h_thres: float
+        Threshold for h
+    rho_multiply: float
+        Multiplication to amplify rho each time
+    temperature: float
+        Temperature for gumbel sigmoid
 
     Attributes
     ----------
@@ -93,19 +88,44 @@ class MCSL(BaseLearner):
     >>> from castle.common import GraphDAG
     >>> from castle.metrics import MetricsDAG
     >>> true_dag, X = load_dataset(name='iid_test')
-    >>> n = MCSL()
-    >>> n.learn(X, iter_step=1000, rho_thres=1e14, init_rho=1e-5,
-                rho_multiply=10, graph_thres=0.5, l1_graph_penalty=2e-3, 
-                degree=2, use_float64=False)
+    >>> n = MCSL(iter_step=1000, rho_thres=1e14, init_rho=1e-5,
+                 rho_multiply=10, graph_thres=0.5, l1_graph_penalty=2e-3, 
+                 use_float64=False)
+    >>> n.learn(X)
     >>> GraphDAG(n.causal_matrix, true_dag)
     >>> met = MetricsDAG(n.causal_matrix, true_dag)
     >>> print(met.metrics)
     """
 
-    def __init__(self):
+    def __init__(self, use_gpu=False, seed=1230, graph_thres=0.5, 
+                 model_type='MaskedNN', num_hidden_layers=4, hidden_size=16, 
+                 l1_graph_penalty=2e-3, use_float64=False, learning_rate=3e-2, 
+                 max_iter=25, iter_step=1000, init_iter=2, h_tol=1e-10, 
+                 init_rho=1e-5, rho_thres=1e14, h_thres=0.25, rho_multiply=10,
+                 temperature=0.2):
+        
         super().__init__()
+        
+        self.use_gpu = use_gpu
+        self.seed = seed
+        self.graph_thres = graph_thres
+        self.model_type = model_type
+        self.num_hidden_layers = num_hidden_layers
+        self.hidden_size = hidden_size
+        self.l1_graph_penalty = l1_graph_penalty
+        self.use_float64 = use_float64
+        self.learning_rate = learning_rate
+        self.max_iter = max_iter
+        self.iter_step = iter_step
+        self.init_iter = init_iter
+        self.h_tol = h_tol
+        self.init_rho = init_rho
+        self.rho_thres = rho_thres
+        self.h_thres = h_thres
+        self.rho_multiply = rho_multiply
+        self.temperature = temperature
 
-    def learn(self, data, **kwargs):
+    def learn(self, data):
         """
         Set up and run the MCSL algorithm.
 
@@ -114,9 +134,6 @@ class MCSL(BaseLearner):
         data: castle.Tensor or numpy.ndarray
             The castle.Tensor or numpy.ndarray format data you want to learn.
         """
-        opt = Parameters()
-        for k in kwargs:
-            opt.__dict__[k] = kwargs[k]
 
         if isinstance(data, np.ndarray):
             X = data
@@ -127,13 +144,13 @@ class MCSL(BaseLearner):
                             'Tensor or numpy.ndarray, but got {}'
                             .format(type(data)))
         
-        opt.n, opt.d = X.shape
+        self.n, self.d = X.shape
         pns_mask = np.ones([X.shape[1], X.shape[1]])
 
-        causal_matrix = self._mcsl(X, pns_mask, opt)
+        causal_matrix = self._mcsl(X, pns_mask)
         self.causal_matrix = causal_matrix
 
-    def _mcsl(self, X, pns_mask, opt):
+    def _mcsl(self, X, pns_mask):
         """
         Starting model of MCSL.
 
@@ -143,27 +160,25 @@ class MCSL(BaseLearner):
             The numpy.ndarray format data you want to learn.
         pns_mask: numpy.ndarray
             The mask matrix.
-        opt: dict
-            The parameters dict for mcsl.
         """
 
-        set_seed(opt.seed)
+        set_seed(self.seed)
 
-        if opt.model_type == 'MaskedNN':
+        if self.model_type == 'MaskedNN':
             Model = MaskedNN
-        elif opt.model_type == 'MaskedQuadraticRegression':
+        elif self.model_type == 'MaskedQuadraticRegression':
             Model = MaskedQuadraticRegression
 
-        model = Model(opt.n, opt.d, pns_mask, opt.num_hidden_layers,
-                      opt.hidden_size, opt.l1_graph_penalty, opt.learning_rate, 
-                      opt.seed, opt.use_float64, opt.use_gpu)
+        model = Model(self.n, self.d, pns_mask, self.num_hidden_layers,
+                      self.hidden_size, self.l1_graph_penalty, self.learning_rate, 
+                      self.seed, self.use_float64, self.use_gpu)
 
-        trainer = ALTrainer(opt.init_rho, opt.rho_thres, opt.h_thres, 
-                            opt.rho_multiply, opt.init_iter, opt.h_tol, 
-                            opt.temperature)
+        trainer = ALTrainer(self.init_rho, self.rho_thres, self.h_thres, 
+                            self.rho_multiply, self.init_iter, self.h_tol, 
+                            self.temperature)
 
-        W_logits = trainer.train(model, X, opt.max_iter, opt.iter_step)
+        W_logits = trainer.train(model, X, self.max_iter, self.iter_step)
 
-        W_est = callback_after_training(W_logits, opt.temperature, opt.graph_thres)
+        W_est = callback_after_training(W_logits, self.temperature, self.graph_thres)
 
         return W_est

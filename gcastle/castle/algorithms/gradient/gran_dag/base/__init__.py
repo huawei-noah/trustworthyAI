@@ -1,5 +1,3 @@
-from .base_model import BaseModel
-from .base_model import LearnableModel
 from .base_model import NonlinearGauss
 from .base_model import NonlinearGaussANM
 

@@ -13,7 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import logging
 import numpy as np
 import tensorflow as tf
 
@@ -28,7 +27,6 @@ class MaskedQuadraticRegression(MaskedModel):
     - https://www.digitalocean.com/community/tutorials/understanding-class-inheritance-in-python-3
     - https://github.com/aymericdamien/TensorFlow-Examples/blob/master/examples/2_BasicModels/linear_regression.py
     """
-    _logger = logging.getLogger(__name__)
 
     def _forward(self, x):
         # x is of shape (n, d - 1)

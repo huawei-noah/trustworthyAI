@@ -1,0 +1,10 @@
+dataset_params:
+  x_file: None  # None or .csv
+  dag_file: None  # None or .npz or .csv, CSV file does not contain table header
+  topology_file: None # None or .npz or .csv, CSV file does not contain table header
+
+model_params:
+  delta: 0.1 # Time decaying coefficient for the exponential kernel
+  epsilon: 1 # BIC penalty coefficient
+  max_hop: 2 # The maximum considered hops in the topology
+  penalty: 'BIC' # penalty method

@@ -13,11 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import logging
 import platform
 import numpy as np
 import matplotlib.pyplot as plt
 import tensorflow as tf
-from loguru import logger
 
 from .data_loader import DataGenerator_read_data
 from .models import Actor
@@ -30,6 +30,9 @@ from .helpers.analyze_utils import convert_graph_int_to_adj_mat, \
 
 from castle.common import BaseLearner, Tensor
 from castle.metrics import MetricsDAG
+
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s %(message)s')
 
 
 class RL(BaseLearner):
@@ -53,17 +56,23 @@ class RL(BaseLearner):
     >>> from castle.common import GraphDAG
     >>> from castle.metrics import MetricsDAG
     >>> true_dag, X = load_dataset(name='iid_test')
-    >>> n = RL()
-    >>> n.learn(X, dag=true_dag, lambda_flag_default=True)
+    >>> n = RL(lambda_flag_default=True)
+    >>> n.learn(X, dag=true_dag)
     >>> GraphDAG(n.causal_matrix, true_dag)
     >>> met = MetricsDAG(n.causal_matrix, true_dag)
     >>> print(met.metrics)
     """
     
-    def __init__(self):
+    def __init__(self, **kwargs):
         super().__init__()
 
-    def learn(self, data, **kwargs):
+        config, _ = get_config()
+        for k in kwargs:
+            config.__dict__[k] = kwargs[k]
+        
+        self.config = config
+
+    def learn(self, data, dag=None):
         """
         Set up and run the RL algorithm.
 
@@ -72,9 +81,9 @@ class RL(BaseLearner):
         data: castle.Tensor or numpy.ndarray
             The castle.Tensor or numpy.ndarray format data you want to learn.
         """
-        config, _ = get_config()
-        for k in kwargs:
-            config.__dict__[k] = kwargs[k]
+        config = self.config
+        if dag is not None:
+            config.dag = dag
 
         if isinstance(data, np.ndarray):
             X = data
@@ -95,7 +104,7 @@ class RL(BaseLearner):
         # Reproducibility
         set_seed(config.seed)
 
-        logger.info('Python version is {}'.format(platform.python_version()))
+        logging.info('Python version is {}'.format(platform.python_version()))
 
         # input data
         if hasattr(config, 'dag'):
@@ -120,8 +129,8 @@ class RL(BaseLearner):
             lambda_iter_num = config.lambda_iter_num
 
             # test initialized score
-            logger.info('Original sl: {}, su: {}, strue: {}'.format(sl, su, strue))
-            logger.info('Transfomed sl: {}, su: {}, lambda2: {}, true: {}'.format(sl, su, lambda2,
+            logging.info('Original sl: {}, su: {}, strue: {}'.format(sl, su, strue))
+            logging.info('Transfomed sl: {}, su: {}, lambda2: {}, true: {}'.format(sl, su, lambda2,
                         (strue-sl)/(su-sl)*lambda1_upper))   
         else:
             # test choices for the case with mannualy provided bounds
@@ -146,9 +155,9 @@ class RL(BaseLearner):
                                 actor.input_dimension, training_set.inputdata,
                                 sl, su, lambda1_upper, score_type, reg_type, 
                                 config.l1_graph_reg, False)
-        logger.info('Finished creating training dataset, actor model and reward class')
+        logging.info('Finished creating training dataset, actor model and reward class')
 
-        logger.info('Starting session...')
+        logging.info('Starting session...')
         sess_config = tf.ConfigProto(log_device_placement=False)
         sess_config.gpu_options.allow_growth = True
 
@@ -157,7 +166,7 @@ class RL(BaseLearner):
             sess.run(tf.global_variables_initializer())
 
             # Test tensor shape
-            logger.info('Shape of actor.input: {}'.format(sess.run(tf.shape(actor.input_))))
+            logging.info('Shape of actor.input: {}'.format(sess.run(tf.shape(actor.input_))))
 
             # Initialize useful variables
             rewards_avg_baseline = []
@@ -173,12 +182,12 @@ class RL(BaseLearner):
             max_reward = float('-inf')
             max_reward_score_cyc = (lambda1_upper+1, 0)
 
-            logger.info('Starting training.')
+            logging.info('Starting training.')
             
             for i in (range(1, config.nb_epoch + 1)):
 
                 if config.verbose:
-                    logger.info('Start training for {}-th epoch'.format(i))
+                    logging.info('Start training for {}-th epoch'.format(i))
 
                 input_batch = training_set.train_batch(actor.batch_size, actor.max_length, actor.input_dimension)
                 graphs_feed = sess.run(actor.graphs, feed_dict={actor.input_: input_batch})
@@ -204,7 +213,7 @@ class RL(BaseLearner):
                 reward_batch_score_cyc = np.mean(reward_feed[:,1:], axis=0)
 
                 if config.verbose:
-                    logger.info('Finish calculating reward for current batch of graph')
+                    logging.info('Finish calculating reward for current batch of graph')
 
                 # Get feed dict
                 feed = {actor.input_: input_batch, actor.reward_: -reward_feed[:,0], actor.graphs_:graphs_feed}
@@ -217,7 +226,7 @@ class RL(BaseLearner):
                         feed_dict=feed)
 
                 if config.verbose:
-                    logger.info('Finish updating actor and critic network using reward calculated')
+                    logging.info('Finish updating actor and critic network using reward calculated')
                 
                 lambda1s.append(lambda1)
                 lambda2s.append(lambda2)
@@ -232,7 +241,7 @@ class RL(BaseLearner):
 
                 # logging
                 if i == 1 or i % 500 == 0:
-                    logger.info('[iter {}] reward_batch: {:.4}, max_reward: {:.4}, max_reward_batch: {:.4}'.format(i,
+                    logging.info('[iter {}] reward_batch: {:.4}, max_reward: {:.4}, max_reward_batch: {:.4}'.format(i,
                                 reward_batch, max_reward, max_reward_batch))
 
                 # update lambda1, lamda2
@@ -245,7 +254,7 @@ class RL(BaseLearner):
                         lambda1_upper = score_min
                     lambda1 = min(lambda1+lambda1_update_add, lambda1_upper)
                     lambda2 = min(lambda2*lambda2_update_mul, lambda2_upper)
-                    logger.info('[iter {}] lambda1 {:.4}, upper {:.4}, lambda2 {:.4}, upper {:.4}, score_min {:.4}, cyc_min {:.4}'.format(i,
+                    logging.info('[iter {}] lambda1 {:.4}, upper {:.4}, lambda2 {:.4}, upper {:.4}, score_min {:.4}, cyc_min {:.4}'.format(i,
                                 lambda1*1.0, lambda1_upper*1.0, lambda2*1.0, lambda2_upper*1.0, score_min*1.0, cyc_min*1.0))
 
                     graph_batch = convert_graph_int_to_adj_mat(graph_int)
@@ -273,8 +282,8 @@ class RL(BaseLearner):
                             acc_est2['fdr'], acc_est2['tpr'], acc_est2['fpr'], \
                             acc_est2['shd'], acc_est2['nnz']
                         
-                        logger.info('before pruning: fdr {}, tpr {}, fpr {}, shd {}, nnz {}'.format(fdr, tpr, fpr, shd, nnz))
-                        logger.info('after  pruning: fdr {}, tpr {}, fpr {}, shd {}, nnz {}'.format(fdr2, tpr2, fpr2, shd2, nnz2))
+                        logging.info('before pruning: fdr {}, tpr {}, fpr {}, shd {}, nnz {}'.format(fdr, tpr, fpr, shd, nnz))
+                        logging.info('after  pruning: fdr {}, tpr {}, fpr {}, shd {}, nnz {}'.format(fdr2, tpr2, fpr2, shd2, nnz2))
 
             plt.figure(1)
             plt.plot(rewards_batches, label='reward per batch')
@@ -284,6 +293,6 @@ class RL(BaseLearner):
             plt.show()
             plt.close()
             
-            logger.info('Training COMPLETED !')
+            logging.info('Training COMPLETED !')
 
         return graph_batch_pruned.T
