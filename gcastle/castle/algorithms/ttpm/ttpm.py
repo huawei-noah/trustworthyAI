@@ -13,14 +13,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
+import logging
 import pandas as pd
 import numpy as np
-from tqdm import tqdm
 import networkx as nx
 from itertools import product
 
 from castle.common import BaseLearner
+
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s %(message)s')
 
 
 class TTPM(BaseLearner):
@@ -44,11 +46,13 @@ class TTPM(BaseLearner):
 
     max_hop: positive int, default=6
         The maximum considered hops in the topology,
-        when ``max_hop=1``, it is divided by nodes, regardless of topology.
+        when ``max_hop=0``, it is divided by nodes, regardless of topology.
 
     penalty: str, default=BIC
         Two optional values: 'BIC' or 'AIC'.
         
+    max_iter: int
+        Maximum number of iterations.
 
     Examples
     --------
@@ -69,7 +73,7 @@ class TTPM(BaseLearner):
     """
 
     def __init__(self, topology_matrix, delta=0.1, epsilon=1,
-                 max_hop=6, penalty='BIC'):
+                 max_hop=0, penalty='BIC', max_iter=20):
         BaseLearner.__init__(self)
         assert isinstance(topology_matrix, np.ndarray),\
             'topology_matrix should be np.matrix object'
@@ -84,6 +88,7 @@ class TTPM(BaseLearner):
         self._delta = delta
         self._max_hop = max_hop
         self._epsilon = epsilon
+        self._max_iter = max_iter
 
     def learn(self, tensor, *args, **kwargs):
         """
@@ -153,12 +158,12 @@ class TTPM(BaseLearner):
         self._ne_grouped = self.tensor.groupby('node')
 
         self._decay_effects = np.zeros(
-            [len(self._event_names), self._max_hop])  # will be used in EM.
+            [len(self._event_names), self._max_hop+1])  # will be used in EM.
 
         self._max_s_t = tensor['timestamp'].max()
         self._min_s_t = tensor['timestamp'].min()
 
-        for k in tqdm(range(self._max_hop)):
+        for k in range(self._max_hop+1):
             self._decay_effects[:, k] = tensor.groupby('event').apply(
                 lambda i: ((((1 - np.exp(
                     -self._delta * (self._max_s_t - i['timestamp']))) / self._delta)
@@ -196,7 +201,7 @@ class TTPM(BaseLearner):
         """
         return np.array(list(map(lambda event_name:
                                  np.where(base_event_names == event_name)[0][0],
-                                 tqdm(event_names))))
+                                 event_names)))
 
     def _hill_climb(self):
         """
@@ -217,10 +222,14 @@ class TTPM(BaseLearner):
         edge_mat = np.eye(self._N, self._N)
         result = self._em(edge_mat)
         l_ret = result[0]
-        while 1:
+        
+        for num_iter in range(self._max_iter):
+
+            logging.info('[iter {}]: likelihood_score = {}'.format(num_iter, l_ret))
+
             stop_tag = True
-            for new_edge_mat in tqdm(list(
-                    self._one_step_change_iterator(edge_mat))):
+            for new_edge_mat in list(
+                    self._one_step_change_iterator(edge_mat)):
                 new_result = self._em(new_edge_mat)
                 new_l = new_result[0]
                 # Termination condition:
@@ -233,13 +242,15 @@ class TTPM(BaseLearner):
 
             if stop_tag:
                 return result, edge_mat
+        
+        return result, edge_mat
 
     def _get_effect_tensor_decays(self):
 
-        self._effect_tensor_decays = np.zeros([self._max_hop,
+        self._effect_tensor_decays = np.zeros([self._max_hop+1,
                                                len(self.tensor),
                                                len(self._event_names)])
-        for k in range(self._max_hop):
+        for k in range(self._max_hop+1):
             self._get_effect_tensor_decays_each_hop(k)
 
     def _get_effect_tensor_decays_each_hop(self, k):
@@ -247,7 +258,7 @@ class TTPM(BaseLearner):
         j = 0
         pre_effect = np.zeros(self._N)
         tensor_array = self.tensor.values
-        for item_ind in tqdm(range(len(self.tensor))):
+        for item_ind in range(len(self.tensor)):
             sub_n, start_t, ala_i, times = tensor_array[
                 item_ind, [0, 1, 2, 3]]
             last_sub_n, last_start_t, last_ala_i, last_times = \
@@ -313,7 +324,7 @@ class TTPM(BaseLearner):
                    np.zeros(len(self._event_names))
 
         # Initialize alpha:(nxn)，mu:(nx1) and L
-        alpha = np.ones([self._max_hop, len(self._event_names),
+        alpha = np.ones([self._max_hop+1, len(self._event_names),
                          len(self._event_names)])
         alpha = alpha * edge_mat
         mu = np.ones(len(self._event_names))
@@ -333,7 +344,7 @@ class TTPM(BaseLearner):
 
                 # Calculate the second part of the likelihood
                 lambda_for_i = np.zeros(len(self.tensor)) + mu[i]
-                for k in range(self._max_hop):
+                for k in range(self._max_hop+1):
                     lambda_for_i += np.matmul(
                         self._effect_tensor_decays[k, :],
                         alpha[k, :, i].T)
@@ -355,7 +366,7 @@ class TTPM(BaseLearner):
                 mu[i] = ((mu[i] / lambda_for_i) * x_i).sum() / self._T
                 # update alpha
                 for j in pa_i:
-                    for k in range(self._max_hop):
+                    for k in range(self._max_hop+1):
                         upper = ((alpha[k, j, i] * (
                             self._effect_tensor_decays[k, :, j])[ind]
                                   / lambda_for_i) * x_i).sum()
@@ -369,11 +380,11 @@ class TTPM(BaseLearner):
         if self._penalty == 'AIC':
             return l_init - (len(self._event_names)
                              + self._epsilon * edge_mat.sum()
-                             * self._max_hop), alpha, mu
+                             * (self._max_hop+1)), alpha, mu
         elif self._penalty == 'BIC':
             return l_init - (len(self._event_names)
                              + self._epsilon * edge_mat.sum()
-                             * self._max_hop) * np.log(
+                             * (self._max_hop+1)) * np.log(
                 self.tensor['times'].sum()) / 2, alpha, mu
         else:
             raise ValueError("The penalty's value should be BIC or AIC.")

@@ -34,7 +34,7 @@ topology_matrix = Topology.erdos_renyi(n_nodes=20, n_edges=20)
 simulator = THPSimulation(true_causal_matrix, topology_matrix,
                           mu_range=(0.00005, 0.0001),
                           alpha_range=(0.005, 0.007))
-X = simulator.simulate(T=25000, max_hop=2)
+X = simulator.simulate(T=3600*24, max_hop=2)
 
 # TTPM modeling
 ttpm = TTPM(topology_matrix, max_hop=2)
