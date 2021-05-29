@@ -2,7 +2,7 @@
 
 [中文版本](./README.cn.md)
 
-Version 1.0.1 will be released. (2021/05/31).
+Version 1.0.1 will be released (2021/05/31).
 
 ## Introduction
 
