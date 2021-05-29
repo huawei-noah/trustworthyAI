@@ -608,9 +608,8 @@ class THPSimulation(object):
 
         alpha = np.random.uniform(*self._alpha_range, [N, N])
         alpha = alpha * self._causal_matrix
-        alpha = np.ones([max_hop, N, N]) * alpha
+        alpha = np.ones([max_hop+1, N, N]) * alpha
 
-        events = dict()
         immigrant_events = dict()
         for node in self._topo.nodes:
             immigrant_events[node] = self._trigger_events(mu, 0, T, beta)
@@ -621,7 +620,7 @@ class THPSimulation(object):
             offspring_events = dict()
             for node in tqdm(self._topo.nodes):
                 offspring_events[node] = []
-                for k in range(max_hop):
+                for k in range(max_hop+1):
                     k_base_events = []
                     for neighbor in self._get_k_hop_neighbors(
                             self._topo, node, k):
@@ -649,8 +648,9 @@ class THPSimulation(object):
         events = []
         for i, intensity in enumerate(intensity_vec):
             if intensity:
+                trigger_time = start_time
                 while True:
-                    trigger_time = round(start_time + np.random.exponential(
+                    trigger_time = round(trigger_time + np.random.exponential(
                         1 / intensity))
                     if trigger_time > start_time + duration:
                         break
