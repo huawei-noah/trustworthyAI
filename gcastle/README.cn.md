@@ -2,7 +2,7 @@
 
 [English Version](./README.md)
 
-1.0.0 版本发布
+1.0.1 版本预发布
 
 ## 简介
 
