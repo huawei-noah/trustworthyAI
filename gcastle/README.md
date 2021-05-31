@@ -29,8 +29,8 @@ Version 1.0.1 (pre-release).
 | [RL](https://arxiv.org/abs/1906.04477) | IID/Gradient-based | A RL-based algorithm that can work with flexible score functions (including non-smooth ones) | v1.0.0 |
 | CORL1 | IID/Gradient-based | A RL- and order-based algorithm that improves the efficiency and scalability of previous RL-based approach | v1.0.0 |
 | CORL2 | IID/Gradient-based | A RL- and order-based algorithm that improves the efficiency and scalability of previous RL-based approach | v1.0.0 |
-| [TTPM](https://arxiv.org/abs/2105.10884) | Event-Sequence/Function-based | A causal structure learning algorithm based on Topological Hawkes process for spatio-temporal event sequences |v1.0.0 |
-| [HPCI](https://arxiv.org/abs/2105.03092) | Event-Sequence/Hybrid | A causal structure learning algorithm based on Hawkes process and CI tests for event sequences | under development. |
+| [TTPM](https://arxiv.org/abs/2105.10884) | EventSequence/Function-based | A causal structure learning algorithm based on Topological Hawkes process for spatio-temporal event sequences |v1.0.0 |
+| [HPCI](https://arxiv.org/abs/2105.03092) | EventSequence/Hybrid | A causal structure learning algorithm based on Hawkes process and CI tests for event sequences | under development. |
 
 
 ## Installation
