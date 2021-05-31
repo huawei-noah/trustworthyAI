@@ -8,4 +8,4 @@ python-igraph>=0.8.2
 loguru>=0.5.3
 networkx>=2.5
 torch>=1.4.0
-tensorflow>=1.15.0
+tensorflow~=1.15.0
