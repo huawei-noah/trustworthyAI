@@ -1,5 +1,5 @@
 tqdm>=4.48.2
-numpy>=1.19.2
+numpy>=1.19.1
 pandas>=0.22.0
 scipy>=1.4.1
 scikit-learn>=0.21.1
@@ -8,4 +8,4 @@ python-igraph>=0.8.2
 loguru>=0.5.3
 networkx>=2.5
 torch>=1.4.0
-tensorflow==1.15.0
+tensorflow>=1.15.0

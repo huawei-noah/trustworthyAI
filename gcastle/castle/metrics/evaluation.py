@@ -15,9 +15,36 @@
 
 import copy
 import numpy as np
+import pandas as pd
 
 
 class MetricsDAG(object):
+    """
+    Compute various accuracy metrics for B_est.
+    true positive(TP): an edge estimated with correct direction.
+    true nagative(TN): an edge that is neither in estimated graph nor in true graph.
+    false positive(FP): an edge that is in estimated graph but not in the true graph.
+    false negative(FN): an edge that is not in estimated graph but in the true graph.
+    reverse = an edge estimated with reversed direction.
+
+    fdr: (reverse + FP) / (TP + FP)
+    tpr: TP/(TP + FN)
+    fpr: (reverse + FP) / (TN + FP)
+    shd: undirected extra + undirected missing + reverse
+    nnz: TP + FP
+    precision: TP/(TP + FP)
+    recall: TP/(TP + FN)
+    F1: 2*(recall*precision)/(recall+precision)
+    gscore: max(0, (TP-FP))/(TP+FN), A score ranges from 0 to 1
+
+    Parameters
+    ----------
+    B_est: np.ndarray
+        [d, d] estimate, {0, 1, -1}, -1 is undirected edge in CPDAG.
+    B_true: np.ndarray
+        [d, d] ground truth graph, {0, 1}.
+    """
+
     def __init__(self, B_est, B_true):
         self.B_est = copy.deepcopy(B_est)
         self.B_true = copy.deepcopy(B_true)
@@ -27,11 +54,6 @@ class MetricsDAG(object):
     @staticmethod
     def _count_accuracy(B_est, B_true, decimal_num=4):
         """
-        Compute various accuracy metrics for B_est.
-        true positive = predicted association exists in condition in correct direction.
-        reverse = predicted association exists in condition in opposite direction.
-        false positive = predicted association does not exist in condition.
-
         Parameters
         ----------
         B_est: np.ndarray
@@ -45,16 +67,25 @@ class MetricsDAG(object):
         ------
         metrics: dict
             fdr: float
-                (reverse + false positive) / prediction positive
+                (reverse + FP) / (TP + FP)
             tpr: float
-                (true positive) / condition positive
+                TP/(TP + FN)
             fpr: float
-                (reverse + false positive) / condition negative
-            shd: float
+                (reverse + FP) / (TN + FP)
+            shd: int
                 undirected extra + undirected missing + reverse
-            nnz: float
-                prediction positive
+            nnz: int
+                TP + FP
+            precision: float
+                TP/(TP + FP)
+            recall: float
+                TP/(TP + FN)
+            F1: float
+                2*(recall*precision)/(recall+precision)
+            gscore: float
+                max(0, (TP-FP))/(TP+FN), A score ranges from 0 to 1
         """
+
         # trans diagonal element into 0
         for i in range(len(B_est)):
             if B_est[i, i] == 1:
@@ -112,8 +143,79 @@ class MetricsDAG(object):
         missing_lower = np.setdiff1d(cond_lower, pred_lower, assume_unique=True)
         shd = len(extra_lower) + len(missing_lower) + len(reverse)
 
-        mt = {'fdr': fdr, 'tpr': tpr, 'fpr': fpr, 'shd': shd, 'nnz': pred_size}
+        # trans cpdag [-1, 0, 1] to [0, 1], -1 is undirected edge in CPDAG
+        for i in range(len(B_est)):
+            for j in range(len(B_est[i])):
+                if B_est[i, j] == -1:
+                    B_est[i, j] = 1
+                    B_est[j, i] = 1
+
+        W_p = pd.DataFrame(B_est)
+        W_true = pd.DataFrame(B_true)
+
+        gscore = MetricsDAG._cal_gscore(W_p, W_true)
+        precision, recall, F1 = MetricsDAG._cal_precision_recall(W_p, W_true)
+
+        mt = {'fdr': fdr, 'tpr': tpr, 'fpr': fpr, 'shd': shd, 'nnz': pred_size, 
+              'precision': precision, 'recall': recall, 'F1': F1, 'gscore': gscore}
         for i in mt:
             mt[i] = round(mt[i], decimal_num)
         
         return mt
+
+    @staticmethod
+    def _cal_gscore(W_p, W_true):
+        """
+        Parameters
+        ----------
+        W_p: pd.DataDrame
+            [d, d] estimate, {0, 1, -1}, -1 is undirected edge in CPDAG.
+        W_true: pd.DataDrame
+            [d, d] ground truth graph, {0, 1}.
+        
+        Return
+        ------
+        score: float
+            max(0, (TP-FP))/(TP+FN), A score ranges from 0 to 1
+        """
+        
+        num_true = W_true.sum(axis=1).sum()
+        assert num_true!=0
+        
+        # true_positives
+        num_tp =  (W_p + W_true).applymap(lambda elem:1 if elem==2 else 0).sum(axis=1).sum()
+        # False Positives + Reversed Edges
+        num_fn_r = (W_p - W_true).applymap(lambda elem:1 if elem==1 else 0).sum(axis=1).sum()
+        score = np.max((num_tp-num_fn_r,0))/num_true
+        
+        return score
+
+    @staticmethod
+    def _cal_precision_recall(W_p, W_true):
+        """
+        Parameters
+        ----------
+        W_p: pd.DataDrame
+            [d, d] estimate, {0, 1, -1}, -1 is undirected edge in CPDAG.
+        W_true: pd.DataDrame
+            [d, d] ground truth graph, {0, 1}.
+        
+        Return
+        ------
+        precision: float
+            TP/(TP + FP)
+        recall: float
+            TP/(TP + FN)
+        F1: float
+            2*(recall*precision)/(recall+precision)
+        """
+
+        assert(W_p.shape==W_true.shape and W_p.shape[0]==W_p.shape[1])
+        TP = (W_p + W_true).applymap(lambda elem:1 if elem==2 else 0).sum(axis=1).sum()
+        TP_FP = W_p.sum(axis=1).sum()
+        TP_FN = W_true.sum(axis=1).sum()
+        precision = TP/TP_FP
+        recall = TP/TP_FN
+        F1 = 2*(recall*precision)/(recall+precision)
+        
+        return precision, recall, F1

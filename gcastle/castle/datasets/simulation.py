@@ -20,6 +20,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import logging
 import random
 from random import sample
 import numpy as np
@@ -31,8 +32,8 @@ from copy import deepcopy
 from itertools import combinations
 from scipy.special import expit as sigmoid
 
-from loguru import logger
-import igraph as ig
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s %(message)s')
 
 
 def set_random_seed(seed):
@@ -231,7 +232,7 @@ class DAG(object):
         assert n_nodes > 0
         set_random_seed(seed)
         B = DAG._low_rank_dag(n_nodes, degree, rank)
-        if weight_range  is None:
+        if weight_range is None:
             return B
         else:
             W = DAG._BtoW(B, n_nodes, weight_range)
@@ -266,7 +267,7 @@ class IIDSimulation(object):
         elif method == 'nonlinear':
             self.X = IIDSimulation._simulate_nonlinear_sem(
                     W, n, sem_type, noise_scale)
-        logger.info('Finished synthetic dataset')
+        logging.info('Finished synthetic dataset')
 
     @staticmethod
     def _simulate_linear_sem(W, n, sem_type, noise_scale):
@@ -321,7 +322,8 @@ class IIDSimulation(object):
             if len(noise_scale) != d:
                 raise ValueError('noise scale must be a scalar or has length d')
             scale_vec = noise_scale
-        if not ig.Graph.Weighted_Adjacency(W.tolist()).is_dag():
+        G_nx =  nx.from_numpy_matrix(W, create_using=nx.DiGraph)
+        if not nx.is_directed_acyclic_graph(G_nx):
             raise ValueError('W must be a DAG')
         if np.isinf(n):  # population risk for linear gauss SEM
             if sem_type == 'gauss':
@@ -331,12 +333,11 @@ class IIDSimulation(object):
             else:
                 raise ValueError('population risk not available')
         # empirical risk
-        G = ig.Graph.Weighted_Adjacency(W.tolist())
-        ordered_vertices = G.topological_sorting()
+        ordered_vertices = list(nx.topological_sort(G_nx))
         assert len(ordered_vertices) == d
         X = np.zeros([n, d])
         for j in ordered_vertices:
-            parents = G.neighbors(j, mode=ig.IN)
+            parents = list(G_nx.predecessors(j))
             X[:, j] = _simulate_single_equation(X[:, parents], W[parents, j], scale_vec[j])
         return X
 
@@ -410,11 +411,11 @@ class IIDSimulation(object):
             scale_vec = noise_scale
 
         X = np.zeros([n, d])
-        G = ig.Graph.Adjacency(B.tolist())
-        ordered_vertices = G.topological_sorting()
+        G_nx =  nx.from_numpy_matrix(B, create_using=nx.DiGraph)
+        ordered_vertices = list(nx.topological_sort(G_nx))
         assert len(ordered_vertices) == d
         for j in ordered_vertices:
-            parents = G.neighbors(j, mode=ig.IN)
+            parents = list(G_nx.predecessors(j))
             X[:, j] = _simulate_single_equation(X[:, parents], scale_vec[j])
         return X
 
@@ -607,9 +608,8 @@ class THPSimulation(object):
 
         alpha = np.random.uniform(*self._alpha_range, [N, N])
         alpha = alpha * self._causal_matrix
-        alpha = np.ones([max_hop, N, N]) * alpha
+        alpha = np.ones([max_hop+1, N, N]) * alpha
 
-        events = dict()
         immigrant_events = dict()
         for node in self._topo.nodes:
             immigrant_events[node] = self._trigger_events(mu, 0, T, beta)
@@ -620,7 +620,7 @@ class THPSimulation(object):
             offspring_events = dict()
             for node in tqdm(self._topo.nodes):
                 offspring_events[node] = []
-                for k in range(max_hop):
+                for k in range(max_hop+1):
                     k_base_events = []
                     for neighbor in self._get_k_hop_neighbors(
                             self._topo, node, k):
@@ -648,8 +648,9 @@ class THPSimulation(object):
         events = []
         for i, intensity in enumerate(intensity_vec):
             if intensity:
+                trigger_time = start_time
                 while True:
-                    trigger_time = round(start_time + np.random.exponential(
+                    trigger_time = round(trigger_time + np.random.exponential(
                         1 / intensity))
                     if trigger_time > start_time + duration:
                         break

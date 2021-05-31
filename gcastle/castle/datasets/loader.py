@@ -46,8 +46,8 @@ def load_dataset(name='iid_test'):
 
     if name.lower() == 'iid_test':
         weighted_random_dag = DAG.erdos_renyi(n_nodes=10, n_edges=20, 
-                                                weight_range=(0.5, 2.0), 
-                                                seed=1)
+                                              weight_range=(0.5, 2.0),
+                                              seed=1)
         dataset = IIDSimulation(W=weighted_random_dag, n=2000, 
                                 method='linear', sem_type='gauss')
         true_dag, X = dataset.B, dataset.X
@@ -56,11 +56,11 @@ def load_dataset(name='iid_test'):
         
     elif name.lower() == 'thp_test':
         true_dag = DAG.erdos_renyi(n_nodes=10, n_edges=10)
-        topology_matrix = Topology.erdos_renyi(n_nodes=5, n_edges=5)
+        topology_matrix = Topology.erdos_renyi(n_nodes=20, n_edges=20)
         simulator = THPSimulation(true_dag, topology_matrix, 
-                                    mu_range=(0.0005, 0.001), 
-                                    alpha_range=(0.005, 0.007))
-        X = simulator.simulate(T=10000, max_hop=2)
+                                  mu_range=(0.00005, 0.0001),
+                                  alpha_range=(0.005, 0.007))
+        X = simulator.simulate(T=25000, max_hop=2)
 
         return true_dag, topology_matrix, X
 

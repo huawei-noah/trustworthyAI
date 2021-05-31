@@ -8,27 +8,26 @@ if sys.version_info < (3, 6):
     sys.exit("Sorry, Python < 3.6 is not supported.")
 
 
-with open("README.md", "r") as fh:
+with open("package.md", "r", encoding='utf-8') as fh:
     long_desc = fh.read()
 
 
 setuptools.setup(
     name="gcastle",
-    version="1.0.0",
-    # packages=["gcastle"],
+    version="1.0.1",
     include_package_data=True,
     python_requires=">=3.6",
     author="Huawei Noah's Ark Lab",
     author_email="zhangkeli1@huawei.com",
-    description="Pipeline for causal structure learning",
+    description="gCastle is the fundamental package for causal structure learning with Python.",
     long_description=long_desc,
     long_description_content_type="text/markdown",
-    url="https://gitlab.huawei.com/gtsbrain/project/causal_discovery/pcastle",
+    url="https://github.com/huawei-noah/trustworthyAI/tree/master/gcastle",
     packages=setuptools.find_packages(),
-    license="Apache license",
+    license="Apache License 2.0",
     classifiers=[
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: Apache License",
+        "License :: OSI Approved :: Apache Software License",
         "Operating System :: OS Independent",
     ],
     install_requires=[
@@ -42,7 +41,7 @@ setuptools.setup(
         "loguru>=0.5.3",
         "networkx>=2.5",
         "torch>=1.4.0",
-        "tensorflow==1.15.0",
+        "tensorflow>=1.15.0",
     ],
 )
 
