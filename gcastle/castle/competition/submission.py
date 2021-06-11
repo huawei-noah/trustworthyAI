@@ -22,7 +22,7 @@ import logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(message)s')
 
 
-def transform(source, target):
+def transform(source, target, phase=1):
     """
     This function is used to generate the submission file for the causality competition:
     https://competition.huaweicloud.com/information/1000041487/circumstance
@@ -33,36 +33,29 @@ def transform(source, target):
         The source directory used to store all the .npy files.
     target: str
         The target directory/file used to store the submission file.
+    phase: int, {1, 2}
+        In phase 1, the number of .npy files is 20; in phase 2, the number is 24.
     """
 
     if not os.path.splitext(target)[1] == '.csv':
         target = os.path.join(target, 'submit.csv')
 
-    f_list = os.listdir(source)
-    npy_list = []
-    for i in f_list:
-        if os.path.splitext(i)[1] == '.npy':
-            try:
-                npy_list.append(int(i.split('.')[0]))
-            except:
-                pass
-    
-    if len(npy_list) > 24:
-        raise RuntimeError('Number of .npy files is ' + str(len(npy_list)) + '! (must <= 24)')
-    elif len(npy_list) == 0:
-        raise RuntimeError('Cannot find any .npy file!')
-
-    npy_list.sort()
-
-    for i in range(1, len(npy_list)):
-        if npy_list[i] - npy_list[i-1] == 1:
-            pass
-        else:
-            raise RuntimeError('The .npy filenames are not continuous!')
-
     arrs = []
-    for i in npy_list:
-        arrs.append(np.load(os.path.join(source, str(i)+'.npy')))
+
+    if phase == 1:
+        for i in range(1, 21):
+            try:
+                arrs.append(np.load(os.path.join(source, str(i)+'.npy')))
+            except:
+                raise RuntimeError('Cannot find ' + str(i) + \
+                                    '.npy file or the file format is incorrect!')
+    elif phase == 2:
+        for i in range(1, 25):
+            try:
+                arrs.append(np.load(os.path.join(source, str(i)+'.npy')))
+            except:
+                raise RuntimeError('Cannot find ' + str(i) + \
+                                    '.npy file or the file format is incorrect!')
 
     def arr_to_string(mat):
         mat_int = mat.astype(int)
