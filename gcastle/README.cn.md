@@ -2,7 +2,7 @@
 
 [English Version](./README.md)
 
-1.0.1 版本预发布
+1.0.2 版本预发布
 
 ## 简介
 
@@ -54,7 +54,7 @@
 
 ### PIP安装
 ```bash
-pip install gcastle
+pip install gcastle==1.0.2
 ```
 
 ## 算法使用指导
