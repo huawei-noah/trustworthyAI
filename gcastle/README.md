@@ -2,7 +2,7 @@
 
 [中文版本](./README.cn.md)
 
-Version 1.0.1 (pre-release).
+Version 1.0.2 (pre-release).
 
 ## Introduction
 
@@ -53,7 +53,7 @@ gCastle requires:
 
 ### PIP installation
 ```bash
-pip install gcastle
+pip install gcastle==1.0.2
 ```
 
 ## Usage Example (PC algorithm)
