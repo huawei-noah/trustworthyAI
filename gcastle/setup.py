@@ -3,6 +3,8 @@
 import setuptools
 import sys
 
+from castle import __version__
+
 
 if sys.version_info < (3, 6):
     sys.exit("Sorry, Python < 3.6 is not supported.")
@@ -14,7 +16,7 @@ with open("package.md", "r", encoding='utf-8') as fh:
 
 setuptools.setup(
     name="gcastle",
-    version="1.0.1",
+    version=__version__,
     include_package_data=True,
     python_requires=">=3.6",
     author="Huawei Noah's Ark Lab",
@@ -44,4 +46,3 @@ setuptools.setup(
         "tensorflow>=1.15.0",
     ],
 )
-
