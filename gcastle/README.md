@@ -4,6 +4,10 @@
 
 Version 1.0.2 (pre-release).
 
+Welcome to participate in [PCIC Causal Discovery Competition 2021 ](https://competition.huaweicloud.com/information/1000041487/introduction)(June 8, 2021 ~ August 22, 2021)
+
+gCastle offers the competition module to be convenient for you to generate the submission file and evaluate your methods, you can visit the [Submission section of the competition website](https://competition.huaweicloud.com/information/1000041487/circumstance) to get the toy example.
+
 ## Introduction
 
 `gCastle` is a causal structure learning toolchain developed by [Huawei Noah's Ark Lab](https://www.noahlab.com.hk/#/home). The package contains various functionality related to causal learning and evaluation, including: 
