@@ -6,7 +6,7 @@ Version 1.0.2 (pre-release).
 
 Welcome to participate in [PCIC Causal Discovery Competition 2021 ](https://competition.huaweicloud.com/information/1000041487/introduction)(June 8, 2021 ~ August 22, 2021)
 
-gCastle offers the competition module to be convenient for you to generate the submission file and evaluate your methods, you can visit the [Submission section of the competition website](https://competition.huaweicloud.com/information/1000041487/circumstance) to get the toy example.
+gCastle offers the competition module to be convenient for you to generate the submission file and evaluate your methods, and you can visit the submission section of the [competition website ](https://competition.huaweicloud.com/information/1000041487/circumstance) to get the toy example.
 
 ## Introduction
 
