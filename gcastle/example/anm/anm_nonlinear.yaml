@@ -1,0 +1,6 @@
+dataset_params:
+  x_file: None  # None or .npz or .csv    样本数据所在路径
+  dag_file: None  # None or .npz or .csv  真实dag矩阵所在路径
+
+model_params:
+  alpha: 0.05

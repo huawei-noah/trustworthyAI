@@ -13,12 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import logging
 import numpy as np
 import scipy.linalg as slin
 import scipy.optimize as sopt
-from loguru import logger
 
 from castle.common import BaseLearner, Tensor
+
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s %(message)s')
 
 
 class NotearsLowRank(BaseLearner):
@@ -37,6 +40,7 @@ class NotearsLowRank(BaseLearner):
     
     Examples
     --------
+    >>> import numpy as np
     >>> from castle.algorithms import NotearsLowRank
     >>> from castle.datasets import load_dataset
     >>> from castle.common import GraphDAG
@@ -188,7 +192,7 @@ class NotearsLowRank(BaseLearner):
         uv_est = np.copy(uv_new)
         # bnds = [(0, 0) if i == j else (None, None) for i in range(d) for j in range(d)]
         
-        logger.info('[start]: n={}, d={}, iter_={}, h_={}, rho_={}'.format( \
+        logging.info('[start]: n={}, d={}, iter_={}, h_={}, rho_={}'.format( \
                     n, d, max_iter, h_tol, rho_max))
         
         for flag in range(-1, max_iter):       
@@ -201,7 +205,7 @@ class NotearsLowRank(BaseLearner):
                     h_new =_h(np.matmul(uv_new[0: d*r].reshape((d, r)), 
                                         uv_new[d*r:].reshape((d, r)).transpose()))
                     
-                    logger.debug(
+                    logging.debug(
                         '[iter {}] h={:.3e}, loss={:.3f}, rho={:.1e}'.format( \
                         flag, h_new, _func(uv_new), rho))
 
@@ -226,6 +230,6 @@ class NotearsLowRank(BaseLearner):
         w_est2[np.abs(w_est2) < w_threshold] = 0
         w_est_binary = np.float32(np.abs(w_est2) >= w_threshold)
 
-        logger.info('FINISHED')
+        logging.info('FINISHED')
 
         return w_est_binary

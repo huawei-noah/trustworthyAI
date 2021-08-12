@@ -14,6 +14,7 @@
 # limitations under the License.
 
 import logging
+import argparse
 import platform
 import numpy as np
 import matplotlib.pyplot as plt
@@ -23,7 +24,6 @@ from .data_loader import DataGenerator_read_data
 from .models import Actor
 from .rewards import get_Reward
 from .helpers.tf_utils import set_seed
-from .helpers.config_graph import get_config
 from .helpers.lambda_utils import BIC_lambdas
 from .helpers.analyze_utils import convert_graph_int_to_adj_mat, \
     graph_prunned_by_coef, graph_prunned_by_coef_2nd
@@ -39,6 +39,85 @@ class RL(BaseLearner):
     """
     RL Algorithm.
     A classic causal discovery algorithm based on conditional independence tests.
+
+    Parameters
+    ----------
+    encoder_type: str
+        type of encoder used
+    hidden_dim: int
+        actor LSTM num_neurons
+    num_heads: int
+        actor input embedding
+    num_stacks: int
+        actor LSTM num_neurons
+    residual: bool
+        whether to use residual for gat encoder
+    decoder_type: str
+        type of decoder used
+    decoder_activation: str
+        activation for decoder
+    decoder_hidden_dim: int
+        hidden dimension for decoder
+    use_bias: bool
+        Whether to add bias term when calculating decoder logits
+    use_bias_constant: bool
+        Whether to add bias term as CONSTANT when calculating decoder logits
+    bias_initial_value: float
+        Initial value for bias term when calculating decoder logits
+    batch_size: int
+        batch size for training
+    input_dimension: int
+        dimension of reshaped vector
+    normalize: bool
+        whether the inputdata shall be normalized
+    transpose: bool
+        whether the true graph needs transposed
+    score_type: str
+        score functions
+    reg_type: str
+        regressor type (in combination wth score_type)
+    lambda_iter_num: int
+        how often to update lambdas
+    lambda_flag_default: bool
+        with set lambda parameters; true with default strategy and ignore input bounds
+    score_bd_tight: bool
+        if bound is tight, then simply use a fixed value, rather than the adaptive one
+    lambda1_update: float
+        increasing additive lambda1
+    lambda2_update: float
+        increasing  multiplying lambda2
+    score_lower: float
+        lower bound on lambda1
+    score_upper: float
+        upper bound on lambda1
+    lambda2_lower: float
+        lower bound on lambda2
+    lambda2_upper: float
+        upper bound on lambda2
+    seed: int
+        seed
+    nb_epoch: int
+        nb epoch
+    lr1_start: float
+        actor learning rate
+    lr1_decay_step: int
+        lr1 decay step
+    lr1_decay_rate: float
+        lr1 decay rate
+    alpha: float
+        update factor moving average baseline
+    init_baseline: float
+        initial baseline - REINFORCE
+    temperature: float
+        pointer_net initial temperature
+    C: float
+        pointer_net tan clipping
+    l1_graph_reg: float
+        L1 graph regularization to encourage sparsity
+    inference_mode: bool
+        switch to inference mode when model is trained
+    verbose: bool
+        print detailed logging or not
 
     Attributes
     ----------
@@ -63,14 +142,87 @@ class RL(BaseLearner):
     >>> print(met.metrics)
     """
     
-    def __init__(self, **kwargs):
+    def __init__(self, encoder_type='TransformerEncoder', 
+                 hidden_dim=64, 
+                 num_heads=16, 
+                 num_stacks=6, 
+                 residual=False, 
+                 decoder_type='SingleLayerDecoder', 
+                 decoder_activation='tanh', 
+                 decoder_hidden_dim=16, 
+                 use_bias=False, 
+                 use_bias_constant=False, 
+                 bias_initial_value=False, 
+                 batch_size=64, 
+                 input_dimension=64, 
+                 normalize=False, 
+                 transpose=False, 
+                 score_type='BIC', 
+                 reg_type='LR', 
+                 lambda_iter_num=1000, 
+                 lambda_flag_default=False, 
+                 score_bd_tight=False, 
+                 lambda1_update=1.0, 
+                 lambda2_update=10, 
+                 score_lower=0.0, 
+                 score_upper=0.0, 
+                 lambda2_lower=-1.0, 
+                 lambda2_upper=-1.0, 
+                 seed=8, 
+                 nb_epoch=20000, 
+                 lr1_start=0.001,
+                 lr1_decay_step=5000, 
+                 lr1_decay_rate=0.96, 
+                 alpha=0.99, 
+                 init_baseline=-1.0, 
+                 temperature=3.0, 
+                 C=10.0, 
+                 l1_graph_reg=0.0, 
+                 inference_mode=True, 
+                 verbose=False):
+
         super().__init__()
 
-        config, _ = get_config()
-        for k in kwargs:
-            config.__dict__[k] = kwargs[k]
-        
-        self.config = config
+        parser = argparse.ArgumentParser(description='Configuration')
+        self.config = parser.parse_args(args=[])
+        self.config.encoder_type = encoder_type
+        self.config.hidden_dim = hidden_dim
+        self.config.num_heads = num_heads
+        self.config.num_stacks = num_stacks
+        self.config.residual = residual
+        self.config.decoder_type = decoder_type
+        self.config.decoder_activation = decoder_activation
+        self.config.decoder_hidden_dim = decoder_hidden_dim
+        self.config.use_bias = use_bias
+        self.config.use_bias_constant = use_bias_constant
+        self.config.bias_initial_value = bias_initial_value
+        self.config.batch_size = batch_size
+        self.config.input_dimension = input_dimension
+        self.config.normalize = normalize
+        self.config.transpose = transpose
+        self.config.score_type = score_type
+        self.config.reg_type = reg_type
+        self.config.lambda_iter_num = lambda_iter_num
+        self.config.lambda_flag_default = lambda_flag_default
+        self.config.score_bd_tight = score_bd_tight
+        self.config.lambda1_update = lambda1_update
+        self.config.lambda2_update = lambda2_update
+        self.config.score_lower = score_lower
+        self.config.score_upper = score_upper
+        self.config.lambda2_lower = lambda2_lower
+        self.config.lambda2_upper = lambda2_upper
+        self.config.seed = seed
+        self.config.nb_epoch = nb_epoch
+        self.config.lr1_start = lr1_start
+        self.config.lr1_decay_step = lr1_decay_step
+        self.config.lr1_decay_rate = lr1_decay_rate
+        self.config.alpha = alpha
+        self.config.init_baseline = init_baseline
+        self.config.temperature = temperature
+        self.config.C = C
+        self.config.l1_graph_reg = l1_graph_reg
+        self.config.inference_mode = inference_mode
+        self.config.verbose = verbose
 
     def learn(self, data, dag=None):
         """
@@ -263,12 +415,7 @@ class RL(BaseLearner):
                         graph_batch_pruned = np.array(graph_prunned_by_coef(graph_batch, training_set.inputdata))
                     elif reg_type == 'QR':
                         graph_batch_pruned = np.array(graph_prunned_by_coef_2nd(graph_batch, training_set.inputdata))
-                    # elif reg_type == 'GPR':
-                    #     # The R codes of CAM pruning operates the graph form that (i,j)=1 indicates i-th node-> j-th node
-                    #     # so we need to do a tranpose on the input graph and another tranpose on the output graph
-                    #     graph_batch_pruned = np.transpose(pruning_cam(training_set.inputdata, np.array(graph_batch).T))
 
-                    # estimate accuracy
                     if hasattr(config, 'dag'):
                         met = MetricsDAG(graph_batch.T, training_set.true_graph)
                         met2 = MetricsDAG(graph_batch_pruned.T, training_set.true_graph)
@@ -290,7 +437,6 @@ class RL(BaseLearner):
             plt.plot(max_rewards, label='max reward')
             plt.legend()
             plt.savefig('reward_batch_average.png')
-            plt.show()
             plt.close()
             
             logging.info('Training COMPLETED !')

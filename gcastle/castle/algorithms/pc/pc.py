@@ -14,148 +14,45 @@
 # limitations under the License.
 
 from copy import deepcopy
-from itertools import combinations
+from itertools import combinations, permutations
 import numpy as np
+import joblib
 
 from castle.common import BaseLearner, Tensor
-from castle.common.independence_tests import CI_Test
+from castle.common.independence_tests import CITest
 
 
-class PC(BaseLearner):
-    """PC Algorithm.
-
-    A classic causal discovery algorithm based on conditional independence tests.
-
-    Reference: https://www.jmlr.org/papers/volume8/kalisch07a/kalisch07a.pdf
+def _loop(G, d):
+    """
+    Check if |adj(x, G)\{y}| < d for every pair of adjacency vertices in G
 
     Parameters
     ----------
-    alpha: float, default 0.05
-        Significance level.
-    ci_test : str
-        ci_test method
+    G: numpy.ndarray
+        The undirected graph  G
+    d: int
+        depth of conditional vertices
 
-    Attributes
-    ----------
-    causal_matrix : array
-        Learned causal structure matrix.
-
-    Examples
-    --------
-    >>> from castle.common import GraphDAG
-    >>> from castle.metrics import MetricsDAG
-    >>> from castle.datasets import load_dataset
-
-    >>> true_dag, X = load_dataset(name='iid_test')
-    >>> pc = PC()
-    >>> pc.learn(X)
-    >>> GraphDAG(pc.causal_matrix, true_dag, 'result_pc')
-    >>> met = MetricsDAG(pc.causal_matrix, true_dag)
-    >>> print(met.metrics)
+    Returns
+    -------
+    out: bool
+        if False, denote |adj(i, G)\{j}| < d for every pair of adjacency
+        vertices in G, then finished loop.
     """
 
-    def __init__(self, alpha=0.05, ci_test='gauss'):
+    assert G.shape[0] == G.shape[1]
 
-        super(PC, self).__init__()
-        self.alpha = alpha
-        self.causal_matrix = None
-        self.ci_test = ci_test
-
-    def learn(self, data, **kwargs):
-        """Set up and run the PC algorithm.
-
-        Parameters
-        ----------
-        data: array or Tensor
-            Training data.
-        """
-
-        if isinstance(data, np.ndarray):
-            data = data
-        elif isinstance(data, Tensor):
-            data = data.data
-        else:
-            raise TypeError('The type of tensor must be '
-                            'Tensor or array, but got {}.'
-                            .format(type(data)))
-        # Generating an undirected skeleton matrix
-        skeleton, sep_set = FindSkeleton.origin_pc(data=data, alpha=self.alpha,
-                                                   ci_test=self.ci_test)
-        # Generating an causal matrix (DAG)
-        self._causal_matrix = orient(skeleton, sep_set).astype(int)
-
-
-class FindSkeleton(object):
-    """Contains multiple methods for finding skeleton"""
-
-    @staticmethod
-    def origin_pc(data, alpha=0.05, ci_test='gauss'):
-        """Origin PC-algorithm for learns a skeleton graph
-
-        It learns a skeleton graph which contains only undirected edges
-        from data. This is the original version of the PC-algorithm for the
-        skeleton.
-
-        Parameters
-        ----------
-        data : array, (n_samples, n_features)
-            Dataset with a set of variables V
-        alpha : float, default 0.05
-            significant level
-        ci_test : str
-            ci_test method
-
-        Returns
-        -------
-        skeleton : array
-            The undirected graph
-        seq_set : dict
-            Separation sets
-            Such as key is (x, y), then value is a set of other variables
-            not contains x and y.
-        """
-
-        n_features = data.shape[1]
-        skeleton = np.ones((n_features, n_features)) - np.eye(n_features)
-        nodes = list(range(n_features))
-        sep_set = {}
-        k = 0
-        while k <= n_features - 2:
-            for i, j in combinations(nodes, 2):
-                if k == 0:
-                    if ci_test == 'gauss':
-                        p_value = CI_Test.gauss_test(data, i, j, ctrl_var=[])
-                    else:
-                        raise ValueError('Unknown ci_test method, please check '
-                                         f'the parameter {ci_test}.')
-                    if p_value >= alpha:
-                        skeleton[i, j] = skeleton[j, i] = 0
-                        sep_set[(i, j)] = []
-                    else:
-                        pass
-                else:
-                    if skeleton[i, j] == 0:
-                        continue
-                    other_nodes = deepcopy(nodes)
-                    other_nodes.remove(i)
-                    other_nodes.remove(j)
-                    s = []
-                    for ctrl_var in combinations(other_nodes, k):
-                        ctrl_var = list(ctrl_var)
-                        if ci_test == 'gauss':
-                            p_value = CI_Test.gauss_test(data, i, j, ctrl_var)
-                        else:
-                            raise ValueError('Unknown ci_test method, please check '
-                                             f'the parameter {ci_test}.')
-                        if p_value >= alpha:
-                            s.extend(ctrl_var)
-                        if s:
-                            skeleton[i, j] = skeleton[j, i] = 0
-                            sep_set[(i, j)] = s
-                            break
-            k += 1
-
-        return skeleton, sep_set
+    pairs = [(x, y) for x, y in combinations(set(range(G.shape[0])), 2)]
+    less_d = 0
+    for i, j in pairs:
+        adj_i = set(np.argwhere(G[i] == 1).reshape(-1, ))
+        z = adj_i - {j}  # adj(C, i)\{j}
+        if len(z) < d:
+            less_d += 1
+    if less_d == len(pairs):
+        return False
+    else:
+        return True
 
 
 def orient(skeleton, sep_set):
@@ -180,118 +77,6 @@ def orient(skeleton, sep_set):
         which includes both directed and undirected edges.
     """
 
-    def _rule_1(cpdag):
-        """Rule_1
-
-        Orient i——j into i——>j whenever there is an arrow k——>i
-        such that k and j are nonadjacent.
-        """
-
-        columns = list(range(cpdag.shape[1]))
-        ind = list(combinations(columns, 2))
-        for ij in sorted(ind, key=lambda x: (x[1], x[0])):
-            # Iteration every (i, j)
-            i, j = ij
-            if cpdag[i, j] * cpdag[j, i] == 0:
-                continue
-            # search i——j
-            else:
-                all_k = [x for x in columns if x not in ij]
-                for k in all_k:
-                    if cpdag[k, i] == 1 and cpdag[i, k] == 0 \
-                            and cpdag[k, j] + cpdag[j, k] == 0:
-                        cpdag[j, i] = 0
-        return cpdag
-
-    def _rule_2(cpdag):
-        """Rule_2
-
-        Orient i——j into i——>j whenever there is a chain i——>k——>j.
-        """
-
-        columns = list(range(cpdag.shape[1]))
-        ind = list(combinations(columns, 2))
-        for ij in sorted(ind, key=lambda x: (x[1], x[0])):
-            # Iteration every (i, j)
-            i, j = ij
-            if cpdag[i, j] * cpdag[j, i] == 0:
-                continue
-            # search i——j
-            else:
-                all_k = [x for x in columns if x not in ij]
-                for k in all_k:
-                    if cpdag[i, k] == 1 and cpdag[k, i] == 0 \
-                            and cpdag[k, j] == 1 \
-                            and cpdag[j, k] == 0:
-                        cpdag[j, i] = 0
-        return cpdag
-
-    def _rule_3(cpdag, sep_set=None):
-        """Rule_3
-
-        Orient i——j into i——>j
-        whenever there are two chains i——k——>j and i——l——>j
-        such that k and l are non-adjacent.
-        """
-
-        columns = list(range(cpdag.shape[1]))
-        ind = list(combinations(columns, 2))
-        for ij in sorted(ind, key=lambda x: (x[1], x[0])):
-            # Iteration every (i, j)
-            i, j = ij
-            if cpdag[i, j] * cpdag[j, i] == 0:
-                continue
-            # search i——j
-            else:
-                for kl in sep_set.keys():  # k and l are nonadjacent.
-                    k, l = kl
-                    # if i——k——>j and  i——l——>j
-                    if cpdag[i, k] == 1 \
-                            and cpdag[k, i] == 1 \
-                            and cpdag[k, j] == 1 \
-                            and cpdag[j, k] == 0 \
-                            and cpdag[i, l] == 1 \
-                            and cpdag[l, i] == 1 \
-                            and cpdag[l, j] == 1 \
-                            and cpdag[j, l] == 0:
-                        cpdag[j, i] = 0
-        return cpdag
-
-    def _rule_4(cpdag, sep_set=None):
-        """Rule_4
-
-        Orient i——j into i——>j
-        whenever there are two chains i——k——>l and k——>l——>j
-        such that k and j are non-adjacent.
-        """
-
-        columns = list(range(cpdag.shape[1]))
-        ind = list(combinations(columns, 2))
-        for ij in sorted(ind, key=lambda x: (x[1], x[0])):
-            # Iteration every (i, j)
-            i, j = ij
-            if cpdag[i, j] * cpdag[j, i] == 0:
-                continue
-            # search i——j
-            else:
-                for kj in sep_set.keys():  # k and j are nonadjacent.
-                    if j not in kj:
-                        continue
-                    else:
-                        kj = list(kj)
-                        kj.remove(j)
-                        k = kj[0]
-                        ls = [x for x in columns if x not in [i, j, k]]
-                        for l in ls:
-                            if cpdag[k, l] == 1 \
-                                    and cpdag[l, k] == 0 \
-                                    and cpdag[i, k] == 1 \
-                                    and cpdag[k, i] == 1 \
-                                    and cpdag[l, j] == 1 \
-                                    and cpdag[j, l] == 0:
-                                cpdag[j, i] = 0
-        return cpdag
-
     columns = list(range(skeleton.shape[1]))
     cpdag = deepcopy(skeleton)
     # pre-processing
@@ -306,10 +91,305 @@ def orient(skeleton, sep_set):
                         cpdag[k, i] = 0
                     if cpdag[j, k] + cpdag[k, j] == 2:
                         cpdag[k, j] = 0
-    cpdag = _rule_1(cpdag=cpdag)
-    cpdag = _rule_2(cpdag=cpdag)
-    cpdag = _rule_3(cpdag=cpdag, sep_set=sep_set)
-    cpdag = _rule_4(cpdag=cpdag, sep_set=sep_set)
+    while True:
+        old_cpdag = deepcopy(cpdag)
+        pairs = list(combinations(columns, 2))
+        for ij in pairs:
+            i, j = ij
+            if cpdag[i, j] * cpdag[j, i] == 1:
+                # rule1
+                for i, j in permutations(ij, 2):
+                    all_k = [x for x in columns if x not in ij]
+                    for k in all_k:
+                        if cpdag[k, i] == 1 and cpdag[i, k] == 0 \
+                                and cpdag[k, j] + cpdag[j, k] == 0:
+                            cpdag[j, i] = 0
+                # rule2
+                for i, j in permutations(ij, 2):
+                    all_k = [x for x in columns if x not in ij]
+                    for k in all_k:
+                        if (cpdag[i, k] == 1 and cpdag[k, i] == 0) \
+                            and (cpdag[k, j] == 1 and cpdag[j, k] == 0):
+                            cpdag[j, i] = 0
+                # rule3
+                for i, j in permutations(ij, 2):
+                    for kl in sep_set.keys():  # k and l are nonadjacent.
+                        k, l = kl
+                        # if i——k——>j and  i——l——>j
+                        if cpdag[i, k] == 1 \
+                                and cpdag[k, i] == 1 \
+                                and cpdag[k, j] == 1 \
+                                and cpdag[j, k] == 0 \
+                                and cpdag[i, l] == 1 \
+                                and cpdag[l, i] == 1 \
+                                and cpdag[l, j] == 1 \
+                                and cpdag[j, l] == 0:
+                            cpdag[j, i] = 0
+                # rule4
+                for i, j in permutations(ij, 2):
+                    for kj in sep_set.keys():  # k and j are nonadjacent.
+                        if j not in kj:
+                            continue
+                        else:
+                            kj = list(kj)
+                            kj.remove(j)
+                            k = kj[0]
+                            ls = [x for x in columns if x not in [i, j, k]]
+                            for l in ls:
+                                if cpdag[k, l] == 1 \
+                                        and cpdag[l, k] == 0 \
+                                        and cpdag[i, k] == 1 \
+                                        and cpdag[k, i] == 1 \
+                                        and cpdag[l, j] == 1 \
+                                        and cpdag[j, l] == 0:
+                                    cpdag[j, i] = 0
+        if (cpdag == old_cpdag).all():
+            break
 
     return cpdag
+
+
+def find_skeleton(data, alpha, ci_test, variant='original',
+                  p_cores=1, s=None, batch=None):
+    """Find skeleton graph from G using PC algorithm
+
+    It learns a skeleton graph which contains only undirected edges
+    from data.
+
+    Parameters
+    ----------
+    data : array, (n_samples, n_features)
+        Dataset with a set of variables V
+    alpha : float, default 0.05
+        significant level
+    ci_test : str, callable
+        ci_test method, if str, must be one of [`gauss`, `g2`, `chi2`].
+        if callable, must return a tuple that  the last element is `p_value` ,
+        like (_, _, p_value) or (chi2, dof, p_value).
+        See more: `castle.common.independence_tests.CITest`
+    variant : str, default 'original'
+        variant of PC algorithm, contains [`original`, `stable`, `parallel`].
+        If variant == 'parallel', need to provide the flowing 3 parameters.
+    p_cores : int
+        Number of CPU cores to be used
+    s : bool, default False
+        memory-efficient indicator
+    batch : int
+        number of edges per batch
+
+    if s is None or False, or without batch, batch=|J|.
+    |J| denote number of all pairs of adjacency vertices (X, Y) in G.
+
+    Returns
+    -------
+    skeleton : array
+        The undirected graph
+    seq_set : dict
+        Separation sets
+        Such as key is (x, y), then value is a set of other variables
+        not contains x and y.
+
+    Examples
+    --------
+    >>> from castle.algorithms.pc.pc import find_skeleton
+    >>> from castle.datasets import load_dataset
+
+    >>> true_dag, X = load_dataset(name='iid_test')
+    >>> skeleton, sep_set = find_skeleton(data, 0.05, 'gauss')
+    >>> print(skeleton)
+    [[0. 0. 1. 0. 0. 1. 0. 0. 0. 0.]
+     [0. 0. 0. 1. 1. 1. 1. 0. 1. 0.]
+     [1. 0. 0. 0. 1. 0. 0. 1. 0. 0.]
+     [0. 1. 0. 0. 1. 0. 0. 1. 0. 1.]
+     [0. 1. 1. 1. 0. 0. 0. 0. 0. 1.]
+     [1. 1. 0. 0. 0. 0. 0. 1. 1. 1.]
+     [0. 1. 0. 0. 0. 0. 0. 0. 0. 0.]
+     [0. 0. 1. 1. 0. 1. 0. 0. 0. 1.]
+     [0. 1. 0. 0. 0. 1. 0. 0. 0. 1.]
+     [0. 0. 0. 1. 1. 1. 0. 1. 1. 0.]]
+    """
+
+    def test(x, y):
+
+        K_x_y = 1
+        sub_z = None
+        # On X's neighbours
+        adj_x = set(np.argwhere(skeleton[x] == 1).reshape(-1, ))
+        z_x = adj_x - {y}  # adj(X, G)\{Y}
+        if len(z_x) >= d:
+            # |adj(X, G)\{Y}| >= d
+            for sub_z in combinations(z_x, d):
+                sub_z = list(sub_z)
+                _, _, p_value = ci_test(data, x, y, sub_z)
+                if p_value >= alpha:
+                    K_x_y = 0
+                    # sep_set[(x, y)] = sub_z
+                    break
+            if K_x_y == 0:
+                return K_x_y, sub_z
+
+        return K_x_y, sub_z
+
+    def parallel_cell(x, y):
+
+        # On X's neighbours
+        K_x_y, sub_z = test(x, y)
+        if K_x_y == 1:
+            # On Y's neighbours
+            K_x_y, sub_z = test(y, x)
+
+        return (x, y), K_x_y, sub_z
+
+    if ci_test == 'gauss':
+        ci_test = CITest.gauss
+    elif ci_test == 'g2':
+        ci_test = CITest.g2_test
+    elif ci_test == 'chi2':
+        ci_test = CITest.chi2_test
+    elif callable(ci_test):
+        ci_test = ci_test
+    else:
+        raise ValueError(f'The type of param `ci_test` expect callable,'
+                         f'but got {type(ci_test)}.')
+
+    n_feature = data.shape[1]
+    skeleton = np.ones((n_feature, n_feature)) - np.eye(n_feature)
+    nodes = set(range(n_feature))
+    pairs = [(x, y) for x, y in combinations(nodes, 2)]
+    sep_set = {}
+    d = -1
+    while _loop(skeleton, d):  # until for each adj(C,i)\{j} < l
+        d += 1
+        if variant == 'stable':
+            C = deepcopy(skeleton)
+        else:
+            C = skeleton
+        if variant != 'parallel':
+            for i, j in pairs:
+                if skeleton[i, j] == 0:
+                    continue
+                adj_i = set(np.argwhere(C[i] == 1).reshape(-1, ))
+                z = adj_i - {j}  # adj(C, i)\{j}
+                if len(z) >= d:
+                    # |adj(C, i)\{j}| >= l
+                    for sub_z in combinations(z, d):
+                        sub_z = list(sub_z)
+                        _, _, p_value = ci_test(data, i, j, sub_z)
+                        if p_value >= alpha:
+                            skeleton[i, j] = skeleton[j, i] = 0
+                            sep_set[(i, j)] = sub_z
+                            break
+        else:
+            J = [(x, y) for x, y in combinations(nodes, 2)
+                 if skeleton[x, y] == 1]
+            if not s or not batch:
+                batch = len(J)
+            if not p_cores or p_cores == 0:
+                raise ValueError(f'If variant is parallel, type of p_cores '
+                                 f'must be int, but got {type(p_cores)}.')
+            for i in range(int(np.ceil(len(J) / batch))):
+                each_batch = J[batch * i: batch * (i + 1)]
+                parallel_result = joblib.Parallel(n_jobs=p_cores)(
+                    joblib.delayed(parallel_cell)(x, y) for x, y in
+                    each_batch
+                )
+                # Synchronisation Step
+                for (x, y), K_x_y, sub_z in parallel_result:
+                    if K_x_y == 0:
+                        skeleton[x, y] = skeleton[y, x] = 0
+                        sep_set[(x, y)] = sub_z
+
+    return skeleton, sep_set
+
+
+class PC(BaseLearner):
+    """PC algorithm
+
+    A classic causal discovery algorithm based on conditional independence tests.
+
+    References
+    ----------
+    [1] original-PC
+        https://www.jmlr.org/papers/volume8/kalisch07a/kalisch07a.pdf
+    [2] stable-PC
+        https://arxiv.org/pdf/1211.3295.pdf
+    [3] parallel-PC
+        https://arxiv.org/pdf/1502.02454.pdf
+
+    Parameters
+    ----------
+    variant : str
+        A variant of PC-algorithm, one of [`original`, `stable`, `parallel`].
+    alpha: float, default 0.05
+        Significance level.
+    ci_test : str, callable
+        ci_test method, if str, must be one of [`gauss`, `g2`, `chi2`]
+        See more: `castle.common.independence_tests.CITest`
+
+    Attributes
+    ----------
+    causal_matrix : array
+        Learned causal structure matrix.
+
+    Examples
+    --------
+    >>> from castle.common import GraphDAG
+    >>> from castle.metrics import MetricsDAG
+    >>> from castle.datasets import load_dataset
+
+    >>> true_dag, X = load_dataset(name='iid_test')
+    >>> pc = PC(variant='stable')
+    >>> pc.learn(X)
+    >>> GraphDAG(pc.causal_matrix, true_dag, 'result_pc')
+    >>> met = MetricsDAG(pc.causal_matrix, true_dag)
+    >>> print(met.metrics)
+
+    >>> pc = PC(variant='parallel')
+    >>> pc.learn(X, p_cores=2)
+    >>> GraphDAG(pc.causal_matrix, true_dag, 'result_pc')
+    >>> met = MetricsDAG(pc.causal_matrix, true_dag)
+    >>> print(met.metrics)
+    """
+
+    def __init__(self, variant='original', alpha=0.05, ci_test='gauss'):
+        super(PC, self).__init__()
+        self.variant = variant
+        self.alpha = alpha
+        self.ci_test = ci_test
+        self.causal_matrix = None
+
+    def learn(self, data, **kwargs):
+        """Set up and run the PC algorithm.
+
+        Parameters
+        ----------
+        data: array or Tensor
+            Training data
+        kwargs: [optional]
+            p_cores : int
+                number of CPU cores to be used
+            s : boolean
+                memory-efficient indicator
+            batch : int
+                number of edges per batch
+            if s is None or False, or without batch, batch=|J|.
+            |J| denote number of all pairs of adjacency vertices (X, Y) in G.
+        """
+
+        if isinstance(data, np.ndarray):
+            data = data
+        elif isinstance(data, Tensor):
+            data = data.data
+        else:
+            raise TypeError('The type of tensor must be '
+                            'Tensor or array, but got {}.'
+                            .format(type(data)))
+
+        skeleton, sep_set = find_skeleton(data,
+                                          alpha=self.alpha,
+                                          ci_test=self.ci_test,
+                                          variant=self.variant,
+                                          **kwargs)
+
+        self._causal_matrix = orient(skeleton, sep_set).astype(int)
 

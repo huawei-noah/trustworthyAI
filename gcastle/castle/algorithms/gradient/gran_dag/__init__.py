@@ -13,4 +13,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .gran_dag import GraN_DAG
+from .gran_dag import GraNDAG

@@ -1,6 +1,6 @@
 # coding=utf-8
 # 2021.03 modified (1) golem(def) to GOLEM(class)
-# 2021.03 added    (1) loguru, get_args, set_seed; 
+# 2021.03 added    (1) get_args, set_seed; 
 #                  (2) BaseLearner
 # 2021.03 deleted  (1) __main__
 # Huawei Technologies Co., Ltd. 
@@ -23,7 +23,6 @@
 
 import os
 import numpy as np
-from loguru import logger
 
 from .golem_utils import GolemModel
 from .golem_utils import GolemTrainer

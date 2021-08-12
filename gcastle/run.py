@@ -30,7 +30,8 @@ parser.add_argument('--model', '-m',
                     choices=['pc', 'gran_dag', 'direct_lingam', 'ica_lingam',
                              'notears', 'notears_mlp', 'notears_sob',
                              'notears_low_rank', 'notears_golem',
-                             'gae', 'mcsl', 'rl', 'corl1', 'corl2', 'ttpm'],
+                             'gae', 'mcsl', 'rl', 'corl1', 'corl2', 'ttpm',
+                             'anm_nonlinear'],
                     help='name of algorithm',
                     default='rl')
 parser.add_argument('--config',  '-c',
@@ -90,9 +91,9 @@ else:
 
 # Instantiation algorithm and learn dag
 if args.model_name == 'gran_dag':
-    from castle.algorithms import GraN_DAG
+    from castle.algorithms import GraNDAG
 
-    g = GraN_DAG(**params_config['model_params'])
+    g = GraNDAG(**params_config['model_params'])
     g.learn(data=X)
 
 elif args.model_name == 'pc':
@@ -118,7 +119,11 @@ elif args.model_name == 'ttpm':
 
     g = TTPM(topology_matrix, **params_config['model_params'])
     g.learn(X)
+elif args.model_name == 'anm_nonlinear':
+    from castle.algorithms import ANMNonlinear
 
+    g = ANMNonlinear(**params_config['model_params'])
+    g.learn(X)
 else:
     raise ValueError('Invalid algorithm name: {}.'.format(args.model_name))
 

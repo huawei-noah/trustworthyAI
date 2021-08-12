@@ -1,7 +1,8 @@
 # coding=utf-8
-# 2020.12 added (1) low rank DAG generations
+# 2020.12 added (1) low rank DAG generations;
 #               (2) quad functons for causal functions;
 #               (3) event-type data
+# 2021.08 deleted (1) condition: sem_type == 'poisson'
 # Huawei Technologies Co., Ltd. 
 # 
 # Copyright (C) 2021. Huawei Technologies Co., Ltd. All rights reserved.
@@ -57,7 +58,9 @@ class DAG(object):
 
     @staticmethod
     def _random_acyclic_orientation(B_und):
-        return np.tril(DAG._random_permutation(B_und), k=-1)
+        B = np.tril(DAG._random_permutation(B_und), k=-1)
+        B_perm = DAG._random_permutation(B)
+        return B_perm
 
     @staticmethod
     def _graph_to_adjmat(G):
@@ -65,10 +68,9 @@ class DAG(object):
 
     @staticmethod
     def _BtoW(B, d, w_range):
-        B_perm = DAG._random_permutation(B)
         U = np.random.uniform(low=w_range[0], high=w_range[1], size=[d, d])
         U[np.random.rand(d, d) < 0.5] *= -1
-        W = (B_perm != 0).astype(float) * U
+        W = (B != 0).astype(float) * U
         return W
 
     @staticmethod
@@ -146,9 +148,9 @@ class DAG(object):
             BB[sampled_pa, sampled_ch] = 0
             rmv_cand_edges = np.transpose(np.nonzero(BB))
             if delta <= 0:
-                raise Exception(r'Number edge is lower than rank, please \
-                                select a higher number of edge or degree \
-                                (you can change seed or increase degree).')
+                raise RuntimeError(r'Number of edges is below the rank, please \
+                                   set a larger edge or degree \
+                                   (you can change seed or increase degree).')
             selected = np.array(sample(rmv_cand_edges.tolist(), delta))
             B[selected[:, 0], selected[:, 1]] = 1
             B[sampled_pa, sampled_ch] = 1
@@ -252,7 +254,8 @@ class IIDSimulation(object):
     method: str, (linear or nonlinear), default='linear'
         Distribution for standard trainning dataset.
     sem_type: str
-        gauss, exp, gumbel, uniform, logistic, or poisson.
+        gauss, exp, gumbel, uniform, logistic (linear); 
+        mlp, mim, gp, gp-add, quadratic (nonlinear).
     noise_scale: float
         Scale parameter of noise distribution in linear SEM.
     '''
@@ -282,7 +285,7 @@ class IIDSimulation(object):
         n: int
             Number of samples, n=inf mimics population risk.
         sem_type: str 
-            gauss, exp, gumbel, uniform, logistic, or poisson.
+            gauss, exp, gumbel, uniform, logistic.
         noise_scale: float 
             Scale parameter of noise distribution in linear SEM.
         
@@ -307,10 +310,10 @@ class IIDSimulation(object):
                 x = X @ w + z
             elif sem_type == 'logistic':
                 x = np.random.binomial(1, sigmoid(X @ w)) * 1.0
-            elif sem_type == 'poisson':
-                x = np.random.poisson(np.exp(X @ w)) * 1.0
             else:
-                raise ValueError('unknown sem type')
+                raise ValueError('Unknown sem type. In a linear model, \
+                                 the options are as follows: gauss, exp, \
+                                 gumbel, uniform, logistic.')
             return x
 
         d = W.shape[0]
@@ -396,7 +399,9 @@ class IIDSimulation(object):
                 x = sum([gp.sample_y(X[:, i, None], random_state=None).flatten()
                         for i in range(X.shape[1])]) + z
             else:
-                raise ValueError('unknown sem type')
+                raise ValueError('Unknown sem type. In a nonlinear model, \
+                                 the options are as follows: mlp, mim, \
+                                 gp, gp-add, or quadratic.')
             return x
 
         B = (W != 0).astype(int)

@@ -27,31 +27,27 @@ class GraphDAG(object):
         The DAG matrix to be estimated.
     true_dag: np.ndarray
         The true DAG matrix.
+    show: bool
+        Select whether to display pictures.
     save_name: str
         The file name of the image to be saved.
     '''
 
-    def __init__(self, est_dag, *args, **kwargs):
+    def __init__(self, est_dag, true_dag=None, show=True, save_name=None):
 
         self.est_dag = est_dag
-        self.true_dag = None
-        self.save_name = None
-        
-        if len(args) == 2:
-            self.true_dag = args[0]
-            self.save_name = args[1]
-        
-        else:
-            if len(args) == 1:
-                self.true_dag = args[0]
-            
-            if 'save_name' in kwargs:
-                self.save_name = kwargs['save_name']
+        self.true_dag = true_dag
+        self.show = show
+        self.save_name = save_name
 
-        GraphDAG._plot_dag(self.est_dag, self.true_dag, self.save_name)
+        if not show and save_name is None:
+            raise ValueError('Neither display nor save the picture! ' + \
+                             'Please modify the parameter show or save_name.')
+
+        GraphDAG._plot_dag(self.est_dag, self.true_dag, self.show, self.save_name)
 
     @staticmethod
-    def _plot_dag(est_dag, true_dag, save_name=None):
+    def _plot_dag(est_dag, true_dag, show=True, save_name=None):
         """
         Plot the estimated DAG and the true DAG.
 
@@ -61,9 +57,12 @@ class GraphDAG(object):
             The DAG matrix to be estimated.
         true_dag: np.ndarray
             The True DAG matrix.
+        show: bool
+            Select whether to display pictures.
         save_name: str
             The file name of the image to be saved.
         """
+
         if isinstance(true_dag, np.ndarray):
             
             # trans diagonal element into 0
@@ -86,7 +85,8 @@ class GraphDAG(object):
             
             if save_name is not None:
                 fig.savefig(save_name)
-            plt.show()
+            if show:
+                plt.show()
 
         elif isinstance(est_dag, np.ndarray):
 
@@ -104,7 +104,8 @@ class GraphDAG(object):
 
             if save_name is not None:
                 fig.savefig(save_name)
-            plt.show()
+            if show:
+                plt.show()
 
         else:
             raise TypeError("Input data is not numpy.ndarray!")
