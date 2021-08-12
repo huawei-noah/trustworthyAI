@@ -1,6 +1,6 @@
 # coding=utf-8
 # 2021.03 modified (1) notears_linear(def) to Notears(class)
-# 2021.03 added    (1) loguru; 
+# 2021.03 added    (1) logging; 
 #                  (2) BaseLearner
 # 2021.03 deleted  (1) __main__
 # Huawei Technologies Co., Ltd. 

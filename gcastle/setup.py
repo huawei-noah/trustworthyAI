@@ -39,8 +39,6 @@ setuptools.setup(
         "scipy>=1.4.1",
         "scikit-learn>=0.21.1",
         "matplotlib>=2.1.2",
-        "python-igraph>=0.8.2",
-        "loguru>=0.5.3",
         "networkx>=2.5",
         "torch>=1.4.0",
         "tensorflow>=1.15.0",

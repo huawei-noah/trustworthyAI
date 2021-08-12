@@ -1,5 +1,5 @@
 # coding=utf-8
-# 2021.03 modified (1) logging to loguru
+# 2021.03 modified (1) logging config
 # 2021.03 deleted  (1) create_dir
 # Huawei Technologies Co., Ltd. 
 # 
@@ -19,9 +19,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import logging
 import numpy as np
 import tensorflow as tf
-from loguru import logger
+
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s %(message)s')
 
 
 class GolemTrainer:
@@ -61,7 +64,7 @@ class GolemTrainer:
         """
         model.sess.run(tf.compat.v1.global_variables_initializer())
 
-        logger.info("Started training for {} iterations.".format(int(num_iter)))
+        logging.info("Started training for {} iterations.".format(int(num_iter)))
         for i in range(0, int(num_iter) + 1):
             if i == 0:    # Do not train here, only perform evaluation
                 score, likelihood, h, B_est = self.eval_iter(model, X)
@@ -146,5 +149,5 @@ class GolemTrainer:
         B_est: numpy.ndarray
             [d, d] estimated weighted matrix.
         """
-        logger.info("[Iter {}] score={:.3f}, likelihood={:.3f}, h={:.1e}".format( \
+        logging.info("[Iter {}] score={:.3f}, likelihood={:.3f}, h={:.1e}".format( \
             i, score, likelihood, h))

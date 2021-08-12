@@ -36,17 +36,15 @@ $$
 
 ### 3.1 使用示例
 
-使用模拟数据的示例 [demo]() 。
-
 #### API 模式
 
 ```python
 import pandas as pd
-from castle.algorithms import ANM_Nonlinear
+from castle.algorithms import ANMNonlinear
 
 x = pd.read_csv('x.csv').values # x.csv 是观测数据，行-表示样本，列-表示特征
 
-anm = ANM_Nonlinear(alpha=0.05)
+anm = ANMNonlinear(alpha=0.05)
 anm.learn(data=x)
 
 print(anm.causal_matrix) # 打印 学到的因果图（矩阵）
@@ -63,7 +61,6 @@ print(anm.causal_matrix) # 打印 学到的因果图（矩阵）
    
    model_params:
      alpha: 0.05 
-     gpr_alpha: !!float 1e-10
    ```
 
 2. 执行如下命令：
@@ -74,5 +71,5 @@ print(anm.causal_matrix) # 打印 学到的因果图（矩阵）
 
 ### 3.2 算法输出
 
-算法会输出模型的实例，可通过访问 `ANM_Nonlinear.causal_matrix` 查看模型所推断的因果关系矩阵。
+算法会输出模型的实例，可通过访问 `ANMNonlinear.causal_matrix` 查看模型所推断的因果关系矩阵。
 

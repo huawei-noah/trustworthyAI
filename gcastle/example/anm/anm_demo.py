@@ -15,7 +15,7 @@
 
 """
 This demo script aim to demonstrate
-how to use gran_DAG algorithm in `castle` package for causal inference.
+how to use ANM algorithm in `castle` package for causal inference.
 
 If you want to plot causal graph, please make sure you have already install
 `networkx` package, then like the following import method.
@@ -27,18 +27,18 @@ Warnings: This script is used only for demonstration and cannot be directly
 from castle.common import GraphDAG
 from castle.metrics import MetricsDAG
 from castle.datasets import DAG, IIDSimulation
-from castle.algorithms import GraNDAG
+from castle.algorithms import ANMNonlinear
 
-# load data
-weighted_random_dag = DAG.erdos_renyi(n_nodes=10, n_edges=20, weight_range=(0.5, 2.0), seed=1)
-dataset = IIDSimulation(W=weighted_random_dag, n=2000, method='nonlinear', sem_type='mlp')
-dag, x = dataset.B, dataset.X
 
-# Instantiation algorithm
-gnd = GraNDAG(input_dim=x.shape[1], pns=True)
-gnd.learn(data=x)
+weighted_random_dag = DAG.erdos_renyi(n_nodes=6, n_edges=10, weight_range=(0.5, 2.0), seed=1)
+dataset = IIDSimulation(W=weighted_random_dag, n=1000, method='nonlinear', sem_type='gp-add')
+true_dag, X = dataset.B, dataset.X
+
+anm = ANMNonlinear(alpha=0.05)
+anm.learn(data=X)
 
 # plot predict_dag and true_dag
-GraphDAG(gnd.causal_matrix, dag)
-mm = MetricsDAG(gnd.causal_matrix, dag)
+GraphDAG(anm.causal_matrix, true_dag)
+mm = MetricsDAG(anm.causal_matrix, true_dag)
 print(mm.metrics)
+

@@ -1,5 +1,5 @@
 # coding=utf-8
-# 2021.03 modified (1) logging to loguru
+# 2021.03 modified (1) logging config
 # 2021.03 deleted  (1) __main__
 # Huawei Technologies Co., Ltd. 
 # 
@@ -19,8 +19,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from loguru import logger
+import logging
 import tensorflow as tf
+
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s %(message)s')
 
 
 class GolemModel:
@@ -93,7 +96,7 @@ class GolemModel:
 
         # Optimizer
         self.train_op = tf.compat.v1.train.AdamOptimizer(learning_rate=self.lr).minimize(self.score)
-        logger.debug("Finished building tensorflow graph.")
+        logging.debug("Finished building tensorflow graph.")
 
     def _preprocess(self, B):
         """

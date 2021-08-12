@@ -14,7 +14,6 @@
 # limitations under the License.
 
 from .ttpm import TTPM
-from .pc import PC
 from .lingam import DirectLiNGAM
 from .lingam import ICALiNGAM
 from .gradient import Notears
@@ -22,9 +21,11 @@ from .gradient import NotearsMLP
 from .gradient import NotearsSob
 from .gradient import NotearsLowRank
 from .gradient import GOLEM
-from .gradient import GraN_DAG
 from .gradient import GAE
 from .gradient import MCSL
 from .gradient import RL
 from .gradient import CORL1
 from .gradient import CORL2
+from .gradient import GraNDAG
+from .pc import PC
+from .anm import ANMNonlinear
