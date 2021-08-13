@@ -16,6 +16,7 @@
 
 import torch
 import numpy as np
+from tqdm import tqdm
 from sklearn.ensemble import ExtraTreesRegressor
 from sklearn.feature_selection import SelectFromModel
 
@@ -103,7 +104,7 @@ class NormalizationData(object):
         return samples, torch.ones_like(samples)
 
 
-class GraN_DAG(BaseLearner):
+class GraNDAG(BaseLearner):
     """
     Gradient Based Neural DAG Learner
 
@@ -177,7 +178,7 @@ class GraN_DAG(BaseLearner):
     >>> from castle.datasets import load_dataset
     >>> target, data = load_dataset(name='iid_test')
 
-    >>> gnd = GraN_DAG(input_dim=data.shape[1])
+    >>> gnd = GraNDAG(input_dim=data.shape[1])
     >>> gnd.learn(data=data)
 
         Also print GraN_DAG.model.adjacency with torch.Tensor type
@@ -191,7 +192,7 @@ class GraN_DAG(BaseLearner):
                  hidden_dim=10,
                  batch_size=64,
                  lr=0.001,
-                 iterations=100000,
+                 iterations=10000,
                  model_name='NonLinGaussANM',
                  nonlinear='leaky-relu',
                  optimizer='rmsprop',
@@ -212,7 +213,7 @@ class GraN_DAG(BaseLearner):
                  edge_clamp_range=0.0001,
                  norm_prod='paths',
                  square_prod=False):
-        super(GraN_DAG, self).__init__()
+        super(GraNDAG, self).__init__()
 
         self.input_dim = input_dim
         self.hidden_num = hidden_num
@@ -369,7 +370,7 @@ class GraN_DAG(BaseLearner):
                                       .format(self.optimizer))
 
         # Learning loop:
-        for iter in range(self.iterations):
+        for iter in tqdm(range(self.iterations), desc='Training Iterations'):
             # compute loss
             self.model.train()
             x, _ = train_data.sample(self.batch_size)
@@ -509,9 +510,6 @@ class GraN_DAG(BaseLearner):
         # evaluate on validation set
         x, _ = test_data.sample(test_data.n_samples)
         weights, biases, extra_params = self.model.get_parameters(mode="wbx")
-        nll_validation = - torch.mean(self.model.compute_log_likelihood(x, weights,
-                                                                   biases,
-                                                                   extra_params)).item()
 
         return  self.model
 
@@ -566,7 +564,7 @@ def _pns(model_adj, all_samples, num_neighbors, thresh):
 
     num_nodes = all_samples.shape[1]
 
-    for node in range(num_nodes):
+    for node in tqdm(range(num_nodes), desc='Preliminary neighborhood selection'):
         x_other = np.copy(all_samples)
         x_other[:, node] = 0
         extraTree = ExtraTreesRegressor(n_estimators=500)

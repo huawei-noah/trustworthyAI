@@ -20,12 +20,13 @@
 | [NOTEARS-SOB](https://arxiv.org/abs/1909.13189) | IID | A gradient-based algorithm using Sobolev space modeling for non-linear causal relationships |
 | [NOTEARS-lOW-RANK](https://arxiv.org/abs/2006.05691) | IID | Adapting NOTEARS for large problems with low-rank causal graphs |
 | [GOLEM](https://arxiv.org/abs/2006.10201) | IID | A more efficient version of NOTEARS that can reduce number of optimization iterations |
-| [GraN_DAG](https://arxiv.org/abs/1906.02226) | IID | A gradient-based algorithm using neural network modeling for non-linear additive noise data  |
+| [GraNDAG](https://arxiv.org/abs/1906.02226) | IID | A gradient-based algorithm using neural network modeling for non-linear additive noise data  |
 | [MCSL](https://arxiv.org/abs/1910.08527) | IID | A gradient-based algorithm for non-linear additive noise data by learning the binary adjacency matrix|
 | [GAE](https://arxiv.org/abs/1911.07420) | IID | A gradient-based algorithm using graph autoencoder to model non-linear causal relationships|
 | [RL](https://arxiv.org/abs/1906.04477) | IID | A RL-based algorithm that can work with flexible score functions (including non-smooth ones) |
 | CORL1 | IID | A RL- and order-based algorithm that improves the efficiency and scalability of previous RL-based approach |
 | CORL2 | IID | A RL- and order-based algorithm that improves the efficiency and scalability of previous RL-based approach |
+| ANM | IID | a causal discovery algorithm based on non-linear additive noise models |
 | TTPM | EVENT SEQUENCE | A causal structure learning algorithm based on Topological Hawkes process for spatio-temporal event sequences |
 
 ## Installation
@@ -41,8 +42,6 @@ gCastle requires:
 * scipy (>= 1.4.1)
 * scikit-learn (>= 0.21.1)
 * matplotlib (>=2.1.2)
-* python-igraph (>= 0.8.2)
-* loguru (>= 0.5.3)
 * networkx (>= 2.5)
 * torch (>= 1.4.0)
 * tensorflow (>= 1.15.0)

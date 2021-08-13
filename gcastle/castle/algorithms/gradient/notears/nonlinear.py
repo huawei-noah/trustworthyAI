@@ -1,5 +1,5 @@
 # coding=utf-8
-# 2021.03 added    (1) loguru; 
+# 2021.03 added    (1) logging; 
 #                  (2) BaseLearner;
 #                  (3) NotearsMLP, NotearsSob;
 # 2021.03 deleted  (1) __main__
@@ -22,10 +22,10 @@
 # limitations under the License.
 
 import math
+import logging
 import torch
 import torch.nn as nn
 import numpy as np
-from loguru import logger
 from .utils.locally_connected import LocallyConnected
 from .utils.lbfgsb_scipy import LBFGSBScipy
 
@@ -33,6 +33,8 @@ from castle.common import BaseLearner, Tensor
 
 torch.set_default_dtype(torch.double)
 np.set_printoptions(precision=3)
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s %(message)s')
 
 
 class NotearsMLP(BaseLearner):
@@ -192,7 +194,7 @@ def notears_nonlinear(model: nn.Module,
                       rho_max: float = 1e+16,
                       w_threshold: float = 0.3):
     
-    logger.info('[start]: n={}, d={}, iter_={}, h_={}, rho_={}'.format( \
+    logging.info('[start]: n={}, d={}, iter_={}, h_={}, rho_={}'.format( \
                  X.shape[0], X.shape[1], max_iter, h_tol, rho_max))
     
     rho, alpha, h = 1.0, 0.0, np.inf
@@ -200,14 +202,14 @@ def notears_nonlinear(model: nn.Module,
         rho, alpha, h = dual_ascent_step(
             model, X, lambda1, lambda2, rho, alpha, h, rho_max)
         
-        logger.debug('[iter {}] h={:.3e}, rho={:.1e}'.format(_, h, rho))
+        logging.debug('[iter {}] h={:.3e}, rho={:.1e}'.format(_, h, rho))
 
         if h <= h_tol or rho >= rho_max:
             break
     W_est = model.fc1_to_adj()
     W_est[np.abs(W_est) < w_threshold] = 0
 
-    logger.info('FINISHED')
+    logging.info('FINISHED')
 
     return (W_est != 0).astype(int)
 
