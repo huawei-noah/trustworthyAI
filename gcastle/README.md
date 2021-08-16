@@ -28,7 +28,7 @@ gCastle offers the competition module to be convenient for you to generate the s
 | [NOTEARS-SOB](https://arxiv.org/abs/1909.13189) | IID/Gradient-based | A gradient-based algorithm using Sobolev space modeling for non-linear causal relationships | v1.0.1 |
 | [NOTEARS-lOW-RANK](https://arxiv.org/abs/2006.05691) | IID/Gradient-based | Adapting NOTEARS for large problems with low-rank causal graphs | v1.0.1 |
 | [GOLEM](https://arxiv.org/abs/2006.10201) | IID/Gradient-based | A more efficient version of NOTEARS that can reduce number of optimization iterations | v1.0.1 |
-| [GraN_DAG](https://arxiv.org/abs/1906.02226) | IID/Gradient-based | A gradient-based algorithm using neural network modeling for non-linear additive noise data  | v1.0.1 |
+| [GraNDAG](https://arxiv.org/abs/1906.02226) | IID/Gradient-based | A gradient-based algorithm using neural network modeling for non-linear additive noise data  | v1.0.1 |
 | [MCSL](https://arxiv.org/abs/1910.08527) | IID/Gradient-based | A gradient-based algorithm for non-linear additive noise data by learning the binary adjacency matrix| v1.0.1 |
 | [GAE](https://arxiv.org/abs/1911.07420) | IID/Gradient-based | A gradient-based algorithm using graph autoencoder to model non-linear causal relationships| v1.0.1 |
 | [RL](https://arxiv.org/abs/1906.04477) | IID/Gradient-based | A RL-based algorithm that can work with flexible score functions (including non-smooth ones) | v1.0.3rc1 |
