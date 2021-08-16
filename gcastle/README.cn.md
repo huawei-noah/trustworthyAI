@@ -27,7 +27,7 @@
 | [NOTEARS-SOB](https://arxiv.org/abs/1909.13189) | IID/Gradient-based | 一种深度可微分、基于Sobolev空间建模的因果结构学习算法 | v1.0.1 |
 | [NOTEARS-lOW-RANK](https://arxiv.org/abs/2006.05691) | IID/Gradient-based | 基于low rank假定、针对线性数据模型的因果结构学习算法 | v1.0.1 |
 | [GOLEM](https://arxiv.org/abs/2006.10201) | IID/Gradient-based | 一种基于NOTEARS、通过减少优化循环次数提升训练效率的因果结构学习算法 | v1.0.1 |
-| [GraN_DAG](https://arxiv.org/abs/1906.02226) | IID/Gradient-based | 一种深度可微分、针对非线性加性噪声数据模型的因果结构学习算法 | v1.0.1 |
+| [GraNDAG](https://arxiv.org/abs/1906.02226) | IID/Gradient-based | 一种深度可微分、针对非线性加性噪声数据模型的因果结构学习算法 | v1.0.1 |
 | [MCSL](https://arxiv.org/abs/1910.08527) | IID/Gradient-based | 一种基于掩码梯度的因果结构学习算法 | v1.0.1 |
 | [GAE](https://arxiv.org/abs/1911.07420) | IID/Gradient-based | 一种基于图自编码器的因果发现算法 | v1.0.1 |
 | [RL](https://arxiv.org/abs/1906.04477) | IID/Gradient-based | 一种基于强化学习的因果发现算法 | v1.0.3rc1 |
