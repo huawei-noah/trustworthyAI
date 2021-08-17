@@ -88,4 +88,4 @@ You can visit [examples](./example) to find more examples.
 
 
 ## Next Up & Contributing
-This is the first released version of `gCastle`, we'll be continuously complementing and optimizing the code and documentation. We welcome new contributors of all experience levels. If you have any questions or suggestions (such as, contributing new algorithms, optimizing code, improving documentation), please submit an issue here. We will reply as soon as possible.
+This is the first released version of `gCastle`, we'll be continuously complementing and optimizing the code and documentation. We welcome new contributors of all experience levels, the specifications about how to contribute code will be coming out soon. If you have any questions or suggestions (such as, contributing new algorithms, optimizing code, improving documentation), please submit an issue here. We will reply as soon as possible.
