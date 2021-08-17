@@ -19,7 +19,7 @@
 | 算法 | 分类 | 说明 |状态 |
 | :--: | :-- | :-- | :--: |
 | [PC](https://arxiv.org/abs/math/0510436) | IID/Constraint-based | 一种基于独立性检验的经典因果发现算法 | v1.0.1 |
-| [ANM](https://webdav.tuebingen.mpg.de/causality/NIPS2008-Hoyer.pdf) | IID/Function-based | Nonlinear causal discovery with additive noise models | v1.0.3rc1 |
+| [ANM](https://webdav.tuebingen.mpg.de/causality/NIPS2008-Hoyer.pdf) | IID/Function-based | 一种非线性的加性噪声因果模型 | v1.0.3rc1 |
 | [DirectLiNGAM](https://arxiv.org/abs/1101.2489) | IID/Function-based | 一种线性非高斯无环模型的直接学习方法 | v1.0.1 |
 | [ICALiNGAM](https://dl.acm.org/doi/10.5555/1248547.1248619) | IID/Function-based | 一种线性非高斯无环模型的因果学习算法 | v1.0.1 |
 | [NOTEARS](https://arxiv.org/abs/1803.01422) | IID/Gradient-based | 一种基于梯度、针对线性数据模型的因果结构学习算法 | v1.0.1 |
@@ -85,9 +85,5 @@ print(mt.metrics)
 大家可访问 [examples](./example) 获取更多的示例. 
 
 ## 合作和贡献
-这是`gCastle`的第一个发布版本，我们将持续对相关代码及文档进行完善和优化。下面是我们针对下一个版本的完善和优化计划（备注：下一个版本预计在2021年6月发布）：
-* 更完善的文档说明：包括每个算法基本原理的介绍，使用gCastle工具快速设计因果结构学习实验的简明手册，更易读的API说明。
-* 算法库拓展：新增`GES`,`TTPM`等因果结构学习算法，并提供简易的可配置脚本辅助进行相应算法的调用和运行。
-* 真实场景数据集：将陆续公开一批来源于真实AIOPS场景的时间序列和事件序列数据集，其中真实的因果图标注来源于业务专家经验。
 
-欢迎大家使用`gCastle`. 该项目尚处于起步阶段，欢迎各个经验等级的贡献者。有任何疑问及建议，包括修改bug、贡献算法、完善文档等，请在社区提交issue，我们会及时回复交流。
+欢迎大家使用`gCastle`. 该项目尚处于起步阶段，欢迎各个经验等级的贡献者，近期我们将公布具体的代码贡献规范和要求。当前有任何疑问及建议，包括修改bug、贡献算法、完善文档等，请在社区提交issue，我们会及时回复交流。
