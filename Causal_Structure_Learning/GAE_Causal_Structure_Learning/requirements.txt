@@ -5,4 +5,4 @@ pyyaml
 pytz
 matplotlib
 pandas
-tensorflow==1.13.1
+tensorflow==2.4.2
