@@ -31,8 +31,8 @@
 | [MCSL](https://arxiv.org/abs/1910.08527) | IID/Gradient-based | 一种基于掩码梯度的因果结构学习算法 | v1.0.1 |
 | [GAE](https://arxiv.org/abs/1911.07420) | IID/Gradient-based | 一种基于图自编码器的因果发现算法 | v1.0.1 |
 | [RL](https://arxiv.org/abs/1906.04477) | IID/Gradient-based | 一种基于强化学习的因果发现算法 | v1.0.3rc1 |
-| CORL1 | IID/Gradient-based | 一种基于强化学习搜索因果序的因果发现方法 | v1.0.3rc1 |
-| CORL2 | IID/Gradient-based | 一种基于强化学习搜索因果序的因果发现方法 | v1.0.3rc1 |
+| [CORL1](https://arxiv.org/abs/2105.06631) | IID/Gradient-based | 一种基于强化学习搜索因果序的因果发现方法 | v1.0.3rc1 |
+| [CORL2](https://arxiv.org/abs/2105.06631) | IID/Gradient-based | 一种基于强化学习搜索因果序的因果发现方法 | v1.0.3rc1 |
 | [TTPM](https://arxiv.org/abs/2105.10884) | EventSequence/Function-based | 一种针对时空事件序列的基于时空Hawkes Process的因果结构学习算法 | v1.0.1 |
 | [HPCI](https://arxiv.org/abs/2105.03092) | EventSequence/Hybrid | 一种针对时序事件序列的基于Hawkes Process和CI tests的因果结构学习算法 | 开发中 |
 
@@ -49,7 +49,7 @@
 - matplotlib (>=2.1.2)
 - networkx (>= 2.5)
 - torch (>= 1.4.0)
-- tensorflow (>= 1.15.0)
+- tensorflow (1.15.0)
 
 ### PIP安装
 ```bash
