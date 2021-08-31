@@ -32,8 +32,8 @@ gCastle offers the competition module to be convenient for you to generate the s
 | [MCSL](https://arxiv.org/abs/1910.08527) | IID/Gradient-based | A gradient-based algorithm for non-linear additive noise data by learning the binary adjacency matrix| v1.0.1 |
 | [GAE](https://arxiv.org/abs/1911.07420) | IID/Gradient-based | A gradient-based algorithm using graph autoencoder to model non-linear causal relationships| v1.0.1 |
 | [RL](https://arxiv.org/abs/1906.04477) | IID/Gradient-based | A RL-based algorithm that can work with flexible score functions (including non-smooth ones) | v1.0.3rc1 |
-| CORL1 | IID/Gradient-based | A RL- and order-based algorithm that improves the efficiency and scalability of previous RL-based approach | v1.0.3rc1 |
-| CORL2 | IID/Gradient-based | A RL- and order-based algorithm that improves the efficiency and scalability of previous RL-based approach | v1.0.3rc1 |
+| [CORL1](https://arxiv.org/abs/2105.06631) | IID/Gradient-based | A RL- and order-based algorithm that improves the efficiency and scalability of previous RL-based approach | v1.0.3rc1 |
+| [CORL2](https://arxiv.org/abs/2105.06631) | IID/Gradient-based | A RL- and order-based algorithm that improves the efficiency and scalability of previous RL-based approach | v1.0.3rc1 |
 | [TTPM](https://arxiv.org/abs/2105.10884) | EventSequence/Function-based | A causal structure learning algorithm based on Topological Hawkes process for spatio-temporal event sequences |v1.0.1 |
 | [HPCI](https://arxiv.org/abs/2105.03092) | EventSequence/Hybrid | A causal structure learning algorithm based on Hawkes process and CI tests for event sequences | under development. |
 
@@ -51,7 +51,7 @@ gCastle requires:
 - matplotlib (>=2.1.2)
 - networkx (>= 2.5)
 - torch (>= 1.4.0)
-- tensorflow (>= 1.15.0)
+- tensorflow (1.15.0)
 
 
 ### PIP installation
