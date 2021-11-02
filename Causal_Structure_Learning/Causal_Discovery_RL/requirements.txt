@@ -8,4 +8,4 @@ pyyaml
 pytz
 matplotlib
 rpy2=3.1.0
-tensoflow=1.13.1
+tensorflow=1.13.1
