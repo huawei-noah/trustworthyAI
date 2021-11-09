@@ -9,8 +9,7 @@ Current projects include:
 
 - gCastle (or pyCastle, pCastle)
 
-  Welcome to participate in [PCIC Causal Discovery Competition 2021 ](https://competition.huaweicloud.com/information/1000041487/introduction)(June 8, 2021 ~ August 22, 2021).
-  gCastle offers the competition module to be convenient for you to generate the submission file and evaluate your methods, and you can visit the submission section of the      [competition website ](https://competition.huaweicloud.com/information/1000041487/circumstance) to get the toy example.
+  The real datasets (id:10, 21, 22) used in PCIC Causal Discovery Competition 2021 have been released on the github: temporary link.
 
 ### Causal Structure Learning
 
