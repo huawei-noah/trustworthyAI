@@ -9,7 +9,7 @@ Current projects include:
 
 - gCastle (or pyCastle, pCastle)
 
-  The real datasets (id:10, 21, 22) used in PCIC Causal Discovery Competition 2021 have been released on the github: temporary link.
+  The real datasets (id:10, 21, 22) used in [PCIC Causal Discovery Competition 2021 ](https://competition.huaweicloud.com/information/1000041487/introduction) have been released on the github: [temporary link](https://github.com/gcastle-hub/dataset).
 
 ### Causal Structure Learning
 
