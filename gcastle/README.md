@@ -8,7 +8,7 @@ The real datasets (id:10, 21, 22) used in [PCIC Causal Discovery Competition 202
 
 ## Introduction
 
-`gCastle` is a causal structure learning toolchain developed by [Huawei Noah's Ark Lab](https://www.noahlab.com.hk/#/home). The package contains various functionality related to causal learning and evaluation, including: 
+gCastle is a causal structure learning toolchain developed by [Huawei Noah's Ark Lab](https://www.noahlab.com.hk/#/home). The package contains various functionality related to causal learning and evaluation, including: 
 * Data generation and processing: data simulation, data reading operators, and data pre-processing operators（such as prior injection and variable selection).
 * Causal structure learning: causal structure learning methods, including both classic and recently developed methods, especially gradient-based ones that can handle large problems.
 * Evaluation metrics: various commonly used metrics for causal structure learning, including F1, SHD, FDR, TPR, FDR, NNZ, etc.
@@ -85,5 +85,18 @@ print(mt.metrics)
 You can visit [examples](./example) to find more examples.
 
 
+## Citation
+If you find gCastle useful in your research, please consider citing the the following [paper](https://arxiv.org/abs/2111.15155):
+```
+@misc{zhang2021gcastle,
+  title={gCastle: A Python Toolbox for Causal Discovery}, 
+  author={Keli Zhang and Shengyu Zhu and Marcus Kalander and Ignavier Ng and Junjian Ye and Zhitang Chen and Lujia Pan},
+  year={2021},
+  eprint={2111.15155},
+  archivePrefix={arXiv},
+  primaryClass={cs.LG}
+}
+```
+
 ## Next Up & Contributing
-This is the first released version of `gCastle`, we'll be continuously complementing and optimizing the code and documentation. We welcome new contributors of all experience levels, the specifications about how to contribute code will be coming out soon. If you have any questions or suggestions (such as, contributing new algorithms, optimizing code, improving documentation), please submit an issue here. We will reply as soon as possible.
+This is the first released version of gCastle, we'll be continuously complementing and optimizing the code and documentation. We welcome new contributors of all experience levels, the specifications about how to contribute code will be coming out soon. If you have any questions or suggestions (such as, contributing new algorithms, optimizing code, improving documentation), please submit an issue here. We will reply as soon as possible.
