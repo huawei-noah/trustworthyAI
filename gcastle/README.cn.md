@@ -84,6 +84,21 @@ print(mt.metrics)
 ```
 大家可访问 [examples](./example) 获取更多的示例. 
 
+
+## 引用
+如果您想在公开的研究成果中使用gCastle, 请考虑引用如下[论文](https://arxiv.org/abs/2111.15155):
+```
+@misc{zhang2021gcastle,
+  title={gCastle: A Python Toolbox for Causal Discovery}, 
+  author={Keli Zhang and Shengyu Zhu and Marcus Kalander and Ignavier Ng and Junjian Ye and Zhitang Chen and Lujia Pan},
+  year={2021},
+  eprint={2111.15155},
+  archivePrefix={arXiv},
+  primaryClass={cs.LG}
+}
+```
+
+
 ## 合作和贡献
 
 欢迎大家使用`gCastle`. 该项目尚处于起步阶段，欢迎各个经验等级的贡献者，近期我们将公布具体的代码贡献规范和要求。当前有任何疑问及建议，包括修改bug、贡献算法、完善文档等，请在社区提交issue，我们会及时回复交流。
