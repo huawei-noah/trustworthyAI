@@ -51,7 +51,7 @@ gCastle requires:
 - torch (>= 1.4.0)
 - tensorflow (1.15.0)
 
- Note that the tensorflow dependency will be removed in the next version (v1.0.3, 2021.12.15), we are efforts to rewrite some algorithms, such as MCSL, GOLEM, fully based on pytorch.
+ Note that the tensorflow dependency will be removed soon (in the next version v1.0.3, 2021.12.15), we are efforts to rewrite some algorithms, such as MCSL, GOLEM, fully based on pytorch.
 
 
 ### PIP installation
