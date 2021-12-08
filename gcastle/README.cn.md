@@ -40,7 +40,7 @@
 ## 获取和安装
 
 ### 依赖
-- python (>= 3.6)
+- python (>= 3.5,<= 3.7)
 - tqdm (>= 4.48.2)
 - numpy (>= 1.19.2)
 - pandas (>= 0.22.0)
@@ -49,7 +49,7 @@
 - matplotlib (>=2.1.2)
 - networkx (>= 2.5)
 - torch (>= 1.4.0)
-- tensorflow (1.15.0)
+- tensorflow (~=1.15.0)
 
 ### PIP安装
 ```bash
