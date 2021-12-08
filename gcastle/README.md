@@ -40,7 +40,7 @@ gCastle is a causal structure learning toolchain developed by [Huawei Noah's Ark
 
 ### Dependencies
 gCastle requires:
-- python (>= 3.6)
+- python (>= 3.5,<= 3.7)
 - tqdm (>= 4.48.2)
 - numpy (>= 1.19.2)
 - pandas (>= 0.22.0)
@@ -49,7 +49,7 @@ gCastle requires:
 - matplotlib (>=2.1.2)
 - networkx (>= 2.5)
 - torch (>= 1.4.0)
-- tensorflow (1.15.0)
+- tensorflow (~=1.15.0)
 
  Note that the tensorflow dependency will be removed in the next version (v1.0.3, 2021.12.15), we are making efforts to rewrite some algorithms, such as MCSL, GOLEM, fully based on pytorch.
 
