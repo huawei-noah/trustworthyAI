@@ -1,0 +1,91 @@
+# I18N.
+# Copyright (C) 2018 Japin Li
+# This file is distributed under the same license as the I18N package.
+# Japin Li <japinli@hotmail.com>, 2018.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-11-04 11:21+0800\n"
+"PO-Revision-Date: 2018-11-04 11:24+0800\n"
+"Last-Translator: Japin Li <japinli@hotmail.com>\n"
+"Language-Team: English <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ASCII\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/main.py:100
+msgid "Sample Distribution"
+msgstr "Sample Distribution"
+
+#: src/main.py:101
+msgid "Selecting an algorithm"
+msgstr "Select an algorithm"
+
+#: src/main.py:102
+msgid "The verification result is true."
+msgstr "The verification result is true."
+
+#: src/main.py:103
+msgid "The verification result is false."
+msgstr "The verification result is false."
+
+
+#: src/main.py:104
+msgid "evaluation execute failed"
+msgstr "Evaluation execution failed."
+
+#: src/main.py:106
+msgid "The delete result is true."
+msgstr "The delete result is true."
+
+#: src/main.py:107
+msgid "The delete result is false."
+msgstr "The delete result is false."
+
+#: src/main.py:108
+msgid "The save result is true."
+msgstr "The save result is true."
+
+#: src/main.py:109
+msgid "The result file does not exist."
+msgstr "The result file does not exist."
+
+#: src/main.py:120
+msgid "The task type is incorrect."
+msgstr "The task type is incorrect."
+
+#: src/main.py:121
+msgid "The dataset is set successfully."
+msgstr "The dataset is set successfully."
+
+#: src/main.py:122
+msgid "The dataset fail to be set."
+msgstr "Failed to set the dataset."
+
+#: src/main.py:123
+msgid "The task succeeds to begin to run."
+msgstr "Started to run the task."
+
+#: src/main.py:124
+msgid "The task fails to begin to run."
+msgstr "Failed to start the task."
+
+#: src/main.py:125
+msgid "File uploaded successfully."
+msgstr "File uploaded successfully."
+
+#: src/main.py:126
+msgid "The configuration file does not exist."
+msgstr "The configuration file does not exist."
+
+#: src/main.py:127
+msgid "The language is set successfully."
+msgstr "The language is set successfully."
+
+#: src/main.py:128
+msgid "Failed to set the language."
+msgstr "Failed to set the language."

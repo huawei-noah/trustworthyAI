@@ -42,7 +42,7 @@ ttpm.learn(X)
 print(ttpm.causal_matrix)
 
 # plot est_dag and true_dag
-GraphDAG(ttpm.causal_matrix.values, true_causal_matrix)
+GraphDAG(ttpm.causal_matrix, true_causal_matrix)
 # calculate accuracy
-ret_metrix = MetricsDAG(ttpm.causal_matrix.values, true_causal_matrix)
+ret_metrix = MetricsDAG(ttpm.causal_matrix, true_causal_matrix)
 print(ret_metrix.metrics)

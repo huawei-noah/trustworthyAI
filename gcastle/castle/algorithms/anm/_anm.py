@@ -191,7 +191,7 @@ class ANMNonlinear(BaseLearner):
     >>> anm.learn(data=X)
 
     >>> # plot predict_dag and true_dag
-    >>> GraphDAG(anm.causal_matrix, true_dag, 'result')
+    >>> GraphDAG(anm.causal_matrix, true_dag, show=False, save_name='result')
 
     you can also provide more parameters to use it. like the flowing:
     >>> from sklearn.gaussian_process.kernels import Matern, RBF
@@ -200,20 +200,23 @@ class ANMNonlinear(BaseLearner):
     >>> anm = ANMNonlinear(alpha=0.05)
     >>> anm.learn(data=X, regressor=GPR(kernel=kernel))
     >>> # plot predict_dag and true_dag
-    >>> GraphDAG(anm.causal_matrix, true_dag, 'result')
+    >>> GraphDAG(anm.causal_matrix, true_dag, show=False, save_name='result')
     """
 
     def __init__(self, alpha=0.05):
         super(ANMNonlinear, self).__init__()
         self.alpha = alpha
 
-    def learn(self, data, regressor=GPR(), test_method=hsic_test, **kwargs):
+    def learn(self, data, columns=None, regressor=GPR(), test_method=hsic_test, **kwargs):
         """Set up and run the ANM_Nonlinear algorithm.
 
         Parameters
         ----------
         data: numpy.ndarray or Tensor
             Training data.
+        columns : Index or array-like
+            Column labels to use for resulting tensor. Will default to
+            RangeIndex (0, 1, 2, ..., n) if no column labels are provided.
         regressor: Class
             Nonlinear regression estimator, if not provided, it is GPR.
             If user defined, must implement `estimate` method. such as :
@@ -228,16 +231,12 @@ class ANMNonlinear(BaseLearner):
         self.regressor = regressor
 
         # create learning model and ground truth model
-        if isinstance(data, np.ndarray):
-            data = data
-        elif isinstance(data, Tensor):
-            data = data.data
-        else:
-            raise TypeError('The type of data must be '
-                            'Tensor or numpy.ndarray, but got {}'
-                            .format(type(data)))
+        data = Tensor(data, columns=columns)
+
         node_num = data.shape[1]
-        self.causal_matrix = np.zeros((node_num, node_num))
+        self.causal_matrix = Tensor(np.zeros((node_num, node_num)),
+                                    index=data.columns,
+                                    columns=data.columns)
 
         for i, j in combinations(range(node_num), 2):
             x = data[:, i].reshape((-1, 1))

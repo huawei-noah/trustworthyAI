@@ -30,12 +30,14 @@ from castle.datasets import DAG, IIDSimulation
 from castle.algorithms import GraNDAG
 
 # load data
-weighted_random_dag = DAG.erdos_renyi(n_nodes=10, n_edges=20, weight_range=(0.5, 2.0), seed=1)
-dataset = IIDSimulation(W=weighted_random_dag, n=2000, method='nonlinear', sem_type='mlp')
+weighted_random_dag = DAG.erdos_renyi(n_nodes=10, n_edges=20,
+                                      weight_range=(0.5, 2.0), seed=1)
+dataset = IIDSimulation(W=weighted_random_dag, n=2000, method='nonlinear',
+                        sem_type='mlp')
 dag, x = dataset.B, dataset.X
 
 # Instantiation algorithm
-gnd = GraNDAG(input_dim=x.shape[1], pns=True)
+gnd = GraNDAG(input_dim=x.shape[1])
 gnd.learn(data=x)
 
 # plot predict_dag and true_dag

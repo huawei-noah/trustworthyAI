@@ -149,7 +149,7 @@ def orient(skeleton, sep_set):
     return cpdag
 
 
-def find_skeleton(data, alpha, ci_test, variant='original',
+def find_skeleton(data, alpha, ci_test, variant='original', base_skeleton=None,
                   p_cores=1, s=None, batch=None):
     """Find skeleton graph from G using PC algorithm
 
@@ -170,6 +170,10 @@ def find_skeleton(data, alpha, ci_test, variant='original',
     variant : str, default 'original'
         variant of PC algorithm, contains [`original`, `stable`, `parallel`].
         If variant == 'parallel', need to provide the flowing 3 parameters.
+    base_skeleton : array, (n_features, n_features)
+        prior matrix, must be undirected graph.
+        The two conditionals `base_skeleton[i, j] == base_skeleton[j, i]`
+        and `and base_skeleton[i, i] == 0` must be satisified which i != j.
     p_cores : int
         Number of CPU cores to be used
     s : bool, default False
@@ -253,7 +257,12 @@ def find_skeleton(data, alpha, ci_test, variant='original',
                          f'but got {type(ci_test)}.')
 
     n_feature = data.shape[1]
-    skeleton = np.ones((n_feature, n_feature)) - np.eye(n_feature)
+    if base_skeleton is None:
+        skeleton = np.ones((n_feature, n_feature)) - np.eye(n_feature)
+    else:
+        row, col = np.diag_indices_from(base_skeleton)
+        base_skeleton[row, col] = 0
+        skeleton = base_skeleton
     nodes = set(range(n_feature))
     pairs = [(x, y) for x, y in combinations(nodes, 2)]
     sep_set = {}
@@ -289,7 +298,8 @@ def find_skeleton(data, alpha, ci_test, variant='original',
                                  f'must be int, but got {type(p_cores)}.')
             for i in range(int(np.ceil(len(J) / batch))):
                 each_batch = J[batch * i: batch * (i + 1)]
-                parallel_result = joblib.Parallel(n_jobs=p_cores)(
+                parallel_result = joblib.Parallel(n_jobs=p_cores,
+                                                  max_nbytes=None)(
                     joblib.delayed(parallel_cell)(x, y) for x, y in
                     each_batch
                 )
@@ -337,16 +347,16 @@ class PC(BaseLearner):
     >>> from castle.metrics import MetricsDAG
     >>> from castle.datasets import load_dataset
 
-    >>> true_dag, X = load_dataset(name='iid_test')
+    >>> X, true_dag, _ = load_dataset(name='IID_Test')
     >>> pc = PC(variant='stable')
     >>> pc.learn(X)
-    >>> GraphDAG(pc.causal_matrix, true_dag, 'result_pc')
+    >>> GraphDAG(pc.causal_matrix, true_dag, save_name='result_pc')
     >>> met = MetricsDAG(pc.causal_matrix, true_dag)
     >>> print(met.metrics)
 
     >>> pc = PC(variant='parallel')
     >>> pc.learn(X, p_cores=2)
-    >>> GraphDAG(pc.causal_matrix, true_dag, 'result_pc')
+    >>> GraphDAG(pc.causal_matrix, true_dag, save_name='result_pc')
     >>> met = MetricsDAG(pc.causal_matrix, true_dag)
     >>> print(met.metrics)
     """
@@ -358,13 +368,16 @@ class PC(BaseLearner):
         self.ci_test = ci_test
         self.causal_matrix = None
 
-    def learn(self, data, **kwargs):
+    def learn(self, data, columns=None, **kwargs):
         """Set up and run the PC algorithm.
 
         Parameters
         ----------
         data: array or Tensor
             Training data
+        columns : Index or array-like
+            Column labels to use for resulting tensor. Will default to
+            RangeIndex (0, 1, 2, ..., n) if no column labels are provided.
         kwargs: [optional]
             p_cores : int
                 number of CPU cores to be used
@@ -376,14 +389,7 @@ class PC(BaseLearner):
             |J| denote number of all pairs of adjacency vertices (X, Y) in G.
         """
 
-        if isinstance(data, np.ndarray):
-            data = data
-        elif isinstance(data, Tensor):
-            data = data.data
-        else:
-            raise TypeError('The type of tensor must be '
-                            'Tensor or array, but got {}.'
-                            .format(type(data)))
+        data = Tensor(data, columns=columns)
 
         skeleton, sep_set = find_skeleton(data,
                                           alpha=self.alpha,
@@ -391,5 +397,7 @@ class PC(BaseLearner):
                                           variant=self.variant,
                                           **kwargs)
 
-        self._causal_matrix = orient(skeleton, sep_set).astype(int)
+        self._causal_matrix = Tensor(orient(skeleton, sep_set).astype(int),
+                                     index=data.columns,
+                                     columns=data.columns)
 

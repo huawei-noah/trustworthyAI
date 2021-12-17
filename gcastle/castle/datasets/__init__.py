@@ -13,6 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .simulation import DAG, IIDSimulation
-from .simulation import Topology, THPSimulation
+from .simulator import DAG, IIDSimulation
+from .simulator import Topology, THPSimulation
 from .loader import load_dataset
+from .builtin_dataset import DataSetRegistry
+
+__builtin_dataset__ = DataSetRegistry.meta.keys()

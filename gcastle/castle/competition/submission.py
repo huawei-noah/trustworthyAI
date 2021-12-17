@@ -19,9 +19,6 @@ import os
 import logging
 
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s %(message)s')
-
-
 def transform(source, target, phase=1):
     """
     This function is used to generate the submission file for the causality competition:

@@ -14,132 +14,80 @@
 # limitations under the License.
 
 
+import torch
 import yaml
 import argparse
-import numpy as np
+import logging
 import pandas as pd
+from castle.datasets.loader import load_dataset
+from example.example import read_file, run_simulate, save_to_file, train
 
-from castle.common import GraphDAG
-from castle.metrics import MetricsDAG
-from castle.datasets import load_dataset
+logging.basicConfig(format='%(asctime)s - %(pathname)s[line:%(lineno)d] - %(levelname)s: %(message)s',
+                    level=logging.ERROR)
 
+if __name__ == '__main__':
 
-parser = argparse.ArgumentParser(description='Generic runner')
-parser.add_argument('--model', '-m',
-                    dest='model_name',
-                    choices=['pc', 'gran_dag', 'direct_lingam', 'ica_lingam',
-                             'notears', 'notears_mlp', 'notears_sob',
-                             'notears_low_rank', 'notears_golem',
-                             'gae', 'mcsl', 'rl', 'corl1', 'corl2', 'ttpm',
-                             'anm_nonlinear'],
-                    help='name of algorithm',
-                    default='rl')
-parser.add_argument('--config',  '-c',
-                    dest="filename",
-                    metavar='FILE',
-                    help='path to the config file',
-                    default='example/rl/rl.yaml')
+    parser = argparse.ArgumentParser(description='Generic runner')
+    parser.add_argument('-c', '--config',
+                        dest='config',
+                        help='You must provide the .yaml file corresponding to '
+                             'the simulation data or algorithm.',
+                        default='./example/dataset/simulate_data.yaml')
+    parser.add_argument('-p', '--plot',
+                        dest='plot',
+                        help='whether show graph.',
+                        default=True)
+    args = parser.parse_args()
+    with open(args.config, 'r') as file:
+        try:
+            params_config = yaml.safe_load(file)
+        except yaml.YAMLError as exc:
+            print(exc)
 
-args = parser.parse_args()
-with open(args.filename, 'r') as file:
-    try:
-        params_config = yaml.safe_load(file)
-    except yaml.YAMLError as exc:
-        print(exc)
+    if params_config['task_params']['task_type'] == 1:
+        logging.info('Start task 1: simulate dataset.')
+        outer = run_simulate(config=params_config)
+        save_to_file(outer[0],
+                     file=params_config['dataset_params']['x_file'])
+        logging.info(f"Dataset X has been saved to "
+                     f"{params_config['dataset_params']['x_file']}.")
+        save_to_file(outer[1],
+                     file=params_config['dataset_params']['dag_file'])
+        logging.info(f"Dataset true_dag has been saved to "
+                     f"{params_config['dataset_params']['dag_file']}.")
+        if params_config['task_params']['algorithm'] == 'EVENT':
+            save_to_file(outer[2],
+                         file=params_config['dataset_params']['topology_file'])
+            logging.info(f"Dataset topology has been saved to "
+                         f"{params_config['dataset_params']['topology_file']}.")
+        logging.info('Task completed!')
+    elif params_config['task_params']['task_type'] == 2:
+        logging.info('Start task 2: causal discovery.')
 
-x_file = params_config['dataset_params']['x_file']
-dag_file = params_config['dataset_params']['dag_file']
+        topology = None
+        if params_config['dataset_params']['x_file'] is None:
 
-if x_file != 'None':
-    if args.model_name == 'ttpm':
-        if x_file[-4:] == '.csv':
-            X = pd.read_csv(x_file, header=0)
+            if params_config['task_params']['algorithm'] == 'TTPM':
+                X, true_dag, topology = load_dataset('THP_Test')
+            else:
+                X, true_dag, _ = load_dataset('IID_Test')
+                X = pd.DataFrame(X)
         else:
-            raise ValueError('Invalid file type {}.'.format(x_file))
+            X = read_file(file=params_config['dataset_params']['x_file'],
+                          header=0)
+            true_dag = read_file(file=params_config['dataset_params']['dag_file'],
+                                 header=None)
 
-        topology_file = params_config['dataset_params']['topology_file']
-        if topology_file[-4:] == '.npz':
-            topology_data = np.load(topology_file)
-            topology_matrix = np.mat(topology_data)
-        elif topology_file[-4:] == '.csv':
-            topology_data = np.loadtxt(topology_file, delimiter=',')
-            topology_matrix = np.mat(topology_data)
-        else:
-            raise ValueError('Invalid file type {}.'.format(topology_file))
+        if 'topology_file' in params_config['dataset_params'].keys():
+            topology = read_file(file=params_config['dataset_params']['topology_file'],
+                                 header=None)
+
+        train(model_name=params_config['task_params']['algorithm'],
+              X=X,
+              true_dag=true_dag,
+              model_params=params_config['algorithm_params'],
+              topology_matrix=topology,
+              plot=args.plot)
     else:
-        if x_file[-4:] == '.npz':
-            X = np.load(x_file)
-        elif x_file[-4:] == '.csv':
-            X = np.loadtxt(x_file, delimiter=',')
-        else:
-            raise ValueError('Invalid file type {}.'.format(x_file))
-
-    if dag_file == 'None':
-        true_dag = None
-    else:
-        if dag_file[-4:] == '.npz':
-            true_dag = np.load(dag_file)
-        elif dag_file[-4:] == '.csv':
-            true_dag = np.loadtxt(dag_file, delimiter=',')
-        else:
-            raise ValueError('Invalid file type {}.'.format(dag_file))
-else:
-    if args.model_name == 'ttpm':
-        true_dag, topology_matrix, X = load_dataset(name='thp_test')
-    else:
-        true_dag, X = load_dataset(name='iid_test')
-
-# Instantiation algorithm and learn dag
-if args.model_name == 'gran_dag':
-    from castle.algorithms import GraNDAG
-
-    g = GraNDAG(**params_config['model_params'])
-    g.learn(data=X)
-
-elif args.model_name == 'pc':
-    from castle.algorithms import PC
-
-    g = PC(**params_config['model_params'])
-    g.learn(X)
-
-elif args.model_name == 'notears':
-    from castle.algorithms import Notears
-
-    g = Notears(**params_config['model_params'])
-    g.learn(data=X)
-
-elif args.model_name == 'rl':
-    from castle.algorithms import RL
-
-    g = RL(**params_config['model_params'])
-    g.learn(data=X, dag=true_dag)
-
-elif args.model_name == 'ttpm':
-    from castle.algorithms import TTPM
-
-    g = TTPM(topology_matrix, **params_config['model_params'])
-    g.learn(X)
-elif args.model_name == 'anm_nonlinear':
-    from castle.algorithms import ANMNonlinear
-
-    g = ANMNonlinear(**params_config['model_params'])
-    g.learn(X)
-else:
-    raise ValueError('Invalid algorithm name: {}.'.format(args.model_name))
-
-# plot and evaluate predict_dag and true_dag
-if true_dag is not None:
-    if args.model_name == 'ttpm':
-        GraphDAG(g.causal_matrix.values, true_dag)
-        m = MetricsDAG(g.causal_matrix.values, true_dag)
-        print(m.metrics)
-    else:
-        GraphDAG(g.causal_matrix, true_dag)
-        m = MetricsDAG(g.causal_matrix, true_dag)
-        print(m.metrics)
-
-else:
-    if args.model_name == 'ttpm':
-        GraphDAG(g.causal_matrix.values)
-    else:
-        GraphDAG(g.causal_matrix)
+        raise ValueError('Invalid value of the configuration parameter '
+                         'task_type, expected integer 1 or 2.')

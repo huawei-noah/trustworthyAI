@@ -40,7 +40,7 @@ true_dag, X = dataset.B, dataset.X
 
 # GOLEM learn
 g = GOLEM()
-g.learn(X, lambda_1=2e-2, lambda_2=5.0, equal_variances=True)
+g.learn(X)
 
 # plot est_dag and true_dag
 GraphDAG(g.causal_matrix, true_dag)

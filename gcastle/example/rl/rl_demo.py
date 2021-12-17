@@ -39,7 +39,7 @@ dataset = IIDSimulation(W=weighted_random_dag, n=2000, method='linear', sem_type
 true_dag, X = dataset.B, dataset.X
 
 # rl learn
-rl = RL(lambda_flag_default=True)
+rl = RL()
 rl.learn(X)
 
 # plot est_dag and true_dag

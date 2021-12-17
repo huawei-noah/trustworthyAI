@@ -10,7 +10,7 @@ if sys.version_info < (3, 6):
     sys.exit("Sorry, Python < 3.6 is not supported.")
 
 
-with open("package.md", "r", encoding='utf-8') as fh:
+with open("README.md", "r", encoding='utf-8') as fh:
     long_desc = fh.read()
 
 
@@ -25,7 +25,7 @@ setuptools.setup(
     long_description=long_desc,
     long_description_content_type="text/markdown",
     url="https://github.com/huawei-noah/trustworthyAI/tree/master/gcastle",
-    packages=setuptools.find_packages(),
+    packages=setuptools.find_packages('.', exclude=['web']),
     license="Apache License 2.0",
     classifiers=[
         "Programming Language :: Python :: 3",
@@ -36,11 +36,9 @@ setuptools.setup(
         "tqdm>=4.48.2",
         "numpy>=1.19.1",
         "pandas>=0.22.0",
-        "scipy>=1.4.1",
+        "scipy>=1.7.3",
         "scikit-learn>=0.21.1",
         "matplotlib>=2.1.2",
         "networkx>=2.5",
-        "torch>=1.4.0",
-        "tensorflow~=1.15.0",
     ],
 )

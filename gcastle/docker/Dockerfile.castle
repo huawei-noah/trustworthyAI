@@ -1,0 +1,9 @@
+FROM python:3.7.6
+
+RUN mkdir -p /github/workspace
+
+WORKDIR /github/workspace
+
+RUN pip3 install  --upgrade pip  && \
+    pip install torch>=1.9.0  && \
+    pip install gcastle

@@ -21,13 +21,23 @@ import scipy.optimize as sopt
 from castle.common import BaseLearner, Tensor
 
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s %(message)s')
-
-
 class NotearsLowRank(BaseLearner):
     """
     NotearsLowRank Algorithm.
-    A classic causal discovery algorithm based on conditional independence tests.
+    Adapting NOTEARS for large problems with low-rank causal graphs.
+
+    Parameters
+    ----------
+    w_init: None or numpy.ndarray
+        Initialized weight matrix
+    max_iter: int
+        Maximum number of iterations
+    h_tol: float
+        exit if |h(w)| <= h_tol
+    rho_max: float
+        maximum for rho
+    w_threshold : float,  default='0.3'
+        Drop edge if |weight| < threshold
 
     Attributes
     ----------
@@ -45,7 +55,7 @@ class NotearsLowRank(BaseLearner):
     >>> from castle.datasets import load_dataset
     >>> from castle.common import GraphDAG
     >>> from castle.metrics import MetricsDAG
-    >>> true_dag, X = load_dataset(name='iid_test')
+    >>> X, true_dag, _ = load_dataset('IID_Test')
     >>> rank = np.linalg.matrix_rank(true_dag)
     >>> n = NotearsLowRank()
     >>> n.learn(X, rank=rank)
@@ -54,11 +64,18 @@ class NotearsLowRank(BaseLearner):
     >>> print(met.metrics)
     """
     
-    def __init__(self):
+    def __init__(self, w_init=None, max_iter=15, h_tol=1e-6, 
+                 rho_max=1e+20, w_threshold=0.3):
 
         super().__init__()
 
-    def learn(self, data, rank):
+        self.w_init = w_init
+        self.max_iter = max_iter
+        self.h_tol = h_tol
+        self.rho_max = rho_max
+        self.w_threshold = w_threshold
+
+    def learn(self, data, rank, columns=None, **kwargs):
         """
         Set up and run the NotearsLowRank algorithm.
 
@@ -66,17 +83,13 @@ class NotearsLowRank(BaseLearner):
         ----------
         data: castle.Tensor or numpy.ndarray
             The castle.Tensor or numpy.ndarray format data you want to learn.
+        columns : Index or array-like
+            Column labels to use for resulting tensor. Will default to
+            RangeIndex (0, 1, 2, ..., n) if no column labels are provided.
         rank: int
             The rank of data.
         """
-        if isinstance(data, np.ndarray):
-            X = data
-        elif isinstance(data, Tensor):
-            X = data.data
-        else:
-            raise TypeError('The type of data must be '
-                            'Tensor or numpy.ndarray, but got {}'
-                            .format(type(data)))
+        X = Tensor(data, columns=columns)
 
         n, d = X.shape
         random_cnt = 0
@@ -88,7 +101,8 @@ class NotearsLowRank(BaseLearner):
                 else:
                     w_init_ = np.random.uniform(-0.3, 0.3, (d,d))
                 
-                causal_matrix = self.notears_low_rank(X, rank, w_init_)
+                w_est2 = self.notears_low_rank(X, rank, w_init_)
+                causal_matrix = (abs(w_est2) > self.w_threshold).astype(int)
                 
                 random_cnt += 1
                 total_cnt += 1
@@ -99,10 +113,13 @@ class NotearsLowRank(BaseLearner):
                 print(total_cnt, 'NAN error')
                 total_cnt += 1
 
-        self.causal_matrix = causal_matrix
+        self.weight_causal_matrix = Tensor(w_est2,
+                                           index=X.columns,
+                                           columns=X.columns)
+        self.causal_matrix = Tensor(causal_matrix, index=X.columns,
+                                    columns=X.columns)
 
-    def notears_low_rank(self, X, rank, w_init=None, tcnt=0, max_iter=15, 
-            h_tol=1e-6, rho_max=1e+20, w_threshold=0.3, save_folder=None):
+    def notears_low_rank(self, X, rank, w_init=None):
         """
         Solve min_W ell(W; X) s.t. h(W) = 0 using augmented Lagrangian.
 
@@ -112,8 +129,8 @@ class NotearsLowRank(BaseLearner):
             max_iter: max number of dual ascent steps.
         rank: int
             The rank of data.
-        h_tol: exit if |h(w)| <= h_tol
-            w_threshold: fixed threshold for edge weights.
+        w_init: None or numpy.ndarray
+            Initialized weight matrix
 
         Return
         ------
@@ -193,11 +210,11 @@ class NotearsLowRank(BaseLearner):
         # bnds = [(0, 0) if i == j else (None, None) for i in range(d) for j in range(d)]
         
         logging.info('[start]: n={}, d={}, iter_={}, h_={}, rho_={}'.format( \
-                    n, d, max_iter, h_tol, rho_max))
+                    n, d, self.max_iter, self.h_tol, self.rho_max))
         
-        for flag in range(-1, max_iter):       
+        for flag in range(-1, self.max_iter):       
             if flag >= 0: 
-                while rho <= rho_max:
+                while rho <= self.rho_max:
                     sol = sopt.minimize(_func, uv_est, method='TNC', 
                                         jac=_grad, options={'disp': False})
                     
@@ -220,16 +237,14 @@ class NotearsLowRank(BaseLearner):
             if flag >= 0:
                 alpha += rho * h
             
-            if flag >= 3 and h <= h_tol:
+            if flag >= 3 and h <= self.h_tol:
                 break          
 
         uv_new2 = np.copy(uv_new)
         w_est2 = np.matmul(uv_new2[0: d*r].reshape((d, r)), 
                            uv_new2[d*r:].reshape((d, r)).transpose())
         w_est2 = w_est2.reshape((d, d))
-        w_est2[np.abs(w_est2) < w_threshold] = 0
-        w_est_binary = np.float32(np.abs(w_est2) >= w_threshold)
 
         logging.info('FINISHED')
 
-        return w_est_binary
+        return w_est2
