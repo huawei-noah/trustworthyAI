@@ -46,6 +46,13 @@ class MetricsDAG(object):
     """
 
     def __init__(self, B_est, B_true):
+        
+        if not isinstance(B_est, np.ndarray):
+            raise TypeError("Input B_est is not numpy.ndarray!")
+
+        if not isinstance(B_true, np.ndarray):
+            raise TypeError("Input B_true is not numpy.ndarray!")
+
         self.B_est = copy.deepcopy(B_est)
         self.B_true = copy.deepcopy(B_true)
 

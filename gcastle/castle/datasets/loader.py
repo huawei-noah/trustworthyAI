@@ -13,57 +13,40 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .simulation import DAG, IIDSimulation
-from .simulation import Topology, THPSimulation
+from .builtin_dataset import *
 
 
-def load_dataset(name='iid_test'):
+def load_dataset(name='IID_Test', root=None, download=False):
     """
     A function for loading some well-known datasets.
 
     Parameters
     ----------
-    name: str, ('iid_test' or 'thp_test'), default='iid_test'
+    name: class, default='IID_Test'
         Dataset name, independent and identically distributed (IID),
-        Topological Hawkes Process (THP)
+        Topological Hawkes Process (THP) and real datasets.
+    root: str
+        Root directory in which the dataset will be saved.
+    download: bool
+        If true, downloads the dataset from the internet and
+        puts it in root directory. If dataset is already downloaded, it is not
+        downloaded again.
 
     Return
     ------
     out: tuple
-        if name='iid_test':
-            true_dag: np.ndarray
-                adjacency matrix for the target causal graph.
-            X: np.ndarray
-                standard trainning dataset.
-        if name='thp_test':
-            true_dag: numpy.matrix
-                adjacency matrix for the target causal graph.
-            topology_matrix: numpy.matrix
-                adjacency matrix for the topology.
-            X: pandas.core.frame.DataFrame
-                standard trainning dataset.
+        true_graph_matrix: numpy.matrix
+            adjacency matrix for the target causal graph.
+        topology_matrix: numpy.matrix
+            adjacency matrix for the topology.
+        data: pandas.core.frame.DataFrame
+            standard trainning dataset.
     """
 
-    if name.lower() == 'iid_test':
-        weighted_random_dag = DAG.erdos_renyi(n_nodes=10, n_edges=20, 
-                                              weight_range=(0.5, 2.0),
-                                              seed=1)
-        dataset = IIDSimulation(W=weighted_random_dag, n=2000, 
-                                method='linear', sem_type='gauss')
-        true_dag, X = dataset.B, dataset.X
-
-        return true_dag, X
-        
-    elif name.lower() == 'thp_test':
-        true_dag = DAG.erdos_renyi(n_nodes=10, n_edges=10)
-        topology_matrix = Topology.erdos_renyi(n_nodes=20, n_edges=20)
-        simulator = THPSimulation(true_dag, topology_matrix, 
-                                  mu_range=(0.00005, 0.0001),
-                                  alpha_range=(0.005, 0.007))
-        X = simulator.simulate(T=25000, max_hop=2)
-
-        return true_dag, topology_matrix, X
-
-    else:
-        raise ValueError('The value of name must be iid_test or thp_test, '
-                         'but got {}'.format(name))
+    if name not in DataSetRegistry.meta.keys():
+        raise ValueError('The dataset {} has not been registered, you can use'
+                         ' ''castle.datasets.__builtin_dataset__'' to get registered '
+                         'dataset list'.format(name))
+    loader = DataSetRegistry.meta.get(name)()
+    loader.load(root, download)
+    return loader.data, loader.true_graph_matrix, loader.topology_matrix

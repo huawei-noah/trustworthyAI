@@ -13,4 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .gran_dag import GraNDAG
+
+from castle.backend import backend
+
+if backend == 'pytorch':
+    from .torch import GraNDAG
+elif backend == 'mindspore':
+    from .mindspore import GraNDAG

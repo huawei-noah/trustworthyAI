@@ -1,0 +1,17 @@
+algorithm_params:
+  method: nonlinear
+  n: 1000
+  n_edges: 5
+  n_nodes: 5
+  noise_scale: 1
+  seed: null
+  sem_type: mlp
+  weight_range: null
+dataset_params:
+  dag_file: /opt/home/hym/gcastle/data/true_dag_2.npz
+  path: /opt/home/hym/gcastle/data
+  x_file: /opt/home/hym/gcastle/data/sample_2.csv
+task_params:
+  algorithm: IID_NONLINEAR
+  task_name: nll
+  task_type: 1

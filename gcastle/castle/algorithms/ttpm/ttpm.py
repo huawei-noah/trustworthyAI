@@ -19,10 +19,7 @@ import numpy as np
 import networkx as nx
 from itertools import product
 
-from castle.common import BaseLearner
-
-
-logging.basicConfig(level=logging.INFO, format='%(asctime)s %(message)s')
+from castle.common import BaseLearner, Tensor
 
 
 class TTPM(BaseLearner):
@@ -61,14 +58,14 @@ class TTPM(BaseLearner):
     >>> from castle.datasets import load_dataset
     >>> from castle.algorithms import TTPM
     # Data Simulation for TTPM
-    >>> true_causal_matrix, topology_matrix, X = load_dataset(name='thp_test')
+    >>> X, true_causal_matrix, topology_matrix = load_dataset('THP_Test')
     >>> ttpm = TTPM(topology_matrix, max_hop=2)
     >>> ttpm.learn(X)
     >>> causal_matrix = ttpm.causal_matrix
     # plot est_dag and true_dag
-    >>> GraphDAG(ttpm.causal_matrix.values, true_causal_matrix)
+    >>> GraphDAG(ttpm.causal_matrix, true_causal_matrix)
     # calculate accuracy
-    >>> ret_metrix = MetricsDAG(ttpm.causal_matrix.values, true_causal_matrix)
+    >>> ret_metrix = MetricsDAG(ttpm.causal_matrix, true_causal_matrix)
     >>> ret_metrix.metrics
     """
 
@@ -124,9 +121,9 @@ class TTPM(BaseLearner):
 
         # Generate causal matrix (DAG)
         _, raw_causal_matrix = self._hill_climb()
-        self._causal_matrix = pd.DataFrame(raw_causal_matrix,
-                                           index=self._matrix_names,
-                                           columns=self._matrix_names)
+        self._causal_matrix = Tensor(raw_causal_matrix,
+                                     index=self._matrix_names,
+                                     columns=self._matrix_names)
 
     def _start_init(self, tensor):
         """

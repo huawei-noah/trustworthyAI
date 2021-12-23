@@ -2,7 +2,7 @@
 
 [English Version](./README.md)
 
-1.0.3rc1 版本预发布
+1.0.3rc2 版本发布
 
 ## 简介
 
@@ -11,7 +11,6 @@
 * 数据生成及处理: 包含各种模拟数据生成算子，数据读取算子，数据处理算子（如先验灌入，变量选择，CRAM）。
 * 因果图构建: 提供了一个因果结构学习python算法库，包含了主流的因果学习算法以及最近兴起的基于梯度的因果结构学习算法。
 * 因果评价: 提供了常用的因果结构学习性能评价指标，包括F1, SHD, FDR, TPR, FDR, NNZ等。
-<!--* 因果可视化: 直观展示因果结构（特别是大规模因果结构图），包含整体展示，局部展示及导出功能。-->
 
 
 ## 算法列表
@@ -29,10 +28,9 @@
 | [GOLEM](https://arxiv.org/abs/2006.10201) | IID/Gradient-based | 一种基于NOTEARS、通过减少优化循环次数提升训练效率的因果结构学习算法 | v1.0.1 |
 | [GraNDAG](https://arxiv.org/abs/1906.02226) | IID/Gradient-based | 一种深度可微分、针对非线性加性噪声数据模型的因果结构学习算法 | v1.0.1 |
 | [MCSL](https://arxiv.org/abs/1910.08527) | IID/Gradient-based | 一种基于掩码梯度的因果结构学习算法 | v1.0.1 |
-| [GAE](https://arxiv.org/abs/1911.07420) | IID/Gradient-based | 一种基于图自编码器的因果发现算法 | v1.0.1 |
+| [GAE](https://arxiv.org/abs/1911.07420) | IID/Gradient-based | 一种基于图自编码器的因果发现算法 | testing |
 | [RL](https://arxiv.org/abs/1906.04477) | IID/Gradient-based | 一种基于强化学习的因果发现算法 | v1.0.3rc1 |
-| [CORL1](https://arxiv.org/abs/2105.06631) | IID/Gradient-based | 一种基于强化学习搜索因果序的因果发现方法 | v1.0.3rc1 |
-| [CORL2](https://arxiv.org/abs/2105.06631) | IID/Gradient-based | 一种基于强化学习搜索因果序的因果发现方法 | v1.0.3rc1 |
+| [CORL](https://arxiv.org/abs/2105.06631) | IID/Gradient-based | 一种基于强化学习搜索因果序的因果发现方法 | v1.0.3rc1 |
 | [TTPM](https://arxiv.org/abs/2105.10884) | EventSequence/Function-based | 一种针对时空事件序列的基于时空Hawkes Process的因果结构学习算法 | v1.0.1 |
 | [HPCI](https://arxiv.org/abs/2105.03092) | EventSequence/Hybrid | 一种针对时序事件序列的基于Hawkes Process和CI tests的因果结构学习算法 | 开发中 |
 
@@ -40,20 +38,19 @@
 ## 获取和安装
 
 ### 依赖
-- python (>= 3.5,<= 3.7)
+- python (>= 3.6, <=3.9)
 - tqdm (>= 4.48.2)
-- numpy (>= 1.19.2)
+- numpy (>= 1.19.1)
 - pandas (>= 0.22.0)
-- scipy (>= 1.4.1)
+- scipy (>= 1.7.3)
 - scikit-learn (>= 0.21.1)
 - matplotlib (>=2.1.2)
 - networkx (>= 2.5)
-- torch (>= 1.4.0)
-- tensorflow (~=1.15.0)
+- torch (>= 1.9.0)
 
 ### PIP安装
 ```bash
-pip install gcastle==1.0.3rc1
+pip install gcastle==1.0.3rc2
 ```
 
 ## 算法使用指导

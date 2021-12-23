@@ -1,9 +1,7 @@
 tqdm>=4.48.2
 numpy>=1.19.1
 pandas>=0.22.0
-scipy>=1.4.1
+scipy>=1.7.3
 scikit-learn>=0.21.1
 matplotlib>=2.1.2
 networkx>=2.5
-torch>=1.4.0
-tensorflow~=1.15.0

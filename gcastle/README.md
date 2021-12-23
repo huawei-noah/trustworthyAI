@@ -2,7 +2,7 @@
 
 [中文版本](./README.cn.md)
 
-Version 1.0.3rc1 (pre-release).
+Version 1.0.3rc2 released.
 
 The real datasets (id:10, 21, 22) used in [PCIC Causal Discovery Competition 2021 ](https://competition.huaweicloud.com/information/1000041487/introduction) have been released on the github: [temporary link](https://github.com/gcastle-hub/dataset).
 
@@ -28,10 +28,9 @@ gCastle is a causal structure learning toolchain developed by [Huawei Noah's Ark
 | [GOLEM](https://arxiv.org/abs/2006.10201) | IID/Gradient-based | A more efficient version of NOTEARS that can reduce number of optimization iterations | v1.0.1 |
 | [GraNDAG](https://arxiv.org/abs/1906.02226) | IID/Gradient-based | A gradient-based algorithm using neural network modeling for non-linear additive noise data  | v1.0.1 |
 | [MCSL](https://arxiv.org/abs/1910.08527) | IID/Gradient-based | A gradient-based algorithm for non-linear additive noise data by learning the binary adjacency matrix| v1.0.1 |
-| [GAE](https://arxiv.org/abs/1911.07420) | IID/Gradient-based | A gradient-based algorithm using graph autoencoder to model non-linear causal relationships| v1.0.1 |
+| [GAE](https://arxiv.org/abs/1911.07420) | IID/Gradient-based | A gradient-based algorithm using graph autoencoder to model non-linear causal relationships| testing |
 | [RL](https://arxiv.org/abs/1906.04477) | IID/Gradient-based | A RL-based algorithm that can work with flexible score functions (including non-smooth ones) | v1.0.3rc1 |
-| [CORL1](https://arxiv.org/abs/2105.06631) | IID/Gradient-based | A RL- and order-based algorithm that improves the efficiency and scalability of previous RL-based approach | v1.0.3rc1 |
-| [CORL2](https://arxiv.org/abs/2105.06631) | IID/Gradient-based | A RL- and order-based algorithm that improves the efficiency and scalability of previous RL-based approach | v1.0.3rc1 |
+| [CORL](https://arxiv.org/abs/2105.06631) | IID/Gradient-based | A RL- and order-based algorithm that improves the efficiency and scalability of previous RL-based approach | v1.0.3rc1 |
 | [TTPM](https://arxiv.org/abs/2105.10884) | EventSequence/Function-based | A causal structure learning algorithm based on Topological Hawkes process for spatio-temporal event sequences |v1.0.1 |
 | [HPCI](https://arxiv.org/abs/2105.03092) | EventSequence/Hybrid | A causal structure learning algorithm based on Hawkes process and CI tests for event sequences | under development. |
 
@@ -40,23 +39,23 @@ gCastle is a causal structure learning toolchain developed by [Huawei Noah's Ark
 
 ### Dependencies
 gCastle requires:
-- python (>= 3.5,<= 3.7)
+- python (>= 3.6, <=3.9)
 - tqdm (>= 4.48.2)
-- numpy (>= 1.19.2)
+- numpy (>= 1.19.1)
 - pandas (>= 0.22.0)
-- scipy (>= 1.4.1)
+- scipy (>= 1.7.3)
 - scikit-learn (>= 0.21.1)
 - matplotlib (>=2.1.2)
 - networkx (>= 2.5)
-- torch (>= 1.4.0)
-- tensorflow (~=1.15.0)
+- torch (>= 1.9.0)
+
 
  Note that the tensorflow dependency will be removed in the next version (v1.0.3, 2021.12.15), we are making efforts to rewrite some algorithms, such as MCSL, GOLEM, fully based on pytorch.
 
 
 ### PIP installation
 ```bash
-pip install gcastle==1.0.3rc1
+pip install gcastle==1.0.3rc2
 ```
 
 ## Usage Example (PC algorithm)

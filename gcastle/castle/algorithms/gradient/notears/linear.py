@@ -29,13 +29,10 @@ from scipy.special import expit as sigmoid
 from castle.common import BaseLearner, Tensor
 
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s %(message)s')
-
-
 class Notears(BaseLearner):
     """
     Notears Algorithm.
-    A classic causal discovery algorithm based on conditional independence tests.
+    A gradient-based algorithm for linear data models (typically with least-squares loss).
 
     Parameters
     ----------
@@ -67,7 +64,7 @@ class Notears(BaseLearner):
     >>> from castle.datasets import load_dataset
     >>> from castle.common import GraphDAG
     >>> from castle.metrics import MetricsDAG
-    >>> true_dag, X = load_dataset(name='iid_test')
+    >>> X, true_dag, _ = load_dataset('IID_Test')
     >>> n = Notears()
     >>> n.learn(X)
     >>> GraphDAG(n.causal_matrix, true_dag)
@@ -91,7 +88,7 @@ class Notears(BaseLearner):
         self.rho_max = rho_max
         self.w_threshold = w_threshold
 
-    def learn(self, data):
+    def learn(self, data, columns=None, **kwargs):
         """
         Set up and run the Notears algorithm.
 
@@ -99,26 +96,26 @@ class Notears(BaseLearner):
         ----------
         data: castle.Tensor or numpy.ndarray
             The castle.Tensor or numpy.ndarray format data you want to learn.
+        columns : Index or array-like
+            Column labels to use for resulting tensor. Will default to
+            RangeIndex (0, 1, 2, ..., n) if no column labels are provided.
         """
-        if isinstance(data, np.ndarray):
-            X = data
-        elif isinstance(data, Tensor):
-            X = data.data
-        else:
-            raise TypeError('The type of data must be '
-                            'Tensor or numpy.ndarray, but got {}'
-                            .format(type(data)))
+        X = Tensor(data, columns=columns)
 
-        causal_matrix = self.notears_linear(X, lambda1=self.lambda1, 
-                                            loss_type=self.loss_type, 
-                                            max_iter=self.max_iter, 
-                                            h_tol=self.h_tol, 
-                                            rho_max=self.rho_max, 
-                                            w_threshold=self.w_threshold)
-        self.causal_matrix = causal_matrix
+        W_est = self.notears_linear(X, lambda1=self.lambda1, 
+                                    loss_type=self.loss_type, 
+                                    max_iter=self.max_iter, 
+                                    h_tol=self.h_tol, 
+                                    rho_max=self.rho_max)
+        causal_matrix = (abs(W_est) > self.w_threshold).astype(int)
+        self.weight_causal_matrix = Tensor(W_est,
+                                           index=X.columns,
+                                           columns=X.columns)
+        self.causal_matrix = Tensor(causal_matrix, index=X.columns,
+                                    columns=X.columns)
 
     def notears_linear(self, X, lambda1, loss_type, max_iter, h_tol, 
-                       rho_max, w_threshold):
+                       rho_max):
         """
         Solve min_W L(W; X) + lambda1 ‖W‖_1 s.t. h(W) = 0 using 
         augmented Lagrangian.
@@ -218,8 +215,7 @@ class Notears(BaseLearner):
                 break
 
         W_est = _adj(w_est)
-        W_est[np.abs(W_est) < w_threshold] = 0
 
         logging.info('FINISHED')
 
-        return (W_est != 0).astype(int)
+        return W_est

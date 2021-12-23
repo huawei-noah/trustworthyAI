@@ -40,6 +40,12 @@ class GraphDAG(object):
         self.show = show
         self.save_name = save_name
 
+        if not isinstance(est_dag, np.ndarray):
+            raise TypeError("Input est_dag is not numpy.ndarray!")
+
+        if true_dag is not None and not isinstance(true_dag, np.ndarray):
+            raise TypeError("Input true_dag is not numpy.ndarray!")
+
         if not show and save_name is None:
             raise ValueError('Neither display nor save the picture! ' + \
                              'Please modify the parameter show or save_name.')
@@ -106,6 +112,3 @@ class GraphDAG(object):
                 fig.savefig(save_name)
             if show:
                 plt.show()
-
-        else:
-            raise TypeError("Input data is not numpy.ndarray!")

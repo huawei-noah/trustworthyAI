@@ -24,7 +24,7 @@ from castle.common import BaseLearner, Tensor
 class DirectLiNGAM(_BaseLiNGAM, BaseLearner):
     """
     DirectLiNGAM Algorithm.
-    A classic causal discovery algorithm based on conditional independence tests.
+    A direct learning algorithm for linear non-Gaussian acyclic model (LiNGAM).
     Implementation of DirectLiNGAM Algorithm [1]_ [2]_, Construct a DirectLiNGAM model.
 
     Parameters
@@ -39,11 +39,15 @@ class DirectLiNGAM(_BaseLiNGAM, BaseLearner):
         * ``-1`` : No prior knowledge is available to know if either of the two cases above (0 or 1) is true.
     measure : {'pwling', 'kernel'}, default='pwling'
         Measure to evaluate independence: 'pwling' [2]_ or 'kernel' [1]_.
+    thresh : float,  default='0.3'
+        Drop edge if |weight| < threshold
 
     Attributes
     ----------
     causal_matrix : numpy.ndarray
         Learned causal structure matrix.
+    weight_causal_matrix: numpy.ndarray
+        Learned weighted causal structure matrix.
 
     References
     ----------
@@ -59,7 +63,7 @@ class DirectLiNGAM(_BaseLiNGAM, BaseLearner):
     >>> from castle.datasets import load_dataset
     >>> from castle.common import GraphDAG
     >>> from castle.metrics import MetricsDAG
-    >>> true_dag, X = load_dataset(name='iid_test')
+    >>> X, true_dag, _ = load_dataset(name='IID_Test')
     >>> n = DirectLiNGAM()
     >>> n.learn(X)
     >>> GraphDAG(n.causal_matrix, true_dag)
@@ -67,14 +71,15 @@ class DirectLiNGAM(_BaseLiNGAM, BaseLearner):
     >>> print(met.metrics)
     """
 
-    def __init__(self, prior_knowledge=None, measure='pwling'):
+    def __init__(self, prior_knowledge=None, measure='pwling', thresh=0.3):
 
         super().__init__()
 
         self._prior_knowledge = prior_knowledge
         self._measure = measure
+        self._thresh = thresh
 
-    def learn(self, data, thres=0.3):
+    def learn(self, data, columns=None):
         """
         Set up and run the DirectLiNGAM algorithm.
 
@@ -82,19 +87,24 @@ class DirectLiNGAM(_BaseLiNGAM, BaseLearner):
         ----------
         data: castle.Tensor or numpy.ndarray
             The castle.Tensor or numpy.ndarray format data you want to learn.
+        columns : Index or array-like
+            Column labels to use for resulting tensor. Will default to
+            RangeIndex (0, 1, 2, ..., n) if no column labels are provided.
         """
-        if isinstance(data, np.ndarray):
-            X = data
-        elif isinstance(data, Tensor):
-            X = data.data
-        else:
-            raise TypeError('The type of data must be '
-                            'Tensor or numpy.ndarray, but got {}'
-                            .format(type(data)))
+
+        X = Tensor(data, columns=columns)
     
         self.fit(X)
-        causal_matrix = (abs(self.adjacency_matrix_) > thres).astype(int).T
-        self.causal_matrix = causal_matrix
+        
+        weight_causal_matrix = self.adjacency_matrix_.T
+        self.weight_causal_matrix = Tensor(weight_causal_matrix,
+                                           index=X.columns,
+                                           columns=X.columns)
+
+        causal_matrix = (abs(self.adjacency_matrix_) > self._thresh).astype(int).T
+        self.causal_matrix = Tensor(causal_matrix,
+                                    index=X.columns,
+                                    columns=X.columns)
 
     def fit(self, X):
         """

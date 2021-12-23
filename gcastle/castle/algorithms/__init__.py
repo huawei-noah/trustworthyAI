@@ -16,16 +16,16 @@
 from .ttpm import TTPM
 from .lingam import DirectLiNGAM
 from .lingam import ICALiNGAM
-from .gradient import Notears
-from .gradient import NotearsMLP
-from .gradient import NotearsSob
-from .gradient import NotearsLowRank
-from .gradient import GOLEM
-from .gradient import GAE
-from .gradient import MCSL
-from .gradient import RL
-from .gradient import CORL1
-from .gradient import CORL2
-from .gradient import GraNDAG
 from .pc import PC
 from .anm import ANMNonlinear
+from .gradient.notears import Notears
+from .gradient.notears import NotearsLowRank
+
+from ..backend import backend, logging
+
+if backend == 'pytorch':
+    from ..backend.pytorch import *
+elif backend == 'mindspore':
+    from ..backend.mindspore import *
+
+logging.info(f"You are using ``{backend}`` as the backend.")

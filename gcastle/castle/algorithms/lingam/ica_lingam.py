@@ -25,7 +25,7 @@ from castle.common import BaseLearner, Tensor
 class ICALiNGAM(_BaseLiNGAM, BaseLearner):
     """
     ICALiNGAM Algorithm.
-    A classic causal discovery algorithm based on conditional independence tests.
+    An ICA-based learning algorithm for linear non-Gaussian acyclic model (LiNGAM).
     Implementation of ICA-based LiNGAM Algorithm [1]_, Construct a ICA-based LiNGAM model.
 
     Parameters
@@ -34,11 +34,15 @@ class ICALiNGAM(_BaseLiNGAM, BaseLearner):
         ``random_state`` is the seed used by the random number generator.
     max_iter : int, optional (default=1000)
         The maximum number of iterations of FastICA.
+    thresh : float,  default='0.3'
+        Drop edge if |weight| < threshold
 
     Attributes
     ----------
     causal_matrix : numpy.ndarray
         Learned causal structure matrix
+    weight_causal_matrix: numpy.ndarray
+        Learned weighted causal structure matrix.
 
     References
     ----------
@@ -52,7 +56,7 @@ class ICALiNGAM(_BaseLiNGAM, BaseLearner):
     >>> from castle.datasets import load_dataset
     >>> from castle.common import GraphDAG
     >>> from castle.metrics import MetricsDAG
-    >>> true_dag, X = load_dataset(name='iid_test')
+    >>> X, true_dag, _ = load_dataset(name='IID_Test')
     >>> n = ICALiNGAM()
     >>> n.learn(X)
     >>> GraphDAG(n.causal_matrix, true_dag)
@@ -60,32 +64,36 @@ class ICALiNGAM(_BaseLiNGAM, BaseLearner):
     >>> print(met.metrics)
     """
 
-    def __init__(self, random_state=None, max_iter=1000):
+    def __init__(self, random_state=None, max_iter=1000, thresh=0.3):
 
         super().__init__()
-        self._max_iter = max_iter
+        
         self._random_state = random_state
+        self._max_iter = max_iter
+        self._thresh = thresh
 
-    def learn(self, data, thres=0.3):
+    def learn(self, data, columns=None):
         """
         Set up and run the ICALiNGAM algorithm.
 
         ----------
         data: castle.Tensor or numpy.ndarray
             The castle.Tensor or numpy.ndarray format data you want to learn.
+        columns : Index or array-like
+            Column labels to use for resulting tensor. Will default to
+            RangeIndex (0, 1, 2, ..., n) if no column labels are provided.
         """
-        if isinstance(data, np.ndarray):
-            X = data
-        elif isinstance(data, Tensor):
-            X = data.data
-        else:
-            raise TypeError('The type of data must be '
-                            'Tensor or numpy.ndarray, but got {}'
-                            .format(type(data)))
+        X = Tensor(data, columns=columns)
 
         self.fit(X)
-        causal_matrix = (abs(self.adjacency_matrix_) > thres).astype(int).T
-        self.causal_matrix = causal_matrix
+
+        weight_causal_matrix = self.adjacency_matrix_.T
+        self.weight_causal_matrix = Tensor(weight_causal_matrix,
+                                           index=X.columns, columns=X.columns)
+
+        causal_matrix = (abs(self.adjacency_matrix_) > self._thresh).astype(int).T
+        self.causal_matrix = Tensor(causal_matrix,
+                                    index=X.columns, columns=X.columns)
 
     def fit(self, X):
         """

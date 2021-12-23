@@ -13,9 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-__version__ = "1.0.3rc1"
+__version__ = "1.0.3rc2"
 
 
 import sys
 if sys.version_info < (3, 6):
     sys.exit('Sorry, Python < 3.6 is not supported.')
+
+

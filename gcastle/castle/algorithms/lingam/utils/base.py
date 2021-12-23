@@ -18,7 +18,6 @@ from abc import ABCMeta, abstractmethod
 
 import numpy as np
 from sklearn.utils import check_array
-from sklearn.linear_model import LinearRegression
 from sklearn.linear_model import LassoLarsIC, LinearRegression
 
 from .bootstrap import BootstrapMixin

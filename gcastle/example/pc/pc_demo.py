@@ -24,15 +24,16 @@ Warnings: This script is used only for demonstration and cannot be directly
         imported.
 """
 
+import pandas as pd
 from castle.common import GraphDAG
 from castle.metrics import MetricsDAG
 from castle.datasets import DAG, IIDSimulation
 from castle.algorithms import PC
 
 
-method = 'nonlinear'
+method = 'linear'
 sem_type = 'gauss'
-n_nodes = 12
+n_nodes = 8
 n_edges = 15
 n = 2000
 
@@ -40,9 +41,9 @@ n = 2000
 weighted_random_dag = DAG.erdos_renyi(n_nodes=n_nodes, n_edges=n_edges, weight_range=(0.5, 2.0), seed=1)
 dataset = IIDSimulation(W=weighted_random_dag, n=n, method=method, sem_type=sem_type)
 true_dag, X = dataset.B, dataset.X
-X.dump()
 # PC learn
 pc = PC(variant='original')
+X = pd.DataFrame(X, columns=list('abcdefgh'))
 pc.learn(X)
 
 # plot predict_dag and true_dag

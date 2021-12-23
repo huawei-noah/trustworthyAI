@@ -16,7 +16,8 @@
 
 import numpy as np
 import pandas as pd
-from tqdm import tqdm
+from collections.abc import Iterable
+from pandas import Index, RangeIndex
 
 
 class BaseLearner(object):
@@ -38,44 +39,194 @@ class BaseLearner(object):
         self._causal_matrix = value
 
 
-class Tensor(object):
-    """
-    A Tensor is a common data structure in gCastle, it's mainly used to
-    standardize what we input into the learning algorithms. It supports
-    various types data reading, including 'numpy.ndarray', 
-    'pandas.DataFrame', etc.
+class Tensor(np.ndarray):
+    """A subclass of numpy.ndarray.
+
+    This subclass has all attributes and methods of numpy.ndarray
+    with two additional, user-defined attributes: `index` and `columns`.
+
+    It can be used in the same way as a standard numpy.ndarray.
+    However, after performing any operations on the Tensor (e.g., slicing,
+    transposing, arithmetic, etc.), the user-defined attribute values of
+    `index` and `columns` will be lost and replaced with a numeric indices.
 
     Parameters
     ----------
-    indata: numpy.ndarray or pandas.DataFrame
-        Input object, can be a two-dimensional data for ndarray/DataFrame.
+    object: array-like
+        Multiple list, ndarray, DataFrame
+    index : Index or array-like
+        Index to use for resulting tensor. Will default to RangeIndex if
+        no indexing information part of input data and no index provided.
+    columns : Index or array-like
+        Column labels to use for resulting tensor. Will default to
+        RangeIndex (0, 1, 2, ..., n) if no column labels are provided.
+
+    Examples
+    --------
+    Create a Tensor from a list or numpy.ndarray.
+
+    >>> x = [[0, 3, 8, 1],
+    ...      [8, 4, 1, 9],
+    ...      [7, 3, 3, 7]]
+
+    Or
+
+    >>> x = np.random.randint(0, 10, size=12).reshape((3, 4))
+    >>> arr = Tensor(x)
+    >>> arr
+    Tensor([[0, 3, 8, 1],
+            [8, 4, 1, 9],
+            [7, 3, 3, 7]])
+    >>> arr.index
+    RangeIndex(start=0, stop=3, step=1)
+    >>> list(arr.index)
+    [0, 1, 2]
+    >>> arr.columns
+    RangeIndex(start=0, stop=4, step=1)
+    >>> list(arr.columns)
+    [0, 1, 2, 3]
+
+    `index` and `columns` can be set using kwargs.
+
+    >>> arr = Tensor(x, index=list('XYZ'), columns=list('ABCD'))
+    >>> arr
+    Tensor([[6, 1, 8, 9],
+            [1, 5, 2, 1],
+            [5, 9, 4, 5]])
+    >>> arr.index
+    Index(['x', 'y', 'z'], dtype='object')
+    >>> arr.columns
+    Index(['a', 'b', 'c', 'd'], dtype='object')
+
+    Or a value can be assigned to `arr.index` or `arr.columns`,
+    but it must be an `Iterable`.
+
+    >>> arr.index = list('xyz')
+    >>> arr.index
+    Index(['x', 'y', 'z'], dtype='object')
+    >>> arr.columns = list('abcd')
+    >>> arr.columns
+    Index(['a', 'b', 'c', 'd'], dtype='object')
+
+    A Tensor can also be created from a pandas.DataFrame.
+
+    >>> x = pd.DataFrame(np.random.randint(0, 10, size=12).reshape((3, 4)),
+    ...                  index=list('xyz'),
+    ...                  columns=list('abcd'))
+    >>> x
+       a  b  c  d
+    x  6  1  8  9
+    y  1  5  2  1
+    z  5  9  4  5
+    >>> arr = Tensor(x)
+    >>> arr
+    Tensor([[6, 1, 8, 9],
+            [1, 5, 2, 1],
+            [5, 9, 4, 5]])
+    >>> arr.index
+    Index(['x', 'y', 'z'], dtype='object')
+    >>> arr.columns
+    Index(['a', 'b', 'c', 'd'], dtype='object')
+
+    It's possible to use any method of numpy.ndarray on the Tensor,
+    such as `sum`, `@`, etc.
+
+    >>> arr.sum(axis=0)
+    Tensor([15, 10, 12, 17])
+    >>> arr @ arr.T
+    Tensor([[ 74,  29,  40],
+            [ 29, 162, 134],
+            [ 40, 134, 116]])
+
+    If the Tensor is sliced, the values of `index` and `columns` will disappear,
+    and new values of type `RangeIndex` will be created.
+
+    >>> new_arr = arr[:, 1:3]
+    >>> new_arr
+    Tensor([[1, 8],
+            [5, 2],
+            [9, 4]])
+    >>> new_arr.index
+    RangeIndex(start=0, stop=3, step=1)
+    >>> new_arr.columns
+    RangeIndex(start=0, stop=2, step=1)
+
+    If you want to retain the values of `index` and `columns`,
+    you can reassign them.
+
+    >>> new_arr.index = arr.index[:]
+    >>> new_arr.index
+    Index(['x', 'y', 'z'], dtype='object')
+
+    >>> new_arr.columns = arr.columns[1:3]
+    >>> new_arr.columns
+    Index(['b', 'c'], dtype='object')
+
+    We recommend performing slicing operations in the following way
+    to keep the `index` and `columns` values.
+
+    >>> new_arr = Tensor(array=arr[:, 1:3],
+    ...                  index=arr.index[:, 1:3],
+    ...                  columns=arr.columns[:, 1:3])
+    >>> new_arr.index
+    Index(['x', 'y', 'z'], dtype='object')
+    >>> new_arr.columns
+    Index(['b', 'c'], dtype='object')
     """
 
-    def __init__(self, indata):
+    def __new__(cls, object=None, index=None, columns=None):
 
-        self._set_tensor(indata)
-
-    def _set_tensor(self, indata):
-        """
-        Set tensor for input data.
-
-        Parameters
-        ----------
-        indata: numpy.ndarray or pandas.DataFrame
-            Input object, can be a 2 or 3 dimensional ndarray or a DataFrame.
-
-        Return
-        ------
-        tensor: castle.tensor
-            Output castle.tensor(data) format object.
-        """
-
-        if isinstance(indata, np.ndarray):
-            if indata.ndim == 2 or indata.ndim == 3:
-                self.data = indata
-            else:
-                raise TypeError("Input numpy.ndarray ndim error!") 
-        elif isinstance(indata, pd.DataFrame):
-            self.data = indata.values
+        if object is None:
+            raise TypeError("Tensor() missing required argument 'object' (pos 0)")
+        elif isinstance(object, list):
+            object = np.array(object)
+        elif isinstance(object, pd.DataFrame):
+            index = object.index
+            columns = object.columns
+            object = object.values
+        elif isinstance(object, (np.ndarray, cls)):
+            pass
         else:
-            raise TypeError("Input data is not numpy.ndarray or pd.DataFrame!") 
+            raise TypeError(
+                "Type of the required argument 'object' must be array-like."
+            )
+        if index is None:
+            index = range(object.shape[0])
+        if columns is None:
+            columns = range(object.shape[1])
+        obj = np.asarray(object).view(cls)
+        obj.index = index
+        obj.columns = columns
+
+        return obj
+
+    def __array_finalize__(self, obj):
+        if obj is None: return
+        if self.ndim == 0: return
+        elif self.ndim == 1:
+            self.columns = RangeIndex(0, 1, step=1, dtype=int)
+        else:
+            self.columns = RangeIndex(0, self.shape[1], step=1, dtype=int)
+        self.index = RangeIndex(0, self.shape[0], step=1, dtype=int)
+
+    @property
+    def index(self):
+        return self._index
+
+    @index.setter
+    def index(self, value):
+        assert isinstance(value, Iterable)
+        if len(list(value)) != self.shape[0]:
+            raise ValueError("Size of value is not equal to the shape[0].")
+        self._index = Index(value)
+
+    @property
+    def columns(self):
+        return self._columns
+
+    @columns.setter
+    def columns(self, value):
+        assert isinstance(value, Iterable)
+        if (self.ndim > 1 and len(list(value)) != self.shape[1]):
+            raise ValueError("Size of value is not equal to the shape[1].")
+        self._columns = Index(value)

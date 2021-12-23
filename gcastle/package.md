@@ -24,8 +24,7 @@
 | [MCSL](https://arxiv.org/abs/1910.08527) | IID | A gradient-based algorithm for non-linear additive noise data by learning the binary adjacency matrix|
 | [GAE](https://arxiv.org/abs/1911.07420) | IID | A gradient-based algorithm using graph autoencoder to model non-linear causal relationships|
 | [RL](https://arxiv.org/abs/1906.04477) | IID | A RL-based algorithm that can work with flexible score functions (including non-smooth ones) |
-| CORL1 | IID | A RL- and order-based algorithm that improves the efficiency and scalability of previous RL-based approach |
-| CORL2 | IID | A RL- and order-based algorithm that improves the efficiency and scalability of previous RL-based approach |
+| [CORL](https://arxiv.org/abs/2105.06631) | IID | A RL- and order-based algorithm that improves the efficiency and scalability of previous RL-based approach |
 | ANM | IID | a causal discovery algorithm based on non-linear additive noise models |
 | TTPM | EVENT SEQUENCE | A causal structure learning algorithm based on Topological Hawkes process for spatio-temporal event sequences |
 
@@ -39,12 +38,11 @@ gCastle requires:
 * tqdm (>= 4.48.2)
 * numpy (>= 1.19.1)
 * pandas (>= 0.22.0)
-* scipy (>= 1.4.1)
+* scipy (>= 1.7.3)
 * scikit-learn (>= 0.21.1)
 * matplotlib (>=2.1.2)
 * networkx (>= 2.5)
-* torch (>= 1.4.0)
-* tensorflow (>= 1.15.0)
+* torch (>= 1.9.0)
 
 ### PIP installation
 

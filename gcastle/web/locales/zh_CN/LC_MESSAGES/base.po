@@ -1,0 +1,85 @@
+msgid ""
+msgstr ""
+
+"Project-Id-Version: 0.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-11-04 11:21+0800\n"
+"PO-Revision-Date: 2018-11-04 11:29+0800\n"
+"Last-Translator: Japin Li <japinli@hotmail.com>\n"
+"Language-Team: Chinese <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/main.py:101
+msgid "Sample Distribution"
+msgstr "样本分布"
+
+#: src/main.py:102
+msgid "Selecting an algorithm"
+msgstr "选择算法"
+
+#: src/main.py:102
+msgid "The verification result is true."
+msgstr "验证结果为true。"
+
+#: src/main.py:103
+msgid "The verification result is false."
+msgstr "校验结果为false。"
+
+#: src/main.py:104
+msgid "evaluation execute failed"
+msgstr "评估执行失败。"
+
+#: src/main.py:106
+msgid "The delete result is true."
+msgstr "删除结果为true。"
+
+#: src/main.py:107
+msgid "The delete result is false."
+msgstr "删除结果为false。"
+
+#: src/main.py:108
+msgid "The save result is true."
+msgstr "保存结果为true。"
+
+#: src/main.py:109
+msgid "The result file does not exist."
+msgstr "结果文件不存在。"
+
+#: src/main.py:120
+msgid "The task type is incorrect."
+msgstr "任务类型不正确。"
+
+#: src/main.py:121
+msgid "The dataset is set successfully."
+msgstr "数据集设置成功。"
+
+#: src/main.py:122
+msgid "The dataset fail to be set."
+msgstr "设置数据集失败。"
+
+#: src/main.py:123
+msgid "The task succeeds to begin to run."
+msgstr "任务开始运行成功。"
+
+#: src/main.py:124
+msgid "The task fails to begin to run."
+msgstr "任务开始运行失败。"
+
+#: src/main.py:125
+msgid "File uploaded successfully."
+msgstr "文件上传成功。"
+
+#: src/main.py:126
+msgid "The configuration file does not exist."
+msgstr "配置文件不存在。"
+
+#: src/main.py:127
+msgid "The language is set successfully."
+msgstr "语言设置成功。"
+
+#: src/main.py:128
+msgid "Failed to set the language."
+msgstr "语言设置失败。"
