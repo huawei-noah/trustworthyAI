@@ -27,139 +27,52 @@ from .critic import Critic
 class Actor(object):
     _logger = logging.getLogger(__name__)
 
-    def __init__(self,
-                 hidden_dim,
-                 max_length,
-                 num_heads,
-                 num_stacks,
-                 residual,
-                 encoder_type,
-                 decoder_type,
-                 decoder_activation,
-                 decoder_hidden_dim,
-                 use_bias,
-                 use_bias_constant,
-                 bias_initial_value,
-                 batch_size,
-                 input_dimension,
-                 lr1_start,
-                 lr1_decay_step,
-                 lr1_decay_rate,
-                 alpha,
-                 init_baseline,
-                 device,
-                 is_train=True
-            ):
+    def __init__(self, config):
+        self.config = config
+        self.is_train = True
+        # Data config
+        self.batch_size = config.batch_size  # batch size
+        self.max_length = config.max_length
+        self.input_dimension = config.input_dimension
 
-        self.input_dimension = input_dimension
-        self.hidden_dim      = hidden_dim
-        self.batch_size      = batch_size
-        self.max_length      = max_length
-        self.num_heads       = num_heads
-        self.num_stacks      = num_stacks
-        self.residual        = residual
-        self.alpha           = alpha
-        self.init_baseline   = init_baseline
-        self.lr1_start       = lr1_start
-        self.lr1_decay_rate  = lr1_decay_rate
-        self.lr1_decay_step  = lr1_decay_step
-        self.encoder_type    = encoder_type
-        self.decoder_type    = decoder_type
-        self.decoder_activation = decoder_activation
-        self.decoder_hidden_dim = decoder_hidden_dim
-        self.use_bias          = use_bias
-        self.use_bias_constant = use_bias_constant
-        self.bias_initial_value = bias_initial_value
-        self.is_train        = is_train
-        self.device          = device
         # Reward config
-        self.avg_baseline = torch.tensor([self.init_baseline],
-                                         device=self.device)  # moving baseline for Reinforce
+        self.avg_baseline = torch.Tensor([config.init_baseline])  # moving baseline for Reinforce
+        self.alpha = config.alpha  # moving average update
 
         # Training config (actor)
         self.global_step = torch.Tensor([0])  # global step
+        self.lr1_start = config.lr1_start  # initial learning rate
+        self.lr1_decay_rate = config.lr1_decay_rate  # learning rate decay rate
+        self.lr1_decay_step = config.lr1_decay_step  # learning rate decay step
 
         # Training config (critic)
         self.global_step2 = torch.Tensor([0])  # global step
-        self.lr2_start = self.lr1_start  # initial learning rate
-        self.lr2_decay_rate = self.lr1_decay_rate  # learning rate decay rate
-        self.lr2_decay_step = self.lr1_decay_step  # learning rate decay step
+        self.lr2_start = config.lr1_start  # initial learning rate
+        self.lr2_decay_rate = config.lr1_decay_rate  # learning rate decay rate
+        self.lr2_decay_step = config.lr1_decay_step  # learning rate decay step
 
         # encoder
-        if self.encoder_type == 'TransformerEncoder':
-            self.encoder = TransformerEncoder(batch_size=self.batch_size,
-                                              max_length=self.max_length,
-                                              input_dimension=self.input_dimension,
-                                              hidden_dim=self.hidden_dim,
-                                              num_heads=self.num_heads,
-                                              num_stacks=self.num_stacks,
-                                              is_train=self.is_train,
-                                              device=self.device)
-        elif self.encoder_type == 'GATEncoder':
-            self.encoder = GATEncoder(batch_size=self.batch_size,
-                                      max_length=self.max_length,
-                                      input_dimension=self.input_dimension,
-                                      hidden_dim=self.hidden_dim,
-                                      num_heads=self.num_heads,
-                                      num_stacks=self.num_stacks,
-                                      residual=self.residual,
-                                      is_train=self.is_train,
-                                      device=self.device)
+        if self.config.encoder_type == 'TransformerEncoder':
+            self.encoder = TransformerEncoder(self.config, self.is_train)
+        elif self.config.encoder_type == 'GATEncoder':
+            self.encoder = GATEncoder(self.config, self.is_train)
         else:
             raise NotImplementedError('Current encoder type is not implemented yet!')
 
         # decoder
-        if self.decoder_type == 'SingleLayerDecoder':
-            self.decoder = SingleLayerDecoder(
-                batch_size=self.batch_size,
-                max_length=self.max_length,
-                input_dimension=self.input_dimension,
-                input_embed=self.hidden_dim,
-                decoder_hidden_dim=self.decoder_hidden_dim,
-                decoder_activation=self.decoder_activation,
-                use_bias=self.use_bias,
-                bias_initial_value=self.bias_initial_value,
-                use_bias_constant=self.use_bias_constant,
-                is_train=self.is_train,
-                device=self.device)
-        elif self.decoder_type == 'TransformerDecoder':
-            self.decoder = TransformerDecoder(batch_size=self.batch_size,
-                                              max_length=self.max_length,
-                                              hidden_dim=self.hidden_dim,
-                                              num_heads=self.num_heads,
-                                              num_stacks=self.num_stacks,
-                                              is_train=self.is_train,
-                                              device=self.device)
-        elif self.decoder_type == 'BilinearDecoder':
-            self.decoder = BilinearDecoder(batch_size=self.batch_size,
-                                           max_length=self.max_length,
-                                           hidden_dim=self.hidden_dim,
-                                           use_bias=self.use_bias,
-                                           bias_initial_value=self.bias_initial_value,
-                                           use_bias_constant=self.use_bias_constant,
-                                           is_train=self.is_train,
-                                           device=self.device)
-        elif self.decoder_type == 'NTNDecoder':
-            self.decoder = NTNDecoder(batch_size=self.batch_size,
-                                      max_length=self.max_length,
-                                      hidden_dim=self.hidden_dim,
-                                      decoder_hidden_dim=self.decoder_hidden_dim,
-                                      decoder_activation=self.decoder_activation,
-                                      use_bias=self.use_bias,
-                                      bias_initial_value=self.bias_initial_value,
-                                      use_bias_constant=self.use_bias_constant,
-                                      is_train=self.is_train,
-                                      device=self.device)
+        if self.config.decoder_type == 'SingleLayerDecoder':
+            self.decoder = SingleLayerDecoder(self.config, self.is_train)
+        elif self.config.decoder_type == 'TransformerDecoder':
+            self.decoder = TransformerDecoder(self.config, self.is_train)
+        elif self.config.decoder_type == 'BilinearDecoder':
+            self.decoder = BilinearDecoder(self.config, self.is_train)
+        elif self.config.decoder_type == 'NTNDecoder':
+            self.decoder = NTNDecoder(self.config, self.is_train)
         else:
             raise NotImplementedError('Current decoder type is not implemented yet!')
 
         # critic
-        self.critic = Critic(batch_size=self.batch_size,
-                             max_length=self.max_length,
-                             input_dimension=self.input_dimension,
-                             hidden_dim=self.hidden_dim,
-                             init_baseline=self.init_baseline,
-                             device=self.device)
+        self.critic = Critic(self.config, self.is_train)
         
         # Optimizer
         self.opt1 = torch.optim.Adam([
@@ -209,12 +122,7 @@ class Actor(object):
 
     def build_critic(self):
         # Critic predicts reward (parametric baseline for REINFORCE)
-        self.critic = Critic(batch_size=self.batch_size,
-                             max_length=self.max_length,
-                             input_dimension=self.input_dimension,
-                             hidden_dim=self.hidden_dim,
-                             init_baseline=self.init_baseline,
-                             device=self.device)
+        self.critic = Critic(self.config, self.is_train)
         self.critic(self.encoder_output)
 
     def build_reward(self, reward_):
@@ -229,7 +137,8 @@ class Actor(object):
         reward_mean, reward_var = torch.mean(self.reward), torch.std(self.reward)
         self.reward_batch = reward_mean
         self.avg_baseline = self.alpha * self.avg_baseline + (1.0 - self.alpha) * reward_mean
-        self.avg_baseline = self.avg_baseline.to(self.device)
+        if self.config.device_type == 'gpu':
+            self.avg_baseline = self.avg_baseline.cuda(self.config.device_ids)
 
         # Discounted reward
         self.reward_baseline = (self.reward - self.avg_baseline - self.critic.predictions).detach()  # [Batch size, 1]

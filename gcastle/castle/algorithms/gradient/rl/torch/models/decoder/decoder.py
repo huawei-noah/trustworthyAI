@@ -21,24 +21,29 @@ import torch.distributions as distr
 
 class BilinearDecoder(nn.Module):
 
-    def __init__(self, batch_size, max_length, hidden_dim, use_bias,
-                 bias_initial_value, use_bias_constant, is_train,
-                 device=None):
+    def __init__(self, config, is_train):
 
         super().__init__()
 
-        self.batch_size = batch_size    # batch size
-        self.max_length = max_length    # input sequence length (number of cities)
-        self.input_dimension = hidden_dim
-        self.input_embed = hidden_dim    # dimension of embedding space (actor)
-        self.use_bias = use_bias
-        self.bias_initial_value = bias_initial_value
-        self.use_bias_constant = use_bias_constant
-        self.device = device
+        self.config = config
+
+        self.batch_size = config.batch_size    # batch size
+        self.max_length = config.max_length    # input sequence length (number of cities)
+        self.input_dimension = config.hidden_dim
+        self.input_embed = config.hidden_dim    # dimension of embedding space (actor)
+        self.max_length = config.max_length
+        self.use_bias = config.use_bias
+        self.bias_initial_value = config.bias_initial_value
+        self.use_bias_constant = config.use_bias_constant
+
         self.is_training = is_train
 
-        self._W = nn.Parameter(torch.Tensor(*(self.input_embed, self.input_embed)).to(self.device))
-        self._l = nn.Parameter(torch.Tensor(1).to(self.device))
+        if self.config.device_type == 'gpu':
+            self._W = nn.Parameter(torch.Tensor(*(self.input_embed, self.input_embed)).cuda(self.config.device_ids))
+            self._l = nn.Parameter(torch.Tensor(1).cuda(self.config.device_ids))
+        else:
+            self._W = nn.Parameter(torch.Tensor(*(self.input_embed, self.input_embed)))
+            self._l = nn.Parameter(torch.Tensor(1))
 
         self.reset_parameters()
 
@@ -75,13 +80,13 @@ class BilinearDecoder(nn.Module):
 
         for i in range(self.max_length):
 
-            position = torch.ones([encoder_output.shape[0]],
-                                  device=self.device) * i
-            position = position.long()
+            position = torch.ones([encoder_output.shape[0]]) * i
+            position = position.type(torch.LongTensor)
 
             # Update mask
-            self.mask = torch.zeros((encoder_output.shape[0], self.max_length),
-                                    device=self.device).scatter_(1, position.view(encoder_output.shape[0], 1), 1)
+            self.mask = torch.zeros(encoder_output.shape[0], self.max_length).scatter_(1, position.view(encoder_output.shape[0], 1), 1)
+            if self.config.device_type == 'gpu':
+                self.mask = self.mask.cuda(self.config.device_ids)
 
             masked_score = self.adj_prob[:,i,:] - 100000000.*self.mask
             prob = distr.Bernoulli(logits=masked_score)  # probs input probability, logit input log_probability
@@ -98,35 +103,43 @@ class BilinearDecoder(nn.Module):
 
 class NTNDecoder(nn.Module):
 
-    def __init__(self, batch_size, max_length, hidden_dim,
-                 decoder_hidden_dim, decoder_activation, use_bias,
-                 bias_initial_value, use_bias_constant, is_train, device=None):
+    def __init__(self, config, is_train):
+
         super().__init__()
 
-        self.batch_size = batch_size    # batch size
-        self.max_length = max_length    # input sequence length (number of cities)
-        self.input_dimension = hidden_dim
-        self.input_embed = hidden_dim  # dimension of embedding space (actor)
-        self.max_length = max_length
-        self.decoder_hidden_dim = decoder_hidden_dim
-        self.decoder_activation = decoder_activation
-        self.use_bias = use_bias
-        self.bias_initial_value = bias_initial_value
-        self.use_bias_constant = use_bias_constant
+        self.config = config
+
+        self.batch_size = config.batch_size    # batch size
+        self.max_length = config.max_length    # input sequence length (number of cities)
+        self.input_dimension = config.hidden_dim
+        self.input_embed = config.hidden_dim    # dimension of embedding space (actor)
+        self.max_length = config.max_length
+        self.decoder_hidden_dim = config.decoder_hidden_dim
+        self.decoder_activation = config.decoder_activation
+        self.use_bias = config.use_bias
+        self.bias_initial_value = config.bias_initial_value
+        self.use_bias_constant = config.use_bias_constant
         self.is_training = is_train
-        self.device = device
 
         if self.decoder_activation == 'tanh':    # Original implementation by paper
             self.activation = nn.Tanh()
         elif self.decoder_activation == 'relu':
             self.activation = nn.ReLU()
 
-        self._w = nn.Parameter(torch.Tensor(*(self.input_embed, self.input_embed, self.decoder_hidden_dim)).to(self.device))
-        self._wl = nn.Parameter(torch.Tensor(*(self.input_embed, self.decoder_hidden_dim)).to(self.device))
-        self._wr = nn.Parameter(torch.Tensor(*(self.input_embed, self.decoder_hidden_dim)).to(self.device))
-        self._u = nn.Parameter(torch.Tensor(*(self.decoder_hidden_dim, 1)).to(self.device))
-        self._b = nn.Parameter(torch.Tensor(*(self.decoder_hidden_dim, 1)).to(self.device))
-        self._l = nn.Parameter(torch.Tensor(1).to(self.device))
+        if self.config.device_type == 'gpu':
+            self._w = nn.Parameter(torch.Tensor(*(self.input_embed, self.input_embed, self.decoder_hidden_dim)).cuda(self.config.device_ids))
+            self._wl = nn.Parameter(torch.Tensor(*(self.input_embed, self.decoder_hidden_dim)).cuda(self.config.device_ids))
+            self._wr = nn.Parameter(torch.Tensor(*(self.input_embed, self.decoder_hidden_dim)).cuda(self.config.device_ids))
+            self._u = nn.Parameter(torch.Tensor(*(self.decoder_hidden_dim, 1)).cuda(self.config.device_ids))
+            self._b = nn.Parameter(torch.Tensor(*(self.decoder_hidden_dim, 1)).cuda(self.config.device_ids))
+            self._l = nn.Parameter(torch.Tensor(1).cuda(self.config.device_ids))
+        else:
+            self._w = nn.Parameter(torch.Tensor(*(self.input_embed, self.input_embed, self.decoder_hidden_dim)))
+            self._wl = nn.Parameter(torch.Tensor(*(self.input_embed, self.decoder_hidden_dim)))
+            self._wr = nn.Parameter(torch.Tensor(*(self.input_embed, self.decoder_hidden_dim)))
+            self._u = nn.Parameter(torch.Tensor(*(self.decoder_hidden_dim, 1)))
+            self._b = nn.Parameter(torch.Tensor(*(self.decoder_hidden_dim, 1)))
+            self._l = nn.Parameter(torch.Tensor(1))
 
         self.reset_parameters()
 
@@ -172,7 +185,7 @@ class NTNDecoder(nn.Module):
         elif self.decoder_activation == 'relu':
             final_sum = self.activation(bilinear_product + linear_sum + B.view(self.decoder_hidden_dim))
         elif self.decoder_activation == 'none':    # Without activation function
-            final_sum = bilinear_product + linear_sum + B.view(self.decoder_hidden_dim)
+            final_sum = bilinear_product + linear_sum + B
         else:
             raise NotImplementedError('Current decoder activation is not implemented yet')
 
@@ -191,12 +204,12 @@ class NTNDecoder(nn.Module):
         self.entropy = []
 
         for i in range(self.max_length):
-            position = torch.ones([encoder_output.shape[0]],
-                                  device=self.device) * i
-            position = position.long()
+            position = torch.ones([encoder_output.shape[0]]) * i
+            position = position.type(torch.LongTensor)
             # Update mask
-            self.mask = torch.zeros((encoder_output.shape[0], self.max_length),
-                                    device=self.device).scatter_(1, position.view(encoder_output.shape[0], 1), 1)
+            self.mask = torch.zeros(encoder_output.shape[0], self.max_length).scatter_(1, position.view(encoder_output.shape[0], 1), 1)
+            if self.config.device_type == 'gpu':
+                self.mask = self.mask.cuda(self.config.device_ids)
 
             masked_score = self.adj_prob[:,i,:] - 100000000.*self.mask
             prob = distr.Bernoulli(logits=masked_score)  # probs input probability, logit input log_probability
@@ -213,22 +226,23 @@ class NTNDecoder(nn.Module):
 
 class SingleLayerDecoder(nn.Module):
 
-    def __init__(self, batch_size, max_length, input_dimension, input_embed,
-                 decoder_hidden_dim, decoder_activation, use_bias,
-                 bias_initial_value, use_bias_constant, is_train, device=None):
+    def __init__(self, config, is_train):
 
         super().__init__()
 
-        self.batch_size = batch_size    # batch size
-        self.max_length = max_length    # input sequence length (number of cities)
-        self.input_dimension = input_dimension
-        self.input_embed = input_embed    # dimension of embedding space (actor)
-        self.decoder_hidden_dim = decoder_hidden_dim
-        self.decoder_activation = decoder_activation
-        self.use_bias = use_bias
-        self.bias_initial_value = bias_initial_value
-        self.use_bias_constant = use_bias_constant
-        self.device = device
+        self.config = config
+
+        self.batch_size = config.batch_size    # batch size
+        self.max_length = config.max_length    # input sequence length (number of cities)
+        self.input_dimension = config.hidden_dim
+        self.input_embed = config.hidden_dim    # dimension of embedding space (actor)
+        self.max_length = config.max_length
+        self.decoder_hidden_dim = config.decoder_hidden_dim
+        self.decoder_activation = config.decoder_activation
+        self.use_bias = config.use_bias
+        self.bias_initial_value = config.bias_initial_value
+        self.use_bias_constant = config.use_bias_constant
+
         self.is_training = is_train
 
         if self.decoder_activation == 'tanh':    # Original implementation by paper
@@ -236,10 +250,16 @@ class SingleLayerDecoder(nn.Module):
         elif self.decoder_activation == 'relu':
             self.activation = nn.ReLU()
 
-        self._wl = nn.Parameter(torch.Tensor(*(self.input_embed, self.decoder_hidden_dim)).to(self.device))
-        self._wr = nn.Parameter(torch.Tensor(*(self.input_embed, self.decoder_hidden_dim)).to(self.device))
-        self._u = nn.Parameter(torch.Tensor(*(self.decoder_hidden_dim, 1)).to(self.device))
-        self._l = nn.Parameter(torch.Tensor(1).to(self.device))
+        if self.config.device_type == 'gpu':
+            self._wl = nn.Parameter(torch.Tensor(*(self.input_embed, self.decoder_hidden_dim)).cuda(self.config.device_ids))
+            self._wr = nn.Parameter(torch.Tensor(*(self.input_embed, self.decoder_hidden_dim)).cuda(self.config.device_ids))
+            self._u = nn.Parameter(torch.Tensor(*(self.decoder_hidden_dim, 1)).cuda(self.config.device_ids))
+            self._l = nn.Parameter(torch.Tensor(1).cuda(self.config.device_ids))
+        else:
+            self._wl = nn.Parameter(torch.Tensor(*(self.input_embed, self.decoder_hidden_dim)))
+            self._wr = nn.Parameter(torch.Tensor(*(self.input_embed, self.decoder_hidden_dim)))
+            self._u = nn.Parameter(torch.Tensor(*(self.decoder_hidden_dim, 1)))
+            self._l = nn.Parameter(torch.Tensor(1))
 
         self.reset_parameters()
 
@@ -294,14 +314,14 @@ class SingleLayerDecoder(nn.Module):
         self.entropy = []
 
         for i in range(self.max_length):
-            position = torch.ones([encoder_output.shape[0]],
-                                  device=self.device) * i
-            position = position.long()
-
+            position = torch.ones([encoder_output.shape[0]]) * i
+            position = position.type(torch.LongTensor)
+            # if self.config.device_type == 'gpu':
+            #     position = position.cuda(self.config.device_ids)
             # Update mask
-            self.mask = torch.zeros((encoder_output.shape[0], self.max_length),
-                                    device=self.device).scatter_(1, position.view(encoder_output.shape[0], 1), 1)
-            self.mask = self.mask.to(self.device)
+            self.mask = torch.zeros(encoder_output.shape[0], self.max_length).scatter_(1, position.view(encoder_output.shape[0], 1), 1)
+            if self.config.device_type == 'gpu':
+                self.mask = self.mask.cuda(self.config.device_ids)
 
             masked_score = self.adj_prob[:,i,:] - 100000000.*self.mask
             prob = distr.Bernoulli(logits=masked_score)  # probs input probability, logit input log_probability
@@ -318,25 +338,36 @@ class SingleLayerDecoder(nn.Module):
 
 class MultiheadAttention(nn.Module):
     
-    def __init__(self, input_dimension, num_units=None, device=None):
+    def __init__(self, config, input_dimension, num_units=None):
 
         super().__init__()
-        self.device = device
 
-        # Linear projections
-        # Q_layer = nn.Linear(in_features=input_dimension, out_features=num_units)
-        self.Q_layer = nn.Sequential(nn.Linear(in_features=input_dimension,
-                                               out_features=num_units),
-                                     nn.ReLU()).to(self.device)
-        self.K_layer = nn.Sequential(nn.Linear(in_features=input_dimension,
-                                               out_features=num_units),
-                                     nn.ReLU()).to(self.device)
-        self.V_layer = nn.Sequential(nn.Linear(in_features=input_dimension,
-                                               out_features=num_units),
-                                     nn.ReLU()).to(self.device)
+        self.config = config
+
+        if self.config.device_type == 'gpu':
+            # Linear projections
+            # Q_layer = nn.Linear(in_features=input_dimension, out_features=num_units)
+            self.Q_layer = nn.Sequential(nn.Linear(in_features=input_dimension, out_features=num_units), 
+                                    nn.ReLU()).cuda(self.config.device_ids)
+            self.K_layer = nn.Sequential(nn.Linear(in_features=input_dimension, out_features=num_units), 
+                                    nn.ReLU()).cuda(self.config.device_ids)
+            self.V_layer = nn.Sequential(nn.Linear(in_features=input_dimension, out_features=num_units), 
+                                    nn.ReLU()).cuda(self.config.device_ids)
+        else:
+            # Linear projections
+            # Q_layer = nn.Linear(in_features=input_dimension, out_features=num_units)
+            self.Q_layer = nn.Sequential(nn.Linear(in_features=input_dimension, out_features=num_units), 
+                                    nn.ReLU())
+            self.K_layer = nn.Sequential(nn.Linear(in_features=input_dimension, out_features=num_units), 
+                                    nn.ReLU())
+            self.V_layer = nn.Sequential(nn.Linear(in_features=input_dimension, out_features=num_units), 
+                                    nn.ReLU())
 
         # Normalize
-        self.bn_layer = nn.BatchNorm1d(input_dimension).to(self.device)  # 传入通道数
+        if self.config.device_type == 'gpu':
+            self.bn_layer = nn.BatchNorm1d(input_dimension).cuda(self.config.device_ids)  # 传入通道数
+        else:
+            self.bn_layer = nn.BatchNorm1d(input_dimension)  # 传入通道数
 
     def forward(self, inputs, num_heads=16, dropout_rate=0.1, is_training=True):
 
@@ -385,24 +416,26 @@ class MultiheadAttention(nn.Module):
 # Returns: a 3d tensor with the same shape and dtype as inputs
 class FeedForward(nn.Module):
 
-    def __init__(self, num_units=(2048, 512), device=None):
+    def __init__(self, config, num_units=[2048, 512]):
 
         super().__init__()
-        self.device = device
 
-        # Inner layer
-        self.conv1 = nn.Conv1d(in_channels=num_units[1],
-                               out_channels=num_units[0],
-                               kernel_size=(1,),
-                               bias=True).to(self.device)
-        # Readout layer
-        self.conv2 = nn.Conv1d(in_channels=num_units[0],
-                               out_channels=num_units[1],
-                               kernel_size=(1,),
-                               bias=True).to(self.device)
+        self.config = config
 
-        self.bn_layer = nn.BatchNorm1d(num_units[1]).to(self.device)  # 传入通道数
+        if self.config.device_type == 'gpu':
+            # Inner layer
+            self.conv1 = nn.Conv1d(in_channels=num_units[1], out_channels=num_units[0], kernel_size=1, bias=True).cuda(self.config.device_ids)
+            # Readout layer
+            self.conv2 = nn.Conv1d(in_channels=num_units[0], out_channels=num_units[1], kernel_size=1, bias=True).cuda(self.config.device_ids)
 
+            self.bn_layer = nn.BatchNorm1d(num_units[1]).cuda(self.config.device_ids)  # 传入通道数
+        else:
+            # Inner layer
+            self.conv1 = nn.Conv1d(in_channels=num_units[1], out_channels=num_units[0], kernel_size=1, bias=True)
+            # Readout layer
+            self.conv2 = nn.Conv1d(in_channels=num_units[0], out_channels=num_units[1], kernel_size=1, bias=True)
+
+            self.bn_layer = nn.BatchNorm1d(num_units[1])  # 传入通道数
 
     def forward(self, inputs):
 
@@ -421,43 +454,48 @@ class FeedForward(nn.Module):
 
 class TransformerDecoder(nn.Module):
  
-    def __init__(self, batch_size, max_length, hidden_dim,
-                 num_heads, num_stacks, is_train, device=None):
+    def __init__(self, config, is_train):
 
         super().__init__()
 
-        self.batch_size = batch_size  # batch size
-        self.max_length = max_length  # input sequence length (number of cities)
+        self.config = config
+
+        self.batch_size = config.batch_size  # batch size
+        self.max_length = config.max_length  # input sequence length (number of cities)
         # input_dimension*2+1 # dimension of input, multiply 2 for expanding dimension to input complex value to tf, add 1 high priority token, 1 pointing
-        self.input_dimension = hidden_dim
-        self.input_embed = hidden_dim  # dimension of embedding space (actor)
-        self.num_heads = num_heads
-        self.num_stacks = num_stacks
-        self.device = device
+        self.input_dimension = config.hidden_dim
+ 
+        self.input_embed = config.hidden_dim  # dimension of embedding space (actor)
+        self.num_heads = config.num_heads
+        self.num_stacks = config.num_stacks
+        self.max_length = config.max_length
+
         self.is_training = is_train
 
         # self._emb_params = LayerParams(self, 'emb', self.device)
-        self.emb = nn.Parameter(torch.Tensor(*(1, self.input_embed, self.input_embed)).to(self.device))
-
+        if self.config.device_type == 'gpu':
+            self.emb = nn.Parameter(torch.Tensor(*(1, self.input_embed, self.input_embed)).cuda(self.config.device_ids))
+        else:
+            self.emb = nn.Parameter(torch.Tensor(*(1, self.input_embed, self.input_embed)))
         self.reset_parameters()
 
         # Batch Normalization
-        self.bn_layer = nn.BatchNorm1d(self.input_dimension).to(self.device)  # 传入通道数
+        if self.config.device_type == 'gpu':
+            self.bn_layer = nn.BatchNorm1d(self.input_dimension).cuda(self.config.device_ids)  # 传入通道数
+        else:
+            self.bn_layer = nn.BatchNorm1d(self.input_dimension)  # 传入通道数
 
         # conv1d
-        self.conv1 = nn.Conv1d(in_channels=self.input_embed,
-                               out_channels=self.max_length,
-                               kernel_size=(1,),
-                               bias=True).to(self.device)
+        if self.config.device_type == 'gpu':
+            self.conv1 = nn.Conv1d(in_channels=self.input_embed, out_channels=self.max_length, kernel_size=1, bias=True).cuda(self.config.device_ids)
+        else:
+            self.conv1 = nn.Conv1d(in_channels=self.input_embed, out_channels=self.max_length, kernel_size=1, bias=True)
 
         # attention
-        self.multihead_attention = MultiheadAttention(self.input_dimension,
-                                                      num_units=self.input_embed,
-                                                      device=self.device)
+        self.multihead_attention = MultiheadAttention(self.config, self.input_dimension, num_units=self.input_embed)
 
         # feedforward
-        self.feedforward = FeedForward(num_units=[self.input_embed, self.input_embed],
-                                       device=self.device)
+        self.feedforward = FeedForward(self.config, num_units=[self.input_embed, self.input_embed])
 
     def reset_parameters(self):
         nn.init.xavier_uniform_(self.emb)
@@ -477,10 +515,7 @@ class TransformerDecoder(nn.Module):
         # Blocks
         for i in range(self.num_stacks): # num blocks
             ### Multihead Attention
-            self.enc = self.multihead_attention(self.enc,
-                                                num_heads=self.num_heads,
-                                                dropout_rate=0.0,
-                                                is_training=self.is_training)
+            self.enc = self.multihead_attention(self.enc, num_heads=self.num_heads, dropout_rate=0.0, is_training=self.is_training)
 
             ### Feed Forward
             self.enc = self.feedforward(self.enc)
@@ -500,11 +535,12 @@ class TransformerDecoder(nn.Module):
 
         inputs = inputs.permute(0,2,1)
         for i in range(self.max_length):
-            position = torch.ones([inputs.shape[0]], device=self.device) * i
-            position = position.long()
+            position = torch.ones([inputs.shape[0]]) * i
+            position = position.type(torch.LongTensor)
             # Update mask
-            self.mask = torch.zeros((inputs.shape[0], self.max_length),
-                                    device=self.device).scatter_(1, position.view(inputs.shape[0], 1), 1)
+            self.mask = torch.zeros(inputs.shape[0], self.max_length).scatter_(1, position.view(inputs.shape[0], 1), 1)
+            if self.config.device_type == 'gpu':
+                self.mask = self.mask.cuda(self.config.device_ids)
 
             masked_score = self.adj_prob[:,i,:] - 100000000.*self.mask
             prob = distr.Bernoulli(logits=masked_score)  # probs input probability, logit input log_probability

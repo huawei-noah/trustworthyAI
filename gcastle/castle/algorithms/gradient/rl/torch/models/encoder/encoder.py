@@ -20,32 +20,31 @@ import torch.nn.functional as F
 
 class AttnHead(nn.Module):
 
-    def __init__(self, hidden_dim, out_sz, device=None):
+    def __init__(self, config, hidden_dim, out_sz):
 
         super().__init__()
-        self.device = device
 
-        self._seq_fts = nn.Conv1d(in_channels=hidden_dim,
-                                  out_channels=out_sz,
-                                  kernel_size=(1,),
-                                  bias=False,
-                                  device=self.device)
+        self.config = config
 
-        self._f_1 = nn.Conv1d(in_channels=out_sz,
-                              out_channels=1,
-                              kernel_size=(1,),
-                                  device=self.device)
-        self._f_2 = nn.Conv1d(in_channels=out_sz,
-                              out_channels=1,
-                              kernel_size=(1,),
-                                  device=self.device)
+        if self.config.device_type == 'gpu':
+            self._seq_fts = nn.Conv1d(in_channels=hidden_dim, out_channels=out_sz, kernel_size=1, bias=False).cuda(self.config.device_ids)
 
-        self._ret = nn.Conv1d(in_channels=hidden_dim,
-                              out_channels=out_sz,
-                              kernel_size=(1,),
-                                  device=self.device)
+            self._f_1 = nn.Conv1d(in_channels=out_sz, out_channels=1, kernel_size=1).cuda(self.config.device_ids)
+            self._f_2 = nn.Conv1d(in_channels=out_sz, out_channels=1, kernel_size=1).cuda(self.config.device_ids)
 
-        self._bias = nn.Parameter(torch.ones(1,device=self.device))
+            self._ret = nn.Conv1d(in_channels=hidden_dim, out_channels=out_sz, kernel_size=1).cuda(self.config.device_ids)
+
+            self._bias = nn.Parameter(torch.Tensor(1).cuda(self.config.device_ids))
+        
+        else:
+            self._seq_fts = nn.Conv1d(in_channels=hidden_dim, out_channels=out_sz, kernel_size=1, bias=False)
+
+            self._f_1 = nn.Conv1d(in_channels=out_sz, out_channels=1, kernel_size=1)
+            self._f_2 = nn.Conv1d(in_channels=out_sz, out_channels=1, kernel_size=1)
+
+            self._ret = nn.Conv1d(in_channels=hidden_dim, out_channels=out_sz, kernel_size=1)
+
+            self._bias = nn.Parameter(torch.Tensor(1))
 
         self.reset_parameters()
 
@@ -88,26 +87,26 @@ class AttnHead(nn.Module):
 
 class GATEncoder(nn.Module):
  
-    def __init__(self, batch_size , max_length, input_dimension, hidden_dim,
-                 num_heads, num_stacks, residual, is_train, device=None):
+    def __init__(self, config, is_train):
 
         super().__init__()
 
-        self.batch_size = batch_size # batch size
-        self.max_length = max_length # input sequence length (number of cities)
-        self.input_dimension = input_dimension # dimension of input, multiply 2 for expanding dimension to input complex value to tf, add 1 token
+        self.config = config
+
+        self.batch_size = config.batch_size # batch size
+        self.max_length = config.max_length # input sequence length (number of cities)
+        self.input_dimension = config.input_dimension # dimension of input, multiply 2 for expanding dimension to input complex value to tf, add 1 token
  
-        self.hidden_dim = hidden_dim # dimension of embedding space (actor)
-        self.num_heads = num_heads
-        self.num_stacks = num_stacks
-        self.residual = residual
-        self.device = device
-        self.is_training = is_train #not self.inference_mode
+        self.hidden_dim = config.hidden_dim # dimension of embedding space (actor)
+        self.num_heads = config.num_heads
+        self.num_stacks = config.num_stacks
+        self.residual = config.residual
+ 
+        self.is_training = is_train #not config.inference_mode
 
         self.head_hidden_dim = int(self.hidden_dim / self.num_heads)
 
-        self.attn_head = AttnHead(
-            self.hidden_dim, self.head_hidden_dim, device=self.device)
+        self.attn_head = AttnHead(self.config, self.hidden_dim, self.head_hidden_dim)
 
     def forward(self, inputs):
         """
@@ -135,21 +134,34 @@ https://www.github.com/kyubyong/transformer
 # Returns a 3d tensor with shape of [batch_size, seq_length, n_hidden]
 class MultiheadAttention(nn.Module):
     
-    def __init__(self, input_dimension, num_units=None, device=None):
+    def __init__(self, config, input_dimension, num_units=None):
 
         super().__init__()
-        self.device = device
+
+        self.config = config
+
         # Linear projections
         # Q_layer = nn.Linear(in_features=input_dimension, out_features=num_units)
-        self.Q_layer = nn.Sequential(nn.Linear(in_features=input_dimension, out_features=num_units),
-                                nn.ReLU()).to(self.device)
-        self.K_layer = nn.Sequential(nn.Linear(in_features=input_dimension, out_features=num_units),
-                                nn.ReLU()).to(self.device)
-        self.V_layer = nn.Sequential(nn.Linear(in_features=input_dimension, out_features=num_units),
-                                    nn.ReLU()).to(self.device)
+        if self.config.device_type == 'gpu':
+            self.Q_layer = nn.Sequential(nn.Linear(in_features=input_dimension, out_features=num_units), 
+                                    nn.ReLU()).cuda(self.config.device_ids)
+            self.K_layer = nn.Sequential(nn.Linear(in_features=input_dimension, out_features=num_units), 
+                                    nn.ReLU()).cuda(self.config.device_ids)
+            self.V_layer = nn.Sequential(nn.Linear(in_features=input_dimension, out_features=num_units), 
+                                    nn.ReLU()).cuda(self.config.device_ids)
+        else:
+            self.Q_layer = nn.Sequential(nn.Linear(in_features=input_dimension, out_features=num_units), 
+                                    nn.ReLU())
+            self.K_layer = nn.Sequential(nn.Linear(in_features=input_dimension, out_features=num_units), 
+                                    nn.ReLU())
+            self.V_layer = nn.Sequential(nn.Linear(in_features=input_dimension, out_features=num_units), 
+                                    nn.ReLU())
         
         # Normalize
-        self.bn_layer = nn.BatchNorm1d(input_dimension).to(self.device)
+        if self.config.device_type == 'gpu':
+            self.bn_layer = nn.BatchNorm1d(input_dimension).cuda(self.config.device_ids)
+        else:
+            self.bn_layer = nn.BatchNorm1d(input_dimension)  # 传入通道数
 
     def forward(self, inputs, num_heads=16, dropout_rate=0.1, is_training=True):
 
@@ -198,22 +210,25 @@ class MultiheadAttention(nn.Module):
 # Returns: a 3d tensor with the same shape and dtype as inputs
 class FeedForward(nn.Module):
 
-    def __init__(self, num_units=[2048, 512], device=None):
+    def __init__(self, config, num_units=[2048, 512]):
 
         super().__init__()
-        self.device = device
-        # Inner layer
-        self.conv1 = nn.Conv1d(in_channels=num_units[1],
-                               out_channels=num_units[0],
-                               kernel_size=(1,),
-                               bias=True).to(self.device)
-        # Readout layer
-        self.conv2 = nn.Conv1d(in_channels=num_units[0],
-                               out_channels=num_units[1],
-                               kernel_size=(1,),
-                               bias=True).to(self.device)
 
-        self.bn_layer1 = nn.BatchNorm1d(num_units[1]).to(self.device)  # 传入通道数
+        self.config = config
+
+        # Inner layer
+        if self.config.device_type == 'gpu':
+            self.conv1 = nn.Conv1d(in_channels=num_units[1], out_channels=num_units[0], kernel_size=1, bias=True).cuda(self.config.device_ids)
+            # Readout layer
+            self.conv2 = nn.Conv1d(in_channels=num_units[0], out_channels=num_units[1], kernel_size=1, bias=True).cuda(self.config.device_ids)
+
+            self.bn_layer1 = nn.BatchNorm1d(num_units[1]).cuda(self.config.device_ids)  # 传入通道数
+        else:
+            self.conv1 = nn.Conv1d(in_channels=num_units[1], out_channels=num_units[0], kernel_size=1, bias=True)
+            # Readout layer
+            self.conv2 = nn.Conv1d(in_channels=num_units[0], out_channels=num_units[1], kernel_size=1, bias=True)
+
+            self.bn_layer1 = nn.BatchNorm1d(num_units[1])  # 传入通道数
 
     def forward(self, inputs):
 
@@ -232,43 +247,46 @@ class FeedForward(nn.Module):
 
 class TransformerEncoder(nn.Module):
  
-    def __init__(self, batch_size, max_length, input_dimension, hidden_dim,
-                 num_heads, num_stacks, is_train, device):
+    def __init__(self, config, is_train):
 
         super().__init__()
 
-        self.batch_size = batch_size  # batch size
-        self.max_length = max_length  # input sequence length (number of cities)
-        # dimension of input, multiply 2 for expanding dimension to input complex value to tf, add 1 token
-        self.input_dimension = input_dimension
+        self.config = config
 
-        self.input_embed = hidden_dim  # dimension of embedding space (actor)
-        self.num_heads = num_heads
-        self.num_stacks = num_stacks
-        self.device = device
-        self.is_training = is_train  # not self.inference_mode
+        self.batch_size = config.batch_size  # batch size
+        self.max_length = config.max_length  # input sequence length (number of cities)
+        # dimension of input, multiply 2 for expanding dimension to input complex value to tf, add 1 token
+        self.input_dimension = config.input_dimension
+ 
+        self.input_embed = config.hidden_dim  # dimension of embedding space (actor)
+        self.num_heads = config.num_heads
+        self.num_stacks = config.num_stacks
+
+        self.is_training = is_train  # not config.inference_mode
 
         # self._emb_params = LayerParams(self, 'emb', self.device)
-        self.emb = nn.Parameter(torch.Tensor(*(1, self.input_dimension,
-                                               self.input_embed)).to(self.device))
+        if self.config.device_type == 'gpu':
+            self.emb = nn.Parameter(torch.Tensor(*(1, self.input_dimension, self.input_embed)).cuda(self.config.device_ids))
+        else:
+            self.emb = nn.Parameter(torch.Tensor(*(1, self.input_dimension, self.input_embed)))
         self.reset_parameters()
 
         # Batch Normalization
-        self.bn_layer2 = nn.BatchNorm1d(self.input_dimension).to(self.device)
+        if self.config.device_type == 'gpu':
+            self.bn_layer2 = nn.BatchNorm1d(self.input_dimension).cuda(self.config.device_ids)
+        else:
+            self.bn_layer2 = nn.BatchNorm1d(self.input_dimension)  # 传入通道数
 
         # attention
         self.multihead_attention = []
         for i in range(self.num_stacks):  # num blocks
-            multihead_attention = MultiheadAttention(self.input_dimension,
-                                                     num_units=self.input_embed,
-                                                     device=self.device)
+            multihead_attention = MultiheadAttention(self.config, self.input_dimension, num_units=self.input_embed)
             self.multihead_attention.append(multihead_attention)
 
         # FeedForward
         self.feedforward = []
         for i in range(self.num_stacks):  # num blocks
-            feedforward = FeedForward(num_units=[4*self.input_embed, self.input_embed],
-                                      device=self.device)
+            feedforward = FeedForward(self.config, num_units=[4*self.input_embed, self.input_embed])
             self.feedforward.append(feedforward)
 
     def reset_parameters(self):
