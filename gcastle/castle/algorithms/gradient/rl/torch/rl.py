@@ -13,8 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 import logging
-import argparse
+from tqdm import tqdm
 import platform
 import torch
 import numpy as np
@@ -22,7 +23,7 @@ import numpy as np
 from .data_loader import DataGenerator_read_data
 from .models import Actor
 from .rewards import get_Reward
-from .helpers.torch_utils import set_seed, is_cuda_available
+from .helpers.torch_utils import set_seed
 from .helpers.lambda_utils import BIC_lambdas
 from .helpers.analyze_utils import convert_graph_int_to_adj_mat, \
     graph_prunned_by_coef, graph_prunned_by_coef_2nd
@@ -141,7 +142,7 @@ class RL(BaseLearner):
     >>> met = MetricsDAG(n.causal_matrix, true_dag)
     >>> print(met.metrics)
     """
-    
+
     def __init__(self, encoder_type='TransformerEncoder', 
                  hidden_dim=64, 
                  num_heads=16, 
@@ -185,54 +186,61 @@ class RL(BaseLearner):
 
         super().__init__()
 
-        parser = argparse.ArgumentParser(description='Configuration')
-        self.config = parser.parse_args(args=[])
-        self.config.encoder_type = encoder_type
-        self.config.hidden_dim = hidden_dim
-        self.config.num_heads = num_heads
-        self.config.num_stacks = num_stacks
-        self.config.residual = residual
-        self.config.decoder_type = decoder_type
-        self.config.decoder_activation = decoder_activation
-        self.config.decoder_hidden_dim = decoder_hidden_dim
-        self.config.use_bias = use_bias
-        self.config.use_bias_constant = use_bias_constant
-        self.config.bias_initial_value = bias_initial_value
-        self.config.batch_size = batch_size
-        self.config.input_dimension = input_dimension
-        self.config.normalize = normalize
-        self.config.transpose = transpose
-        self.config.score_type = score_type
-        self.config.reg_type = reg_type
-        self.config.lambda_iter_num = lambda_iter_num
-        self.config.lambda_flag_default = lambda_flag_default
-        self.config.score_bd_tight = score_bd_tight
-        self.config.lambda1_update = lambda1_update
-        self.config.lambda2_update = lambda2_update
-        self.config.score_lower = score_lower
-        self.config.score_upper = score_upper
-        self.config.lambda2_lower = lambda2_lower
-        self.config.lambda2_upper = lambda2_upper
-        self.config.seed = seed
-        self.config.nb_epoch = nb_epoch
-        self.config.lr1_start = lr1_start
-        self.config.lr1_decay_step = lr1_decay_step
-        self.config.lr1_decay_rate = lr1_decay_rate
-        self.config.alpha = alpha
-        self.config.init_baseline = init_baseline
-        self.config.temperature = temperature
-        self.config.C = C
-        self.config.l1_graph_reg = l1_graph_reg
-        self.config.inference_mode = inference_mode
-        self.config.verbose = verbose
-        self.config.device_type = device_type
-        self.config.device_ids = device_ids
+        self.encoder_type = encoder_type
+        self.hidden_dim = hidden_dim
+        self.num_heads = num_heads
+        self.num_stacks = num_stacks
+        self.residual = residual
+        self.decoder_type = decoder_type
+        self.decoder_activation = decoder_activation
+        self.decoder_hidden_dim = decoder_hidden_dim
+        self.use_bias = use_bias
+        self.use_bias_constant = use_bias_constant
+        self.bias_initial_value = bias_initial_value
+        self.batch_size = batch_size
+        self.input_dimension = input_dimension
+        self.normalize = normalize
+        self.transpose = transpose
+        self.score_type = score_type
+        self.reg_type = reg_type
+        self.lambda_iter_num = lambda_iter_num
+        self.lambda_flag_default = lambda_flag_default
+        self.score_bd_tight = score_bd_tight
+        self.lambda1_update = lambda1_update
+        self.lambda2_update = lambda2_update
+        self.score_lower = score_lower
+        self.score_upper = score_upper
+        self.lambda2_lower = lambda2_lower
+        self.lambda2_upper = lambda2_upper
+        self.seed = seed
+        self.nb_epoch = nb_epoch
+        self.lr1_start = lr1_start
+        self.lr1_decay_step = lr1_decay_step
+        self.lr1_decay_rate = lr1_decay_rate
+        self.alpha = alpha
+        self.init_baseline = init_baseline
+        self.temperature = temperature
+        self.C = C
+        self.l1_graph_reg = l1_graph_reg
+        self.inference_mode = inference_mode
+        self.verbose = verbose
+        self.device_type = device_type
+        self.device_ids = device_ids
 
-        if not is_cuda_available:
-            self.config.device_type = 'cpu'
-
-        if self.config.device_type == 'gpu':
-            self.config.device = torch.device(type="cuda", index=self.config.device_ids)
+        if torch.cuda.is_available():
+            logging.info('GPU is available.')
+        else:
+            logging.info('GPU is unavailable.')
+            if self.device_type == 'gpu':
+                raise ValueError("GPU is unavailable, "
+                                 "please set device_type = 'cpu'.")
+        if self.device_type == 'gpu':
+            if self.device_ids:
+                os.environ['CUDA_VISIBLE_DEVICES'] = str(self.device_ids)
+            device = torch.device('cuda')
+        else:
+            device = torch.device('cpu')
+        self.device = device
 
     def learn(self, data, columns=None, dag=None, **kwargs):
         """
@@ -248,45 +256,43 @@ class RL(BaseLearner):
         dag : ndarray
             two-dimensional, prior matrix
         """
-        config = self.config
-        if dag is not None:
-            config.dag = dag
 
+        self.dag = dag
         X = Tensor(data, columns=columns)
         
-        config.data_size = X.shape[0]
-        config.max_length = X.shape[1]
+        self.data_size = X.shape[0]
+        self.max_length = X.shape[1]
 
-        causal_matrix = self._rl(X, config)
+        causal_matrix = self._rl(X)
         self.causal_matrix = causal_matrix
 
-    def _rl(self, X, config):
+    def _rl(self, X):
         # Reproducibility
-        set_seed(config.seed)
+        set_seed(self.seed)
 
         logging.info('Python version is {}'.format(platform.python_version()))
 
         # input data
-        if hasattr(config, 'dag'):
+        if self.dag :
             training_set = DataGenerator_read_data(
-                X, config.dag, config.normalize, config.transpose)
+                X, self.dag, self.normalize, self.transpose)
         else:
             training_set = DataGenerator_read_data(
-                X, None, config.normalize, config.transpose)
+                X, None, self.normalize, self.transpose)
 
         # set penalty weights
-        score_type = config.score_type
-        reg_type = config.reg_type
+        score_type = self.score_type
+        reg_type = self.reg_type
 
-        if config.lambda_flag_default:            
+        if self.lambda_flag_default:
             sl, su, strue = BIC_lambdas(training_set.inputdata, None, None, None, reg_type, score_type)
             lambda1 = 0
             lambda1_upper = 5
             lambda1_update_add = 1
-            lambda2 = 1/(10**(np.round(config.max_length/3)))
+            lambda2 = 1/(10**(np.round(self.max_length/3)))
             lambda2_upper = 0.01
             lambda2_update_mul = 10
-            lambda_iter_num = config.lambda_iter_num
+            lambda_iter_num = self.lambda_iter_num
 
             # test initialized score
             logging.info('Original sl: {}, su: {}, strue: {}'.format(sl, su, strue))
@@ -295,26 +301,45 @@ class RL(BaseLearner):
         else:
             # test choices for the case with mannualy provided bounds
             # not fully tested
-            sl = config.score_lower
-            su = config.score_upper
-            if config.score_bd_tight:
+            sl = self.score_lower
+            su = self.score_upper
+            if self.score_bd_tight:
                 lambda1 = 2
                 lambda1_upper = 2
             else:
                 lambda1 = 0
                 lambda1_upper = 5
                 lambda1_update_add = 1
-            lambda2 = 1/(10**(np.round(config.max_length/3)))
+            lambda2 = 1/(10**(np.round(self.max_length/3)))
             lambda2_upper = 0.01
-            lambda2_update_mul = config.lambda2_update
-            lambda_iter_num = config.lambda_iter_num
+            lambda2_update_mul = self.lambda2_update
+            lambda_iter_num = self.lambda_iter_num
 
         # actor
-        actor = Actor(config)
-        callreward = get_Reward(config.batch_size, config.max_length, 
-                                config.input_dimension, training_set.inputdata,
+        actor = Actor(encoder_type=self.encoder_type,
+                      hidden_dim=self.hidden_dim,
+                      max_length=self.max_length,
+                      num_heads=self.num_heads,
+                      num_stacks=self.num_stacks,
+                      residual=self.residual,
+                      decoder_type=self.decoder_type,
+                      decoder_activation=self.decoder_activation,
+                      decoder_hidden_dim=self.decoder_hidden_dim,
+                      use_bias=self.use_bias,
+                      use_bias_constant=self.use_bias_constant,
+                      bias_initial_value=self.bias_initial_value,
+                      batch_size=self.batch_size,
+                      input_dimension=self.input_dimension,
+                      lr1_start=self.lr1_start,
+                      lr1_decay_step=self.lr1_decay_step,
+                      lr1_decay_rate=self.lr1_decay_rate,
+                      alpha=self.alpha,
+                      init_baseline=self.init_baseline,
+                      device=self.device)
+        callreward = get_Reward(self.batch_size, self.max_length,
+                                self.input_dimension, training_set.inputdata,
                                 sl, su, lambda1_upper, score_type, reg_type, 
-                                config.l1_graph_reg, False)
+                                self.l1_graph_reg, False)
         logging.info('Finished creating training dataset and reward class')
 
         # Initialize useful variables
@@ -333,15 +358,13 @@ class RL(BaseLearner):
 
         logging.info('Starting training.')
         
-        for i in (range(1, config.nb_epoch + 1)):
+        for i in tqdm(range(1, self.nb_epoch + 1)):
 
-            if config.verbose:
+            if self.verbose:
                 logging.info('Start training for {}-th epoch'.format(i))
 
-            input_batch = training_set.train_batch(config.batch_size, config.max_length, config.input_dimension)
-            inputs = torch.from_numpy(np.array(input_batch))
-            if config.device_type == 'gpu':
-                inputs = inputs.cuda(config.device_ids)
+            input_batch = training_set.train_batch(self.batch_size, self.max_length, self.input_dimension)
+            inputs = torch.from_numpy(np.array(input_batch)).to(self.device)
 
             # Test tensor shape
             if i == 1:
@@ -350,12 +373,10 @@ class RL(BaseLearner):
             # actor
             actor.build_permutation(inputs)
             graphs_feed = actor.graphs_
-            if config.device_type == 'gpu':
-                reward_feed = callreward.cal_rewards(graphs_feed.cpu().detach().numpy(), lambda1, lambda2)  # np.array
-                actor.build_reward(reward_ = -torch.from_numpy(reward_feed)[:,0].cuda(config.device_ids))
-            else:
-                reward_feed = callreward.cal_rewards(graphs_feed.detach().numpy(), lambda1, lambda2)  # np.array
-                actor.build_reward(reward_ = -torch.from_numpy(reward_feed)[:,0])
+
+            reward_feed = callreward.cal_rewards(graphs_feed.cpu().detach().numpy(), lambda1, lambda2)  # np.array
+            actor.build_reward(reward_ = -torch.from_numpy(reward_feed)[:,0].to(self.device))
+
 
             # max reward, max reward per batch
             max_reward = -callreward.update_scores([max_reward_score_cyc], lambda1, lambda2)[0]
@@ -376,7 +397,7 @@ class RL(BaseLearner):
             # for average reward per batch
             reward_batch_score_cyc = np.mean(reward_feed[:,1:], axis=0)
 
-            if config.verbose:
+            if self.verbose:
                 logging.info('Finish calculating reward for current batch of graph')
 
             score_test, probs, graph_batch, \
@@ -384,7 +405,7 @@ class RL(BaseLearner):
                     actor.test_scores, actor.log_softmax, actor.graph_batch, \
                     actor.reward_batch, actor.avg_baseline
 
-            if config.verbose:
+            if self.verbose:
                 logging.info('Finish updating actor and critic network using reward calculated')
             
             lambda1s.append(lambda1)
@@ -423,7 +444,7 @@ class RL(BaseLearner):
                 elif reg_type == 'QR':
                     graph_batch_pruned = np.array(graph_prunned_by_coef_2nd(graph_batch, training_set.inputdata))
 
-                if hasattr(config, 'dag'):
+                if self.dag:
                     met = MetricsDAG(graph_batch.T, training_set.true_graph)
                     met2 = MetricsDAG(graph_batch_pruned.T, training_set.true_graph)
                     acc_est = met.metrics
