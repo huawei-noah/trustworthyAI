@@ -2,7 +2,7 @@
 
 [English Version](./README.md)
 
-1.0.3rc2 版本发布
+1.0.3rc3 版本发布
 
 ## 简介
 
@@ -50,7 +50,7 @@
 
 ### PIP安装
 ```bash
-pip install gcastle==1.0.3rc2
+pip install gcastle==1.0.3rc3
 ```
 
 ## 算法使用指导

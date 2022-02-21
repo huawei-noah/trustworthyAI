@@ -1,5 +1,5 @@
-name: Publish Docker image
-on: [push]
+name: Publish PYPI & DOCKER Images
+on: [workflow_dispatch]
 jobs:
 
   push_to_pypi:
