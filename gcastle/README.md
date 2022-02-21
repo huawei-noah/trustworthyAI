@@ -2,7 +2,7 @@
 
 [中文版本](./README.cn.md)
 
-Version 1.0.3rc2 released.
+Version 1.0.3rc3 released.
 
 The real datasets (id:10, 21, 22) used in [PCIC Causal Discovery Competition 2021 ](https://competition.huaweicloud.com/information/1000041487/introduction) have been released on the github: [temporary link](https://github.com/gcastle-hub/dataset).
 
@@ -52,7 +52,7 @@ gCastle requires:
 
 ### PIP installation
 ```bash
-pip install gcastle==1.0.3rc2
+pip install gcastle==1.0.3rc3
 ```
 
 ## Usage Example (PC algorithm)
