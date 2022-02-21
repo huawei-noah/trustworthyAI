@@ -19,42 +19,30 @@ import torch.nn as nn
 
 class Critic(nn.Module):
 
-    def __init__(self, config, is_train):
-
+    def __init__(self, batch_size, max_length, input_dimension, hidden_dim,
+                 init_baseline, device=None):
         super().__init__()
 
-        self.config = config
-
-        self.device = torch.device("cuda" if config.device_type=='gpu' else "cpu")
-
-        # Data config
-        self.batch_size = config.batch_size
-        self.max_length = config.max_length
-        self.input_dimension = config.input_dimension
-
+        self.batch_size      = batch_size
+        self.max_length      = max_length
+        self.input_dimension = input_dimension
         # Network config
-        self.input_embed = config.hidden_dim
-        self.num_neurons = config.hidden_dim
+        self.input_embed     = hidden_dim
+        self.num_neurons     = hidden_dim
+        self.device     = device
 
         # Baseline setup
-        self.init_baseline = 0.
+        self.init_baseline = init_baseline
 
-        if self.config.device_type == 'gpu':
-            layer0 = nn.Linear(in_features=self.input_dimension, out_features=self.num_neurons).cuda(self.config.device_ids)
-            torch.nn.init.xavier_uniform(layer0.weight)
-            self.h0_layer = nn.Sequential(layer0, nn.ReLU()).cuda(self.config.device_ids)
+        layer0 = nn.Linear(in_features=self.input_dimension,
+                           out_features=self.num_neurons).to(self.device)
+        torch.nn.init.xavier_uniform_(layer0.weight)
+        self.h0_layer = nn.Sequential(layer0, nn.ReLU()).to(self.device)
 
-            self.layer1 = nn.Linear(in_features=self.num_neurons, out_features=1).cuda(self.config.device_ids)
-            torch.nn.init.xavier_uniform(self.layer1.weight)
-            self.layer1.bias.data = torch.Tensor([self.init_baseline]).cuda(self.config.device_ids)
-        else:
-            layer0 = nn.Linear(in_features=self.input_dimension, out_features=self.num_neurons)
-            torch.nn.init.xavier_uniform(layer0.weight)
-            self.h0_layer = nn.Sequential(layer0, nn.ReLU())
-
-            self.layer1 = nn.Linear(in_features=self.num_neurons, out_features=1)
-            torch.nn.init.xavier_uniform(self.layer1.weight)
-            self.layer1.bias.data = torch.Tensor([self.init_baseline])
+        self.layer1 = nn.Linear(in_features=self.num_neurons,
+                                out_features=1).to(self.device)
+        torch.nn.init.xavier_uniform_(self.layer1.weight)
+        self.layer1.bias.data = torch.Tensor([self.init_baseline]).to(self.device)
 
     def forward(self, encoder_output):
         # [Batch size, Sequence Length, Num_neurons] to [Batch size, Num_neurons]

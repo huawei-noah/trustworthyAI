@@ -102,8 +102,8 @@ class get_Reward(object):
         for i in range(self.maxlen):
             graph_batch[i][i] = 0
             tt = np.int32(graph_batch[i])
-            graph_to_int.append(self.baseint * i + np.int(''.join([str(ad) for ad in tt]), 2))
-            graph_to_int2.append(np.int(''.join([str(ad) for ad in tt]), 2))
+            graph_to_int.append(self.baseint * i + int(''.join([str(ad) for ad in tt]), 2))
+            graph_to_int2.append(int(''.join([str(ad) for ad in tt]), 2))
 
         graph_batch_to_tuple = tuple(graph_to_int2)
 
@@ -149,7 +149,7 @@ class get_Reward(object):
 
         score = self.score_transform(BIC)
         cycness = np.trace(matrix_exponential(np.array(graph_batch)))- self.maxlen
-        reward = score + lambda1*np.float(cycness>1e-5) + lambda2*cycness
+        reward = score + lambda1 * float(cycness>1e-5) + lambda2*cycness
             
         if self.l1_graph_reg > 0:
             reward = reward + self.l1_grapha_reg * np.sum(graph_batch)
@@ -158,7 +158,7 @@ class get_Reward(object):
         self.d[graph_batch_to_tuple] = (score, cycness)
 
         if self.verbose:
-            self._logger.info('BIC: {}, cycness: {}, returned reward: {}'.format(BIC, cycness, final_score))
+            self._logger.info('BIC: {}, cycness: {}, returned reward: {}'.format(BIC, cycness, score))
 
         return reward, score, cycness
 
@@ -169,7 +169,7 @@ class get_Reward(object):
 
     def penalized_score(self, score_cyc, lambda1, lambda2):
         score, cyc = score_cyc
-        return score + lambda1*np.float(cyc>1e-5) + lambda2*cyc
+        return score + lambda1 * float(cyc > 1e-5) + lambda2 * cyc
     
     def update_scores(self, score_cycs, lambda1, lambda2):
         ls = []
