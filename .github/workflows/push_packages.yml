@@ -1,4 +1,4 @@
-name: Publish PYPY & Docker image
+name: Publish PYPI & DOCKER Images
 on: [workflow_dispatch]
 jobs:
 
