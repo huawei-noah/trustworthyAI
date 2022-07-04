@@ -1,7 +1,7 @@
 # Trustworthy AI
 
 This repository aims to include trustworthy AI related works from Huawei Noah's Ark Lab.  
-Current projects include:
+Current works include:
 
 ### gCastle
 
@@ -12,5 +12,4 @@ Current projects include:
 ### Research 
  
 - we'll progressively put some self-research achievements related to causality in this folder.
-- Notes: For the simplicity, we have adjusted the structure of the old repository, in which we moved the previous 
-  directories 'Causal_Structure_Learning' and 'Causal_Disentangled_Representation_Learning' the 'research' folder.
+- **Notes**: For the simplicity and clean, we have adjusted the structure of the old repository, in which we moved the previous directories 'Causal_Structure_Learning' and 'Causal_Disentangled_Representation_Learning' the 'research' folder.
