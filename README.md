@@ -7,7 +7,7 @@ Current projects include:
 
   The real datasets (id:10, 21, 22) used in [PCIC Causal Discovery Competition 2021 ](https://competition.huaweicloud.com/information/1000041487/introduction) have been released on the github: [temporary link](https://github.com/gcastle-hub/dataset).
 
-- research
+- Research
 
   For the simplicity, we have adjusted the structure of the repository, in which we moved the previous directories'Causal_Structure_Learning' and 'Causal_Disentangled_Representation_Learning' in a common folder 'research'.
 
@@ -28,7 +28,6 @@ It currently includes two parts：
     - Real datasets: a very challenging real dataset where the objective is to find causal structures based on 
     time series data. The true graph is obtained from expert knowledge. We welcome everyone to try this dataset and 
     report the result!
-- We will also release the codes for other gradient-based causal structure learning methods.
 
 #### Causal Disentangled Representation Learning
 
