@@ -4,7 +4,7 @@
 
 Version 1.0.3rc3 released.
 
-The real datasets (id:10, 21, 22) used in [PCIC Causal Discovery Competition 2021 ](https://competition.huaweicloud.com/information/1000041487/introduction) have been released on the github: [temporary link](https://github.com/gcastle-hub/dataset).
+The real datasets (id:10, 21, 22) used in [PCIC Causal Discovery Competition 2021 ](https://competition.huaweicloud.com/information/1000041487/introduction) have been online: [link](https://github.com/gcastle-hub/dataset).
 
 ## Introduction
 
