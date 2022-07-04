@@ -1,8 +1,0 @@
-numpy
-scipy
-networkx
-pyyaml
-pytz
-matplotlib
-pandas
-tensorflow==1.13.1
