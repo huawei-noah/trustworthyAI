@@ -6,19 +6,20 @@ If you find it useful, please consider to cite the paper.
 
 This is a causal disentanglement image package. 
 
-# Requirements
+## Requirements
 - python 3.7
 - torch 1.4.1
 
-# Process
-## Generate synthetic data: 
-- generate flow data: python ./causal_data/flow.py
-- generate pendulum data: python ./causal_data/pendulum.py
+## Process
 
-## Train CausalVae:
-- train on flow data: python ./run_flow.py
-- train on pendulum data: python ./run_pendulum.py
+### Generate synthetic data: 
+- Generate flow data: python ./causal_data/flow.py
+- Generate pendulum data: python ./causal_data/pendulum.py
 
-## Intervention on synthetic data by CausalVae:
-- intervention on flow data: python ./inference_flow.py
-- intervention on pendulum data: python ./inference_pendulum.py
+### Train CausalVae:
+- Train on flow data: python ./run_flow.py
+- Train on pendulum data: python ./run_pendulum.py
+
+### Intervention on synthetic data by CausalVae:
+- Intervention on flow data: python ./inference_flow.py
+- Intervention on pendulum data: python ./inference_pendulum.py
