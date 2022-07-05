@@ -1,5 +1,5 @@
 # A Graph Autoencoder Approach to Causal Structure Learning
-This repository contains the implementation for the paper ['A Graph Autoencoder Approach to Causal Structure Learning'](https://arxiv.org/abs/1911.07420) (NeurIPS 2019 Workshop), by Ignavier Ng, Shengyu Zhu, Zhitang Chen and Zhuangyan Fang.
+This repository contains the implementation for the paper [A Graph Autoencoder Approach to Causal Structure Learning](https://arxiv.org/abs/1911.07420) (NeurIPS 2019 Workshop), by Ignavier Ng, Shengyu Zhu, Zhitang Chen and Zhuangyan Fang.
 
 If you find it useful, please consider citing:
 
@@ -48,7 +48,7 @@ For different graph sizes, simply modify the value of `d` in the command.
 
 ## License
 
-This project is licensed under the  Apache License Version 2.0 - see the [LICENSE](LICENSE) file for details
+This project is licensed under the  Apache License Version 2.0 - see the [LICENSE](../../LICENSE) file for details.
 
 ## Acknowledgments
 
