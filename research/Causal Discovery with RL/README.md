@@ -1,6 +1,6 @@
 # Causal Discovery with Reinforcement Learning
 
-Codes for the paper ['Causal Discovery with Reinforcement Learning'](https://openreview.net/forum?id=S1g2skStPB) (ICLR 2020, Oral), by Shengyu Zhu, Ignavier Ng, and Zhitang Chen.
+Code for the paper [Causal Discovery with Reinforcement Learning](https://openreview.net/forum?id=S1g2skStPB) (ICLR 2020, Oral), by Shengyu Zhu, Ignavier Ng, and Zhitang Chen.
 
 If you find it useful, please consider citing:
 
@@ -20,13 +20,13 @@ We apply reinforcement learning to score-based causal discovery, as outlined bel
 
 ## Setup
 
-You may check the required Python packages in `requirements.txt`. After installing the `rpy2` package, the previous codes would automatically install the R packages `CAM` and `mboost` used in our experiments. However, `CAM` is currently unavailable at `cran` (see the [notice](https://CRAN.R-project.org/package=CAM)), and here is an approach to install `CAM` from local source.
+You may check the required Python packages in `requirements.txt`. After installing the `rpy2` package, the previous codes would automatically install the R packages `CAM` and `mboost` used in our experiments. However, `CAM` is currently unavailable at `cran` (see the [notice](https://CRAN.R-project.org/package=CAM)), and here is an approach to install `CAM` from a local source.
 
-* go to [the notice address](https://CRAN.R-project.org/package=CAM) and download the archived version `CAM_1.0.tar.gz`.
-* put `CAM_1.0.tar.gz` in the same folder and then run the [setup_CAM.py](setup_CAM.py) which will install the required dependencies
-* if there are additional dependencies, then simply add them in [steup_CAM.py](setup_CAM.py).
+* Go to [the notice address](https://CRAN.R-project.org/package=CAM) and download the archived version `CAM_1.0.tar.gz`.
+* Put `CAM_1.0.tar.gz` in the same folder and then run the [setup_CAM.py](setup_CAM.py) which will install the required dependencies.
+* If there are additional dependencies, then simply add them in [setup_CAM.py](setup_CAM.py).
 
-We have verified this setup in a minimal conda env with only `rpy2` package. Please file an issue if there are any further questions.
+We have verified this setup in a minimal conda environment with only `rpy2` package. Please file an issue if there are any further questions.
 
 ## Experiments
 
@@ -35,12 +35,11 @@ We find there are two uses of the meaning of the `(i,j)th` entry in the adjacenc
 * **(1)** whether there is an edge from `node i` to `node j`;
 * **(2)** whether there is an edge from `node j` to `node i`. 
 
-In our experience, we find that most people adopt the use of **(1)**. In fact, **(2)** was what we used in the first working verison of the codes and and we also find it somewhat convenient in the
-implementation. In the current codes, we fix the following:
+In our experience, we find that most people adopt the use of **(1)**. In fact, **(2)** was what we used in the first working version of the codes and we also find it somewhat convenient in the implementation. In the current codes, we fix the following:
 
-* the input true graph should follows **(1)** (if not, please add command --transpose);
-* we transpose the graph adjacency matrix and the RL approach in our codes follows the graph format **(2)**;
-* all the outputs (e.g., saved graphs and plots) are transposed to be in the form of **(1)**.
+* The input true graph should follow **(1)** (if not, please add command --transpose).
+* We transpose the graph adjacency matrix and the RL approach in our codes follows the graph format **(2)**.
+* All the outputs (e.g., saved graphs and plots) are transposed to be in the form of **(1)**.
 
 ### Experiments in the paper
 
@@ -49,12 +48,12 @@ implementation. In the current codes, we fix the following:
 be slightly different from the released training logs. We rerun the codes on several
 (but not all) datasets to verify the reported results. If you find a large deviation
 from the released training log, please file an issue to let us know.
-* We open source three synthetic datasets that were used in our experiments. The Sachs dataset 
+* We open-source three synthetic datasets that were used in our experiments. The Sachs dataset 
 belongs to the authors, so please download the dataset by yourself 
 (we do release the training_logs with this dataset).
-* Codes for synthetic dataset generation are available [here](../Datasets). The used datasets and training logs in the paper can be found [here](https://github.com/zhushy/causal-datasets/tree/master/Causal_Discovery_RL).
+* Codes for synthetic dataset generation are available [here](../../datasets). The used datasets and training logs in the paper can be found [here](https://github.com/zhushy/causal-datasets/tree/master/Causal_Discovery_RL).
 Jupyter notebooks are also provided to illustrate the experiment results.
-* You may need to install the rpy2 package when CAM pruning is used. Otherwise, simply comment the CAM pruning import codes.
+* You may need to install the rpy2 package when CAM pruning is used. Otherwise, simply comment out the CAM pruning import codes.
 
 
 ### Detailed commands for running the experiment:
@@ -170,7 +169,7 @@ python main.py --max_length 11 \
 
 ## License
 
-This project is licensed under the  Apache License Version 2.0 - see the [LICENSE](LICENSE) file for details
+This project is licensed under the  Apache License Version 2.0 - see the [LICENSE](../../LICENSE) file for details.
 
 ## Acknowledgments
 

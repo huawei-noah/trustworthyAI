@@ -1,16 +1,21 @@
+OPEN SOURCE SOFTWARE NOTICE
+
 Please note we provide an open source software notice for the third party open 
 source software along with this software and/or this software component 
 contributed by Huawei (in the following just "this SOFTWARE"). 
 The open source software licenses are granted by the respective right holders.
 
 Warranty Disclaimer
+
 THE OPEN SOURCE SOFTWARE IN THIS SOFTWARE IS DISTRIBUTED IN THE HOPE THAT IT 
 WILL BE USEFUL, BUT WITHOUT ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF 
 MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. SEE THE APPLICABLE 
 LICENSES FOR MORE DETAILS.
 
-
 Copyright Notice and License Texts
+
+------------------------------------------------------------------------------
+
 Software: neural-combinatorial-optimization-rl-tensorflow (https://github.com/MichelDeudon/neural-combinatorial-optimization-rl-tensorflow)
 Copyright notice: 
 Copyright (c), Michel Deudon, Pierre Cournut
@@ -37,8 +42,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
 SOFTWARE.
 
+------------------------------------------------------------------------------
 
-Copyright Notice and License Texts
 Software: lingam (https://github.com/cdt15/lingam)
 Copyright notice: 
 Copyright (c), T.Ikeuchi, G.Haraoka, M.Ide, W.Kurebayashi, S.Shimizu
@@ -65,8 +70,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
+------------------------------------------------------------------------------
 
-Copyright Notice and License Texts
 Software: GraN-DAG (https://github.com/kurowasan/GraN-DAG)
 Copyright notice: 
 Copyright (c), Authors of Gradient-Based Neural DAG Learning
@@ -93,8 +98,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
+------------------------------------------------------------------------------
 
-Copyright Notice and License Texts
 Software: NOTEARS (https://github.com/xunzheng/notears)
 Copyright notice: 
 Copyright (c), Xun Zheng
@@ -301,8 +306,8 @@ License:  Apache License
    See the License for the specific language governing permissions and
    limitations under the License.
 
+------------------------------------------------------------------------------
 
-Copyright Notice and License Texts
 Software: GOLEM (https://github.com/ignavier/golem)
 Copyright notice: 
 Copyright (c), Ignavier Ng
@@ -509,8 +514,8 @@ License:  Apache License
    See the License for the specific language governing permissions and
    limitations under the License.
 
+------------------------------------------------------------------------------
 
-Copyright Notice and License Texts
 Software: ANM (https://github.com/FenTechSolutions/CausalDiscoveryToolbox/blob/master/cdt/causality/pairwise/ANM.py)
 Copyright notice: 
 Copyright (c), Diviyan Kalainathan
@@ -537,8 +542,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
+------------------------------------------------------------------------------
 
-Copyright Notice and License Texts
 Software: HSIC (https://github.com/amber0309/HSIC/blob/master/HSIC.py)
 Copyright notice: 
 Copyright (c), Shoubo
