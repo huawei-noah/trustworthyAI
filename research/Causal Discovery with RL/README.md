@@ -52,7 +52,7 @@ from the released training log, please file an issue to let us know.
 * We open source three synthetic datasets that were used in our experiments. The Sachs dataset 
 belongs to the authors, so please download the dataset by yourself 
 (we do release the training_logs with this dataset).
-* Codes for synthetic dataset generation are available [here](../Datasets). The used datasets and training logs in the paper can be found [here](https://github.com/zhushy/causal-datasets/tree/master/Causal_Discovery_RL).
+* Codes for synthetic dataset generation are available [here](../../datasets). The used datasets and training logs in the paper can be found [here](https://github.com/zhushy/causal-datasets/tree/master/Causal_Discovery_RL).
 Jupyter notebooks are also provided to illustrate the experiment results.
 * You may need to install the rpy2 package when CAM pruning is used. Otherwise, simply comment the CAM pruning import codes.
 
