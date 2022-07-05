@@ -4,8 +4,6 @@
 
 Version 1.0.3rc3 released.
 
-The real datasets (id:10, 21, 22) used in [PCIC Causal Discovery Competition 2021 ](https://competition.huaweicloud.com/information/1000041487/introduction) have been online: [link](https://github.com/gcastle-hub/dataset).
-
 ## Introduction
 
 gCastle is a causal structure learning toolchain developed by [Huawei Noah's Ark Lab](https://www.noahlab.com.hk/#/home). The package contains various functionality related to causal learning and evaluation, including: 
