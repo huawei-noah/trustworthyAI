@@ -1,8 +1,7 @@
 # Datasets for Causal Structure Learning
 
-
 ## Synthetic datasets
-We provide codes for generating synthetic datasets used in 'Causal Discovery with Reinforement Learning'. Please see the [example notebook](examples_to_generate_synthetic_datasets.ipynb) for further details.
+We provide codes for generating synthetic datasets used in '[Causal Discovery with Reinforement Learning](../research/Causal%20Discovery%20with%20RL)'. Please see the [example notebook](examples_to_generate_synthetic_datasets.ipynb) for further details.
 
 ## Real datasets
 
