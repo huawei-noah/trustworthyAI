@@ -48,7 +48,7 @@ For different graph sizes, simply modify the value of `d` in the command.
 
 ## License
 
-This project is licensed under the  Apache License Version 2.0 - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the  Apache License Version 2.0 - see the [LICENSE](../../LICENSE) file for details.
 
 ## Acknowledgments
 
