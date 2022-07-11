@@ -1,4 +1,4 @@
-Web GUI Usage
+## Web GUI Usage
 
 1. Download and unzip the source code.
 2. Make sure all packages in both `requirements.txt` and `requirements_web.txt` are installed.
