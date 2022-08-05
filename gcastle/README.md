@@ -4,6 +4,8 @@
 
 Version 1.0.3rc3 released.
 
+We'll release Version 1.0.3 on 2022/08/08.
+
 ## Introduction
 
 gCastle is a causal structure learning toolchain developed by [Huawei Noah's Ark Lab](https://www.noahlab.com.hk/#/home). The package contains various functionality related to causal learning and evaluation, including: 
