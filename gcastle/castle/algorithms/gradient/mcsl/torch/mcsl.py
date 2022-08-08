@@ -20,10 +20,11 @@ import numpy as np
 import torch
 
 from castle.common.base import BaseLearner, Tensor
-from castle.common.consts import LOG_FORMAT
 from .trainers.al_trainer import Trainer
 from .models.masked_model import MaskedModel
 from .helpers.utils import callback_after_training
+from castle.common.consts import MCSL_VALID_PARAMS
+from castle.common.validator import check_args_value
 
 
 def set_seed(seed):
@@ -52,7 +53,7 @@ class MCSL(BaseLearner):
     ----------
     model_type: str, default: 'nn'
         `nn` denotes neural network, `qr` denotes quatratic regression.
-    hidden_layers: int, default: 4
+    num_hidden_layers: int, default: 4
         Number of hidden layer in neural network when `model_type` is 'nn'.
     hidden_dim: int, default: 16
         Number of hidden dimension in hidden layer, when `model_type` is 'nn'.
@@ -109,7 +110,8 @@ class MCSL(BaseLearner):
     >>> print(met.metrics)
     """
 
-    def __init__(self, model_type='nn', hidden_layers=4, hidden_dim=16,
+    @check_args_value(MCSL_VALID_PARAMS)
+    def __init__(self, model_type='nn', num_hidden_layers=4, hidden_dim=16,
                  graph_thresh=0.5, l1_graph_penalty=2e-3, learning_rate=3e-2,
                  max_iter=25, iter_step=1000, init_iter=2, h_tol=1e-10,
                  init_rho=1e-5, rho_thresh=1e14, h_thresh=0.25,
@@ -118,7 +120,7 @@ class MCSL(BaseLearner):
         super(MCSL, self).__init__()
 
         self.model_type = model_type
-        self.hidden_layers = hidden_layers
+        self.num_hidden_layers = num_hidden_layers
         self.hidden_dim = hidden_dim
         self.graph_thresh = graph_thresh
         self.l1_graph_penalty = l1_graph_penalty
@@ -205,7 +207,7 @@ class MCSL(BaseLearner):
                             n_samples=self.n_samples,
                             n_nodes=self.n_nodes,
                             pns_mask=pns_mask,
-                            hidden_layers=self.hidden_layers,
+                            num_hidden_layers=self.num_hidden_layers,
                             hidden_dim=self.hidden_dim,
                             l1_graph_penalty=self.l1_graph_penalty,
                             seed=self.random_seed,

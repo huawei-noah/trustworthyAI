@@ -359,7 +359,7 @@ class MultiheadAttention(nn.Module):
         outputs = outputs / (K_.shape[-1] ** 0.5)
 
         # Activation
-        outputs = F.softmax(outputs)  # num_heads*[batch_size, seq_length, seq_length]
+        outputs = torch.softmax(outputs, dim=0)  # num_heads*[batch_size, seq_length, seq_length]
 
         # Dropouts
         outputs = F.dropout(outputs, p=dropout_rate, training=is_training)

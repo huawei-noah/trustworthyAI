@@ -19,11 +19,11 @@ import torch.nn as nn
 
 class MaskedNN(nn.Module):
 
-    def __init__(self, mask, hidden_layers, hidden_dim,
+    def __init__(self, mask, num_hidden_layers, hidden_dim,
                  device=None) -> None:
         super(MaskedNN, self).__init__()
         self.mask = mask    # use mask to determine input dimension
-        self.hidden_layers = hidden_layers
+        self.num_hidden_layers = num_hidden_layers
         self.hidden_dim = hidden_dim
         self.device = device
 
@@ -59,7 +59,7 @@ class MaskedNN(nn.Module):
             if first_input_dim == 0:    # Root node, don't have to build NN in this case
                 continue
             reg_nn = []
-            for j in range(self.hidden_layers):
+            for j in range(self.num_hidden_layers):
                 input_dim = self.hidden_dim
                 if j == 0:
                     input_dim = first_input_dim

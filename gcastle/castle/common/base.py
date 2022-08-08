@@ -13,19 +13,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
+import abc
 import numpy as np
 import pandas as pd
 from collections.abc import Iterable
 from pandas import Index, RangeIndex
 
 
-class BaseLearner(object):
+class BaseLearner(metaclass=abc.ABCMeta):
 
     def __init__(self):
 
         self._causal_matrix = None
 
+    @abc.abstractmethod
     def learn(self, data, *args, **kwargs):
 
         raise NotImplementedError

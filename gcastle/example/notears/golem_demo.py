@@ -39,7 +39,7 @@ dataset = IIDSimulation(W=weighted_random_dag, n=2000, method='linear', sem_type
 true_dag, X = dataset.B, dataset.X
 
 # GOLEM learn
-g = GOLEM()
+g = GOLEM(num_iter=1e4)
 g.learn(X)
 
 # plot est_dag and true_dag

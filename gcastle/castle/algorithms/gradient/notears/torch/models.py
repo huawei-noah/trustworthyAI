@@ -46,22 +46,26 @@ class MLPModel(nn.Module):
         device: option, default: None
             torch.device('cpu') or torch.device('cuda')
         """
-        super().__init__()
-        assert len(dims) >= 2
-        assert dims[-1] == 1
+        super(MLPModel, self).__init__()
+        if len(dims) < 2:
+            raise ValueError(f"The size of dims at least greater equal to 2, contains one "
+                             f"one hidden layer and one output_layer")
+        if dims[-1] != 1:
+            raise ValueError(f"The dimension of output layer must be 1, but got {dims[-1]}.")
         d = dims[0]
         self.dims = dims
+        self.device = device
         # fc1: variable splitting for l1
-        self.fc1_pos = nn.Linear(d, d * dims[1], bias=bias)
-        self.fc1_neg = nn.Linear(d, d * dims[1], bias=bias)
+        self.fc1_pos = nn.Linear(d, d * dims[1], bias=bias, device=self.device)
+        self.fc1_neg = nn.Linear(d, d * dims[1], bias=bias, device=self.device)
         self.fc1_pos.weight.bounds = self._bounds()
         self.fc1_neg.weight.bounds = self._bounds()
         # fc2: local linear layers
         layers = []
         for l in range(len(dims) - 2):
             layers.append(LocallyConnected(d, dims[l + 1], dims[l + 2], bias=bias))
-        self.fc2 = nn.ModuleList(layers)
-        self.device = device
+        self.fc2 = nn.ModuleList(layers).to(device=self.device)
+
 
     def _bounds(self):
         d = self.dims[0]
@@ -164,16 +168,16 @@ class SobolevModel(nn.Module):
         torch.device('cpu') or torch.device('cuda')
     """
     def __init__(self, d, k, bias=False, device=None):
-        super().__init__()
+        super(SobolevModel, self).__init__()
         self.d, self.k = d, k
-        self.fc1_pos = nn.Linear(d * k, d, bias=bias)  # ik -> j
-        self.fc1_neg = nn.Linear(d * k, d, bias=bias)
+        self.l2_reg_store = None
+        self.device = device
+        self.fc1_pos = nn.Linear(d * k, d, bias=bias, device=self.device)  # ik -> j
+        self.fc1_neg = nn.Linear(d * k, d, bias=bias, device=self.device)
         self.fc1_pos.weight.bounds = self._bounds()
         self.fc1_neg.weight.bounds = self._bounds()
         nn.init.zeros_(self.fc1_pos.weight)
         nn.init.zeros_(self.fc1_neg.weight)
-        self.l2_reg_store = None
-        self.device = device
 
     def _bounds(self):
         # weight shape [j, ik]

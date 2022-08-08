@@ -27,6 +27,8 @@ import scipy.optimize as sopt
 from scipy.special import expit as sigmoid
 
 from castle.common import BaseLearner, Tensor
+from castle.common.consts import NOTEARS_VALID_PARAMS
+from castle.common.validator import check_args_value
 
 
 class Notears(BaseLearner):
@@ -71,7 +73,8 @@ class Notears(BaseLearner):
     >>> met = MetricsDAG(n.causal_matrix, true_dag)
     >>> print(met.metrics)
     """
-    
+
+    @check_args_value(NOTEARS_VALID_PARAMS)
     def __init__(self, lambda1=0.1, 
                  loss_type='l2', 
                  max_iter=100, 

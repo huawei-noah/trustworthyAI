@@ -37,7 +37,8 @@ dataset = IIDSimulation(W=weighted_random_dag, n=2000, method='nonlinear',
 dag, x = dataset.B, dataset.X
 
 # Instantiation algorithm
-gnd = GraNDAG(input_dim=x.shape[1])
+d = {'model_name': 'NonLinGauss', 'nonlinear': 'leaky-relu', 'optimizer': 'sgd', 'norm_prod': 'paths', 'device_type': 'gpu'}
+gnd = GraNDAG(input_dim=x.shape[1], )
 gnd.learn(data=x)
 
 # plot predict_dag and true_dag

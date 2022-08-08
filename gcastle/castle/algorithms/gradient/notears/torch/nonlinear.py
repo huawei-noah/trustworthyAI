@@ -32,6 +32,8 @@ import numpy as np
 from castle.common import BaseLearner, Tensor
 from .models import MLPModel, SobolevModel, squared_loss
 from .utils.lbfgsb_scipy import LBFGSBScipy
+from castle.common.consts import NONLINEAR_NOTEARS_VALID_PARAMS
+from castle.common.validator import check_args_value
 
 
 np.set_printoptions(precision=3)
@@ -57,10 +59,13 @@ class NotearsNonlinear(BaseLearner):
         exit if rho >= rho_max
     w_threshold: float 
         drop edge if |weight| < threshold
-    hidden_layer: int
-        Number of hidden layers.
-    hidden_units: int
-        Number of hidden units.
+    hidden_layers: Iterrable
+        Dimension of per hidden layer, and the last element must be 1 as output dimension.
+        At least contains 2 elements. For example: hidden_layers=(5, 10, 1), denotes two hidden
+        layer has 5 and 10 dimension and output layer has 1 dimension.
+        It is effective when model_type='mlp'.
+    expansions: int
+        expansions of each variable, it is effective when model_type='sob'.
     bias: bool
         Indicates whether to use weight deviation.
     model_type: str
@@ -96,14 +101,15 @@ class NotearsNonlinear(BaseLearner):
     >>> print(met.metrics)
     """
 
+    @check_args_value(NONLINEAR_NOTEARS_VALID_PARAMS)
     def __init__(self, lambda1: float = 0.01,
                  lambda2: float = 0.01,
                  max_iter: int = 100,
                  h_tol: float = 1e-8,
                  rho_max: float = 1e+16,
                  w_threshold: float = 0.3,
-                 hidden_layer: int = 1,
-                 hidden_units: int = 10,
+                 hidden_layers: tuple = (10, 1),
+                 expansions: int = 10,
                  bias: bool = True,
                  model_type: str = "mlp",
                  device_type: str = "cpu",
@@ -117,8 +123,8 @@ class NotearsNonlinear(BaseLearner):
         self.h_tol = h_tol
         self.rho_max = rho_max
         self.w_threshold = w_threshold
-        self.hidden_layer = hidden_layer
-        self.hidden_units = hidden_units
+        self.hidden_layers = hidden_layers
+        self.expansions = expansions
         self.bias = bias
         self.model_type = model_type
         self.device_type = device_type
@@ -228,7 +234,7 @@ class NotearsNonlinear(BaseLearner):
         :tuple
             Prediction Graph Matrix Coefficients.
         """
-        logging.info('[start]: n={}, d={}, iter_={}, h_={}, rho_={}'.format( \
+        logging.info('[start]: n={}, d={}, iter_={}, h_={}, rho_={}'.format(
             X.shape[0], X.shape[1], self.max_iter, self.h_tol, self.rho_max))
 
         for _ in range(self.max_iter):
@@ -257,11 +263,12 @@ class NotearsNonlinear(BaseLearner):
 
         """
         if self.model_type == "mlp":
-            model = MLPModel(dims=[input_dim, self.hidden_units, self.hidden_layer], bias=self.bias, device=self.device).to(
-                self.device)
+            model = MLPModel(dims=[input_dim, *self.hidden_layers],
+                             bias=self.bias, device=self.device)
             return model
         elif self.model_type == "sob":
-            model = SobolevModel(input_dim, k=self.hidden_units, bias=self.bias, device=self.device).to(self.device)
+            model = SobolevModel(input_dim, k=self.expansions, bias=self.bias,
+                                 device=self.device)
             return model
         else:
             logging.info(f'Unsupported model type {self.model_type}.')

@@ -19,7 +19,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import logging
 import torch
 import torch.nn as nn
 
@@ -33,7 +32,8 @@ class GolemModel(nn.Module):
         (2) GOLEM-EV: equal_variances=True, lambda_1=2e-2, lambda_2=5.0.
     """
 
-    def __init__(self, args, n, d, lambda_1, lambda_2, equal_variances, B_init=None):
+    def __init__(self, n, d, lambda_1, lambda_2, equal_variances,
+                 B_init=None, device=None):
         """
         Initialize self.
 
@@ -56,19 +56,20 @@ class GolemModel(nn.Module):
         """
 
         super().__init__()
-
-        self.args = args
         self.n = n
         self.d = d
         self.lambda_1 = lambda_1
         self.lambda_2 = lambda_2
         self.equal_variances = equal_variances
         self.B_init = B_init
+        self.device= device
 
         if self.B_init is not None:
-            self._B = nn.Parameter(torch.Tensor(self.B_init))
+            self._B = nn.Parameter(torch.tensor(self.B_init,
+                                                device=self.device))
         else:
-            self._B = nn.Parameter(torch.zeros(self.d, self.d))
+            self._B = nn.Parameter(torch.zeros((self.d, self.d),
+                                               device=self.device))
 
     def forward(self, X):
         """Build tensorflow graph."""
@@ -96,10 +97,9 @@ class GolemModel(nn.Module):
         ------
         torch.Tensor: [d, d] weighted matrix.
         """
-        if self.args.device_type == 'gpu':
-            return (1. - torch.eye(self.d)).cuda(self.args.device_ids) * B
-        else:
-            return (1. - torch.eye(self.d)) * B
+
+        return (torch.ones(self.d, device=self.device)
+                - torch.eye(self.d, device=self.device)).to(self.device) * B
 
     def _compute_likelihood(self):
         """
@@ -110,23 +110,13 @@ class GolemModel(nn.Module):
         torch.Tensor: Likelihood term (scalar-valued).
         """
         if self.equal_variances:  # Assuming equal noise variances
-            if self.args.device_type == 'gpu':
-                return (0.5 * self.d 
-                        * torch.log(torch.square(torch.linalg.norm(self.X - self.X @ self.B)))
-                        - torch.linalg.slogdet(torch.eye(self.d).cuda(self.args.device_ids) - self.B)[1])
-            else:
-                return (0.5 * self.d 
-                        * torch.log(torch.square(torch.linalg.norm(self.X - self.X @ self.B)))
-                        - torch.linalg.slogdet(torch.eye(self.d) - self.B)[1])
+            return (0.5 * self.d
+                    * torch.log(torch.square(torch.linalg.norm(self.X - self.X @ self.B)))
+                    - torch.linalg.slogdet(torch.eye(self.d).to(self.device) - self.B)[1])
         else:  # Assuming non-equal noise variances
-            if self.args.device_type == 'gpu':
-                return (0.5
-                        * torch.sum(torch.log(torch.sum(torch.square(self.X - self.X @ self.B), axis=0)))
-                        - torch.linalg.slogdet(torch.eye(self.d).cuda(self.args.device_ids) - self.B)[1])
-            else:
-                return (0.5 
-                        * torch.sum(torch.log(torch.sum(torch.square(self.X - self.X @ self.B), axis=0)))
-                        - torch.linalg.slogdet(torch.eye(self.d) - self.B)[1])
+            return (0.5
+                    * torch.sum(torch.log(torch.sum(torch.square(self.X - self.X @ self.B), dim=0)))
+                    - torch.linalg.slogdet(torch.eye(self.d).to(self.device) - self.B)[1])
 
     def _compute_L1_penalty(self):
         """
