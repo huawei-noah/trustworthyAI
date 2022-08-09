@@ -1,6 +1,6 @@
 # gCastle
 
-[English Version](./README.md)
+[English Version](https://github.com/huawei-noah/trustworthyAI/tree/master/gcastle/README.md)
 
 1.0.3 版本发布
 
@@ -27,6 +27,7 @@
 | [NOTEARS-MLP](https://arxiv.org/abs/1909.13189) | IID/Gradient-based | 一种深度可微分、基于神经网络建模的因果结构学习算法 | v1.0.3 |
 | [NOTEARS-SOB](https://arxiv.org/abs/1909.13189) | IID/Gradient-based | 一种深度可微分、基于Sobolev空间建模的因果结构学习算法 | v1.0.3 |
 | [NOTEARS-lOW-RANK](https://arxiv.org/abs/2006.05691) | IID/Gradient-based | 基于low rank假定、针对线性数据模型的因果结构学习算法 | v1.0.3 |
+| [DAG-GNN](https://arxiv.org/abs/1904.10098) | IID/Gradient-based | 一种基于GNN的因果结构学习算法 | v1.0.3 |
 | [GOLEM](https://arxiv.org/abs/2006.10201) | IID/Gradient-based | 一种基于NOTEARS、通过减少优化循环次数提升训练效率的因果结构学习算法 | v1.0.3 |
 | [GraNDAG](https://arxiv.org/abs/1906.02226) | IID/Gradient-based | 一种深度可微分、针对非线性加性噪声数据模型的因果结构学习算法 | v1.0.3 |
 | [MCSL](https://arxiv.org/abs/1910.08527) | IID/Gradient-based | 一种基于掩码梯度的因果结构学习算法 | v1.0.3 |
@@ -81,7 +82,7 @@ GraphDAG(pc.causal_matrix, true_causal_matrix, 'result')
 mt = MetricsDAG(pc.causal_matrix, true_causal_matrix)
 print(mt.metrics)
 ```
-大家可访问 [examples](./example) 获取更多的示例. 
+大家可访问 [examples](https://github.com/huawei-noah/trustworthyAI/tree/master/gcastle/example) 获取更多的示例. 
 
 
 ## 引用
