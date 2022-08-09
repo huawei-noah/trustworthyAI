@@ -1,4 +1,5 @@
 # gCastle
+[中文版本](./README.cn.md)
 
 Version 1.0.3 released.
 
