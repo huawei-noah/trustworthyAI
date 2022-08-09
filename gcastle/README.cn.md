@@ -1,6 +1,6 @@
 # gCastle
 
-[English Version](./README.md)
+[English Version](https://github.com/huawei-noah/trustworthyAI/tree/master/gcastle/README.md)
 
 1.0.3 版本发布
 
@@ -20,11 +20,14 @@
 | [PC](https://arxiv.org/abs/math/0510436) | IID/Constraint-based | 一种基于独立性检验的经典因果发现算法 | v1.0.3 |
 | [ANM](https://webdav.tuebingen.mpg.de/causality/NIPS2008-Hoyer.pdf) | IID/Function-based | 一种非线性的加性噪声因果模型 | v1.0.3 |
 | [DirectLiNGAM](https://arxiv.org/abs/1101.2489) | IID/Function-based | 一种线性非高斯无环模型的直接学习方法 | v1.0.3 |
-| [ICALiNGAM](https://dl.acm.org/doi/10.5555/1248547.1248619) | IID/Function-based | 一种线性非高斯无环模型的因果学习算法 | v1.0.1 |
+| [ICALiNGAM](https://dl.acm.org/doi/10.5555/1248547.1248619) | IID/Function-based | 一种线性非高斯无环模型的因果学习算法 | v1.0.3 |
+| [GES](https://www.jmlr.org/papers/volume3/chickering02b/chickering02b.pdf?ref=https://githubhelp.com) | IID/Score-based | 一种经典的基于贪婪等价搜索的结构学习算法 | v1.0.3 |
+| [PNL](https://arxiv.org/abs/1205.2599) | IID/Funtion-based | 一种基于后非线性假设的因果发现方法 | v1.0.3 |
 | [NOTEARS](https://arxiv.org/abs/1803.01422) | IID/Gradient-based | 一种基于梯度、针对线性数据模型的因果结构学习算法 | v1.0.3 |
 | [NOTEARS-MLP](https://arxiv.org/abs/1909.13189) | IID/Gradient-based | 一种深度可微分、基于神经网络建模的因果结构学习算法 | v1.0.3 |
 | [NOTEARS-SOB](https://arxiv.org/abs/1909.13189) | IID/Gradient-based | 一种深度可微分、基于Sobolev空间建模的因果结构学习算法 | v1.0.3 |
 | [NOTEARS-lOW-RANK](https://arxiv.org/abs/2006.05691) | IID/Gradient-based | 基于low rank假定、针对线性数据模型的因果结构学习算法 | v1.0.3 |
+| [DAG-GNN](https://arxiv.org/abs/1904.10098) | IID/Gradient-based | 一种基于GNN的因果结构学习算法 | v1.0.3 |
 | [GOLEM](https://arxiv.org/abs/2006.10201) | IID/Gradient-based | 一种基于NOTEARS、通过减少优化循环次数提升训练效率的因果结构学习算法 | v1.0.3 |
 | [GraNDAG](https://arxiv.org/abs/1906.02226) | IID/Gradient-based | 一种深度可微分、针对非线性加性噪声数据模型的因果结构学习算法 | v1.0.3 |
 | [MCSL](https://arxiv.org/abs/1910.08527) | IID/Gradient-based | 一种基于掩码梯度的因果结构学习算法 | v1.0.3 |
@@ -79,7 +82,7 @@ GraphDAG(pc.causal_matrix, true_causal_matrix, 'result')
 mt = MetricsDAG(pc.causal_matrix, true_causal_matrix)
 print(mt.metrics)
 ```
-大家可访问 [examples](./example) 获取更多的示例. 
+大家可访问 [examples](https://github.com/huawei-noah/trustworthyAI/tree/master/gcastle/example) 获取更多的示例. 
 
 
 ## 引用
