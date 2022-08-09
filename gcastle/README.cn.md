@@ -50,7 +50,7 @@
 
 ### PIP安装
 ```bash
-pip install gcastle==1.0.3rc3
+pip install gcastle==1.0.3
 ```
 
 ## 算法使用指导
