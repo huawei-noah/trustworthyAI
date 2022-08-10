@@ -11,6 +11,7 @@ jobs:
       - name: Get the output time
         run: |
           pip3 install twine
+          pip3 install -r ./requirements.txt
           cd gcastle
           python3 setup.py sdist bdist_wheel
           twine upload -u ${{ secrets.PYPI_USERNAME }} -p ${{ secrets.PYPI_PASSWORD }} dist/*
