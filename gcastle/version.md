@@ -1,4 +1,4 @@
-### v1.0.3rc4 main updates
+### v1.0.3 main updates
 
 1. Add new algorithms: DAG-GNN,GES and PNL.
 2. Pytorch implementation for GAE algorithm.
