@@ -1,5 +1,5 @@
 <h1 align="center">
-<img width="655" alt="gcastle_logo" src="https://user-images.githubusercontent.com/1130029/184056068-8eaa21e5-6241-4682-94dc-b6231d238e23.png">
+<img width="500" alt="gcastle_logo" src="https://user-images.githubusercontent.com/1130029/184056068-8eaa21e5-6241-4682-94dc-b6231d238e23.png">
 </h1>
 
 [中文版本](https://github.com/huawei-noah/trustworthyAI/tree/master/gcastle/README.cn.md)
