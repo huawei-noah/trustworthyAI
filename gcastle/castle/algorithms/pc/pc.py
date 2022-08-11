@@ -20,6 +20,104 @@ import joblib
 
 from castle.common import BaseLearner, Tensor
 from castle.common.independence_tests import CITest
+from castle.common.priori_knowledge import orient_by_priori_knowledge
+
+
+class PC(BaseLearner):
+    """PC algorithm
+
+    A classic causal discovery algorithm based on conditional independence tests.
+
+    References
+    ----------
+    [1] original-PC
+        https://www.jmlr.org/papers/volume8/kalisch07a/kalisch07a.pdf
+    [2] stable-PC
+        https://arxiv.org/pdf/1211.3295.pdf
+    [3] parallel-PC
+        https://arxiv.org/pdf/1502.02454.pdf
+
+    Parameters
+    ----------
+    variant : str
+        A variant of PC-algorithm, one of [`original`, `stable`, `parallel`].
+    alpha: float, default 0.05
+        Significance level.
+    ci_test : str, callable
+        ci_test method, if str, must be one of [`fisherz`, `g2`, `chi2`]
+        See more: `castle.common.independence_tests.CITest`
+    priori_knowledge: PrioriKnowledge
+        a class object PrioriKnowledge
+
+    Attributes
+    ----------
+    causal_matrix : array
+        Learned causal structure matrix.
+
+    Examples
+    --------
+    >>> from castle.common import GraphDAG
+    >>> from castle.metrics import MetricsDAG
+    >>> from castle.datasets import load_dataset
+
+    >>> X, true_dag, _ = load_dataset(name='IID_Test')
+    >>> pc = PC(variant='stable')
+    >>> pc.learn(X)
+    >>> GraphDAG(pc.causal_matrix, true_dag, save_name='result_pc')
+    >>> met = MetricsDAG(pc.causal_matrix, true_dag)
+    >>> print(met.metrics)
+
+    >>> pc = PC(variant='parallel')
+    >>> pc.learn(X, p_cores=2)
+    >>> GraphDAG(pc.causal_matrix, true_dag, save_name='result_pc')
+    >>> met = MetricsDAG(pc.causal_matrix, true_dag)
+    >>> print(met.metrics)
+    """
+
+    def __init__(self, variant='original', alpha=0.05, ci_test='fisherz',
+                 priori_knowledge=None):
+        super(PC, self).__init__()
+        self.variant = variant
+        self.alpha = alpha
+        self.ci_test = ci_test
+        self.causal_matrix = None
+        self.priori_knowledge = priori_knowledge
+
+    def learn(self, data, columns=None, **kwargs):
+        """Set up and run the PC algorithm.
+
+        Parameters
+        ----------
+        data: array or Tensor
+            Training data
+        columns : Index or array-like
+            Column labels to use for resulting tensor. Will default to
+            RangeIndex (0, 1, 2, ..., n) if no column labels are provided.
+        kwargs: [optional]
+            p_cores : int
+                number of CPU cores to be used
+            s : boolean
+                memory-efficient indicator
+            batch : int
+                number of edges per batch
+            if s is None or False, or without batch, batch=|J|.
+            |J| denote number of all pairs of adjacency vertices (X, Y) in G.
+        """
+
+        data = Tensor(data, columns=columns)
+
+        skeleton, sep_set = find_skeleton(data,
+                                          alpha=self.alpha,
+                                          ci_test=self.ci_test,
+                                          variant=self.variant,
+                                          priori_knowledge=self.priori_knowledge,
+                                          **kwargs)
+
+        self._causal_matrix = Tensor(
+            orient(skeleton, sep_set, self.priori_knowledge).astype(int),
+            index=data.columns,
+            columns=data.columns
+        )
 
 
 def _loop(G, d):
@@ -45,17 +143,19 @@ def _loop(G, d):
     pairs = [(x, y) for x, y in combinations(set(range(G.shape[0])), 2)]
     less_d = 0
     for i, j in pairs:
-        adj_i = set(np.argwhere(G[i] == 1).reshape(-1, ))
+        adj_i = set(np.argwhere(G[i] != 0).reshape(-1, ))
         z = adj_i - {j}  # adj(C, i)\{j}
         if len(z) < d:
             less_d += 1
+        else:
+            break
     if less_d == len(pairs):
         return False
     else:
         return True
 
 
-def orient(skeleton, sep_set):
+def orient(skeleton, sep_set, priori_knowledge=None):
     """Extending the Skeleton to the Equivalence Class
 
     it orients the undirected edges to form an equivalence class of DAGs.
@@ -77,8 +177,11 @@ def orient(skeleton, sep_set):
         which includes both directed and undirected edges.
     """
 
+    if priori_knowledge is not None:
+        skeleton = orient_by_priori_knowledge(skeleton, priori_knowledge)
+
     columns = list(range(skeleton.shape[1]))
-    cpdag = deepcopy(skeleton)
+    cpdag = deepcopy(abs(skeleton))
     # pre-processing
     for ij in sep_set.keys():
         i, j = ij
@@ -143,13 +246,14 @@ def orient(skeleton, sep_set):
                                         and cpdag[l, j] == 1 \
                                         and cpdag[j, l] == 0:
                                     cpdag[j, i] = 0
-        if (cpdag == old_cpdag).all():
+        if np.all(cpdag == old_cpdag):
             break
 
     return cpdag
 
 
-def find_skeleton(data, alpha, ci_test, variant='original', base_skeleton=None,
+def find_skeleton(data, alpha, ci_test, variant='original',
+                  priori_knowledge=None, base_skeleton=None,
                   p_cores=1, s=None, batch=None):
     """Find skeleton graph from G using PC algorithm
 
@@ -163,7 +267,7 @@ def find_skeleton(data, alpha, ci_test, variant='original', base_skeleton=None,
     alpha : float, default 0.05
         significant level
     ci_test : str, callable
-        ci_test method, if str, must be one of [`gauss`, `g2`, `chi2`].
+        ci_test method, if str, must be one of [`fisherz`, `g2`, `chi2`].
         if callable, must return a tuple that  the last element is `p_value` ,
         like (_, _, p_value) or (chi2, dof, p_value).
         See more: `castle.common.independence_tests.CITest`
@@ -199,7 +303,7 @@ def find_skeleton(data, alpha, ci_test, variant='original', base_skeleton=None,
     >>> from castle.datasets import load_dataset
 
     >>> true_dag, X = load_dataset(name='iid_test')
-    >>> skeleton, sep_set = find_skeleton(data, 0.05, 'gauss')
+    >>> skeleton, sep_set = find_skeleton(data, 0.05, 'fisherz')
     >>> print(skeleton)
     [[0. 0. 1. 0. 0. 1. 0. 0. 0. 0.]
      [0. 0. 0. 1. 1. 1. 1. 0. 1. 0.]
@@ -244,8 +348,8 @@ def find_skeleton(data, alpha, ci_test, variant='original', base_skeleton=None,
 
         return (x, y), K_x_y, sub_z
 
-    if ci_test == 'gauss':
-        ci_test = CITest.gauss
+    if ci_test == 'fisherz':
+        ci_test = CITest.fisherz_test
     elif ci_test == 'g2':
         ci_test = CITest.g2_test
     elif ci_test == 'chi2':
@@ -264,7 +368,14 @@ def find_skeleton(data, alpha, ci_test, variant='original', base_skeleton=None,
         base_skeleton[row, col] = 0
         skeleton = base_skeleton
     nodes = set(range(n_feature))
-    pairs = [(x, y) for x, y in combinations(nodes, 2)]
+
+    # update skeleton based on priori knowledge
+    for i, j in combinations(nodes, 2):
+        if priori_knowledge is not None and (
+                priori_knowledge.is_forbidden(i, j)
+                and priori_knowledge.is_forbidden(j, i)):
+            skeleton[i, j] = skeleton[j, i] = 0
+
     sep_set = {}
     d = -1
     while _loop(skeleton, d):  # until for each adj(C,i)\{j} < l
@@ -274,7 +385,7 @@ def find_skeleton(data, alpha, ci_test, variant='original', base_skeleton=None,
         else:
             C = skeleton
         if variant != 'parallel':
-            for i, j in pairs:
+            for i, j in combinations(nodes, 2):
                 if skeleton[i, j] == 0:
                     continue
                 adj_i = set(np.argwhere(C[i] == 1).reshape(-1, ))
@@ -293,6 +404,8 @@ def find_skeleton(data, alpha, ci_test, variant='original', base_skeleton=None,
                  if skeleton[x, y] == 1]
             if not s or not batch:
                 batch = len(J)
+            if batch < 1:
+                batch = 1
             if not p_cores or p_cores == 0:
                 raise ValueError(f'If variant is parallel, type of p_cores '
                                  f'must be int, but got {type(p_cores)}.')
@@ -310,94 +423,3 @@ def find_skeleton(data, alpha, ci_test, variant='original', base_skeleton=None,
                         sep_set[(x, y)] = sub_z
 
     return skeleton, sep_set
-
-
-class PC(BaseLearner):
-    """PC algorithm
-
-    A classic causal discovery algorithm based on conditional independence tests.
-
-    References
-    ----------
-    [1] original-PC
-        https://www.jmlr.org/papers/volume8/kalisch07a/kalisch07a.pdf
-    [2] stable-PC
-        https://arxiv.org/pdf/1211.3295.pdf
-    [3] parallel-PC
-        https://arxiv.org/pdf/1502.02454.pdf
-
-    Parameters
-    ----------
-    variant : str
-        A variant of PC-algorithm, one of [`original`, `stable`, `parallel`].
-    alpha: float, default 0.05
-        Significance level.
-    ci_test : str, callable
-        ci_test method, if str, must be one of [`gauss`, `g2`, `chi2`]
-        See more: `castle.common.independence_tests.CITest`
-
-    Attributes
-    ----------
-    causal_matrix : array
-        Learned causal structure matrix.
-
-    Examples
-    --------
-    >>> from castle.common import GraphDAG
-    >>> from castle.metrics import MetricsDAG
-    >>> from castle.datasets import load_dataset
-
-    >>> X, true_dag, _ = load_dataset(name='IID_Test')
-    >>> pc = PC(variant='stable')
-    >>> pc.learn(X)
-    >>> GraphDAG(pc.causal_matrix, true_dag, save_name='result_pc')
-    >>> met = MetricsDAG(pc.causal_matrix, true_dag)
-    >>> print(met.metrics)
-
-    >>> pc = PC(variant='parallel')
-    >>> pc.learn(X, p_cores=2)
-    >>> GraphDAG(pc.causal_matrix, true_dag, save_name='result_pc')
-    >>> met = MetricsDAG(pc.causal_matrix, true_dag)
-    >>> print(met.metrics)
-    """
-
-    def __init__(self, variant='original', alpha=0.05, ci_test='gauss'):
-        super(PC, self).__init__()
-        self.variant = variant
-        self.alpha = alpha
-        self.ci_test = ci_test
-        self.causal_matrix = None
-
-    def learn(self, data, columns=None, **kwargs):
-        """Set up and run the PC algorithm.
-
-        Parameters
-        ----------
-        data: array or Tensor
-            Training data
-        columns : Index or array-like
-            Column labels to use for resulting tensor. Will default to
-            RangeIndex (0, 1, 2, ..., n) if no column labels are provided.
-        kwargs: [optional]
-            p_cores : int
-                number of CPU cores to be used
-            s : boolean
-                memory-efficient indicator
-            batch : int
-                number of edges per batch
-            if s is None or False, or without batch, batch=|J|.
-            |J| denote number of all pairs of adjacency vertices (X, Y) in G.
-        """
-
-        data = Tensor(data, columns=columns)
-
-        skeleton, sep_set = find_skeleton(data,
-                                          alpha=self.alpha,
-                                          ci_test=self.ci_test,
-                                          variant=self.variant,
-                                          **kwargs)
-
-        self._causal_matrix = Tensor(orient(skeleton, sep_set).astype(int),
-                                     index=data.columns,
-                                     columns=data.columns)
-

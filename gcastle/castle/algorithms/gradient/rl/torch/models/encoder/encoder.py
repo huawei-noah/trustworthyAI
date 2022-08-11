@@ -66,7 +66,7 @@ class AttnHead(nn.Module):
         f_2 = self._f_2(seq_fts)
 
         logits = f_1 + f_2.permute(0, 2, 1)
-        coefs = F.softmax(F.leaky_relu(logits))
+        coefs = torch.softmax(F.leaky_relu(logits), dim=0)
 
         if coef_drop != 0.0:
             coefs = F.dropout(coefs, coef_drop)
@@ -172,7 +172,7 @@ class MultiheadAttention(nn.Module):
         outputs = outputs / (K_.shape[-1] ** 0.5)
 
         # Activation
-        outputs = F.softmax(outputs)  # num_heads*[batch_size, seq_length, seq_length]
+        outputs = torch.softmax(outputs, dim=0)  # num_heads*[batch_size, seq_length, seq_length]
 
         # Dropouts
         outputs = F.dropout(outputs, p=dropout_rate, training=is_training)

@@ -1,5 +1,5 @@
 # coding=utf-8
-# Copyright (C) 2021. Huawei Technologies Co., Ltd. All rights reserved.
+# Copyright (C) 2022. Huawei Technologies Co., Ltd. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,4 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .al_trainer import ALTrainer
+import sys
+sys.path.append('../')
+import unittest
+from test_all_castle import TestCastleAll
+
+
+if __name__ == '__main__':
+    runner = unittest.TextTestRunner()
+    runner.run(TestCastleAll('test_RL'))

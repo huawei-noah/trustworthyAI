@@ -13,7 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
+import os
+import logging
 import torch
 import numpy as np
 from tqdm import tqdm
@@ -27,6 +28,8 @@ from .base import compute_jacobian_avg
 from .base import is_acyclic
 
 from castle.common import BaseLearner, Tensor
+from castle.common.validator import check_args_value
+from castle.common.consts import GRANDAG_VALID_PARAMS
 
 
 class NormalizationData(object):
@@ -187,6 +190,7 @@ class GraNDAG(BaseLearner):
     >>> print(gnd.model.adjacency)
     """
 
+    @check_args_value(GRANDAG_VALID_PARAMS)
     def __init__(self, input_dim,
                  hidden_num=2,
                  hidden_dim=10,
@@ -198,6 +202,7 @@ class GraNDAG(BaseLearner):
                  optimizer='rmsprop',
                  h_threshold=1e-8,
                  device_type='cpu',
+                 device_ids='0',
                  use_pns=False,
                  pns_thresh=0.75,
                  num_neighbors=None,
@@ -226,6 +231,7 @@ class GraNDAG(BaseLearner):
         self.optimizer = optimizer
         self.h_threshold = h_threshold
         self.device_type = device_type
+        self.device_ids = device_ids
         self.use_pns = use_pns
         self.pns_thresh = pns_thresh
         self.num_neighbors = num_neighbors
@@ -259,18 +265,28 @@ class GraNDAG(BaseLearner):
         np.random.seed(self.random_seed)
 
         # Use gpu
+        if torch.cuda.is_available():
+            logging.info('GPU is available.')
+        else:
+            logging.info('GPU is unavailable.')
+            if self.device_type == 'gpu':
+                raise ValueError("GPU is unavailable, "
+                                 "please set device_type = 'cpu'.")
         if self.device_type == 'gpu':
             if self.precision:
                 torch.set_default_tensor_type('torch.cuda.FloatTensor')
             else:
                 torch.set_default_tensor_type('torch.cuda.DoubleTensor')
-        elif self.device_type == 'cpu':
+            if self.device_ids:
+                os.environ['CUDA_VISIBLE_DEVICES'] = str(self.device_ids)
+            device = torch.device('cuda')
+        else:
             if self.precision:
                 torch.set_default_tensor_type('torch.FloatTensor')
             else:
                 torch.set_default_tensor_type('torch.DoubleTensor')
-        else:
-            raise ValueError("Parameter device_type must be 'cpu' or 'gpu'.")
+            device = torch.device('cpu')
+        self.device = device
 
         # create learning model and ground truth model
         data = Tensor(data, columns=columns)
@@ -326,7 +342,7 @@ class GraNDAG(BaseLearner):
         # update self.model by run _to_dag
         self._to_dag(train_data)
 
-        self._causal_matrix = Tensor(self.model.adjacency.detach().numpy(),
+        self._causal_matrix = Tensor(self.model.adjacency.detach().cpu().numpy(),
                                      index=data.columns,
                                      columns=data.columns)
 
@@ -505,7 +521,7 @@ class GraNDAG(BaseLearner):
             for step, t in enumerate(thresholds):
                 to_keep = torch.Tensor(A > t + epsilon)
                 new_adj = self.model.adjacency * to_keep
-                if is_acyclic(new_adj):
+                if is_acyclic(new_adj, device=self.device):
                     self.model.adjacency.copy_(new_adj)
                     break
 

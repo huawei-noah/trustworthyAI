@@ -13,4 +13,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .model import GAEModel
+from castle.algorithms.gradient.pnl.torch.pnl import PNL

@@ -1,5 +1,5 @@
 # coding=utf-8
-# Copyright (C) 2021. Huawei Technologies Co., Ltd. All rights reserved.
+# Copyright (C) 2022. Huawei Technologies Co., Ltd. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -38,10 +38,7 @@ weighted_random_dag = DAG.erdos_renyi(n_nodes=10, n_edges=20, weight_range=(0.5,
 dataset = IIDSimulation(W=weighted_random_dag, n=2000, method='linear', sem_type='gauss')
 true_dag, X = dataset.B, dataset.X
 
-# graph_auto_encoder learn
-ga = GAE(num_encoder_layers=2, num_decoder_layers=2, hidden_size=16,
-         max_iter=20, h_tol=1e-12, iter_step=300, rho_thres=1e20, rho_multiply=10, 
-         graph_thres=0.2, l1_graph_penalty=1.0, init_iter=5, use_float64=True)
+ga = GAE(input_dim=10)
 ga.learn(X)
 
 # plot est_dag and true_dag

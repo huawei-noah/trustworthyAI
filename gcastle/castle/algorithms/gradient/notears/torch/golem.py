@@ -24,11 +24,11 @@
 
 import logging
 import torch
-import argparse
+import os
 
 from .golem_utils import GolemModel
 from .golem_utils.train import postprocess
-from .golem_utils.utils import is_cuda_available, set_seed
+from .golem_utils.utils import set_seed
 
 from castle.common import BaseLearner, Tensor
 
@@ -103,26 +103,33 @@ class GOLEM(BaseLearner):
 
         super().__init__()
 
-        parser = argparse.ArgumentParser(description='Configuration')
-        self.config = parser.parse_args(args=[])
-        self.config.B_init = B_init
-        self.config.lambda_1 = lambda_1
-        self.config.lambda_2 = lambda_2
-        self.config.equal_variances = equal_variances
-        self.config.non_equal_variances = non_equal_variances
-        self.config.learning_rate = learning_rate
-        self.config.num_iter = num_iter
-        self.config.checkpoint_iter = checkpoint_iter
-        self.config.seed = seed
-        self.config.graph_thres = graph_thres
-        self.config.device_type = device_type
-        self.config.device_ids = device_ids
+        self.B_init = B_init
+        self.lambda_1 = lambda_1
+        self.lambda_2 = lambda_2
+        self.equal_variances = equal_variances
+        self.non_equal_variances = non_equal_variances
+        self.learning_rate = learning_rate
+        self.num_iter = num_iter
+        self.checkpoint_iter = checkpoint_iter
+        self.seed = seed
+        self.graph_thres = graph_thres
+        self.device_type = device_type
+        self.device_ids = device_ids
 
-        if not is_cuda_available:
-            self.config.device_type = 'cpu'
-        
-        if self.config.device_type == 'gpu':
-            self.config.device = torch.device(type='cuda', index=self.config.device_ids)
+        if torch.cuda.is_available():
+            logging.info('GPU is available.')
+        else:
+            logging.info('GPU is unavailable.')
+            if self.device_type == 'gpu':
+                raise ValueError("GPU is unavailable, "
+                                 "please set device_type = 'cpu'.")
+        if self.device_type == 'gpu':
+            if self.device_ids:
+                os.environ['CUDA_VISIBLE_DEVICES'] = str(self.device_ids)
+            device = torch.device('cuda')
+        else:
+            device = torch.device('cpu')
+        self.device = device
 
     def learn(self, data, columns=None, **kwargs):
         """
@@ -157,15 +164,14 @@ class GOLEM(BaseLearner):
             [d, d] weighted matrix for initialization.
             Set to None to disable. Default: None.
         """
-        config = self.config
 
         X = Tensor(data, columns=columns)
         
-        causal_matrix = self._golem(X, config)
+        causal_matrix = self._golem(X)
         self.causal_matrix = Tensor(causal_matrix, index=X.columns,
                                     columns=X.columns)
 
-    def _golem(self, X, args):
+    def _golem(self, X):
         """
         Solve the unconstrained optimization problem of GOLEM, which involves
         GolemModel and GolemTrainer.
@@ -185,24 +191,21 @@ class GOLEM(BaseLearner):
         (1) GOLEM-NV: equal_variances=False, lambda_1=2e-3, lambda_2=5.0.
         (2) GOLEM-EV: equal_variances=True, lambda_1=2e-2, lambda_2=5.0.
         """
-        set_seed(args.seed)
+        set_seed(self.seed)
         n, d = X.shape
-        if args.device_type == 'gpu':
-            X = torch.Tensor(X).cuda(args.device_ids)
-        else:
-            X = torch.Tensor(X)
+        X = torch.Tensor(X).to(self.device)
 
         # Set up model
-        if args.device_type == 'gpu':
-            model = GolemModel(args, n, d, args.lambda_1, args.lambda_2, 
-                               args.equal_variances, args.B_init).cuda(args.device_ids)
-        else:
-            model = GolemModel(args, n, d, args.lambda_1, args.lambda_2, 
-                               args.equal_variances, args.B_init)
-        self.train_op = torch.optim.Adam(model.parameters(), lr=args.learning_rate)
+        model = GolemModel(n=n, d=d, lambda_1=self.lambda_1,
+                           lambda_2=self.lambda_2,
+                           equal_variances=self.equal_variances,
+                           B_init=self.B_init,
+                           device=self.device)
 
-        logging.info("Started training for {} iterations.".format(int(args.num_iter)))
-        for i in range(0, int(args.num_iter) + 1):
+        self.train_op = torch.optim.Adam(model.parameters(), lr=self.learning_rate)
+
+        logging.info("Started training for {} iterations.".format(int(self.num_iter)))
+        for i in range(0, int(self.num_iter) + 1):
             model(X)
             score, likelihood, h, B_est = model.score, model.likelihood, model.h, model.B
             
@@ -213,16 +216,12 @@ class GOLEM(BaseLearner):
                 self.loss.backward()
                 self.train_op.step()
 
-            if args.checkpoint_iter is not None and i % args.checkpoint_iter == 0:
+            if self.checkpoint_iter is not None and i % self.checkpoint_iter == 0:
                 logging.info("[Iter {}] score={:.3f}, likelihood={:.3f}, h={:.1e}".format( \
                     i, score, likelihood, h))
 
         # Post-process estimated solution and compute results
-        if args.device_type == 'gpu':
-            B_processed = postprocess(B_est.cpu().detach().numpy(), graph_thres=0.3)
-        else:
-            B_processed = postprocess(B_est.detach().numpy(), graph_thres=0.3)
-        
+        B_processed = postprocess(B_est.cpu().detach().numpy(), graph_thres=0.3)
         B_result = (B_processed != 0).astype(int)
 
         return B_result

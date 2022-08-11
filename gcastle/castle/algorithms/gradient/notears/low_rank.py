@@ -67,7 +67,7 @@ class NotearsLowRank(BaseLearner):
     def __init__(self, w_init=None, max_iter=15, h_tol=1e-6, 
                  rho_max=1e+20, w_threshold=0.3):
 
-        super().__init__()
+        super(NotearsLowRank, self).__init__()
 
         self.w_init = w_init
         self.max_iter = max_iter
@@ -87,7 +87,7 @@ class NotearsLowRank(BaseLearner):
             Column labels to use for resulting tensor. Will default to
             RangeIndex (0, 1, 2, ..., n) if no column labels are provided.
         rank: int
-            The rank of data.
+            The algebraic rank of the weighted adjacency matrix of a graph.
         """
         X = Tensor(data, columns=columns)
 
@@ -152,13 +152,6 @@ class NotearsLowRank(BaseLearner):
             h = _h(W)
             return loss + 0.5 * rho * h * h + alpha * h
 
-        def _lik(u, v):
-            u = u.reshape((d, -1))
-            v = v.reshape((d, -1))
-            W = np.matmul(u, v.transpose())
-            loss = 0.5 / n * np.square(np.linalg.norm(X.dot(np.eye(d, d) - W), 'fro'))
-            return loss
-
         def _grad(uv):
             nn = len(uv)
             u = uv[0: nn // 2]
@@ -209,7 +202,7 @@ class NotearsLowRank(BaseLearner):
         uv_est = np.copy(uv_new)
         # bnds = [(0, 0) if i == j else (None, None) for i in range(d) for j in range(d)]
         
-        logging.info('[start]: n={}, d={}, iter_={}, h_={}, rho_={}'.format( \
+        logging.info('[start]: n={}, d={}, iter_={}, h_={}, rho_={}'.format(
                     n, d, self.max_iter, self.h_tol, self.rho_max))
         
         for flag in range(-1, self.max_iter):       
@@ -223,7 +216,7 @@ class NotearsLowRank(BaseLearner):
                                         uv_new[d*r:].reshape((d, r)).transpose()))
                     
                     logging.debug(
-                        '[iter {}] h={:.3e}, loss={:.3f}, rho={:.1e}'.format( \
+                        '[iter {}] h={:.3e}, loss={:.3f}, rho={:.1e}'.format(
                         flag, h_new, _func(uv_new), rho))
 
                     if h_new > 0.25 * h:

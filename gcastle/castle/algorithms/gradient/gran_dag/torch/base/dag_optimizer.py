@@ -14,52 +14,26 @@
 # limitations under the License.
 
 import numpy as np
-from scipy.linalg import expm
 import torch
 
-
-class TrExpScipy(torch.autograd.Function):
-    """
-    autograd.Function to compute trace of an exponential of a matrix
-    """
-
-    @staticmethod
-    def forward(ctx, input):
-        with torch.no_grad():
-            # send tensor to cpu in numpy format and compute expm using scipy
-            expm_input = expm(input.detach().cpu().numpy())
-            # transform back into a tensor
-            expm_input = torch.as_tensor(expm_input)
-            if input.is_cuda:
-                # expm_input = expm_input.cuda()
-                assert expm_input.is_cuda
-            # save expm_input to use in backward
-            ctx.save_for_backward(expm_input)
-
-            # return the trace
-            return torch.trace(expm_input)
-
-    @staticmethod
-    def backward(ctx, grad_output):
-        with torch.no_grad():
-            expm_input, = ctx.saved_tensors
-            return expm_input.t() * grad_output
+from castle.common.validator import transfer_to_device
 
 
 def compute_constraint(model, w_adj):
     assert (w_adj >= 0).detach().cpu().numpy().all()
-    h = TrExpScipy.apply(w_adj) - model.input_dim
+    h = torch.trace(torch.matrix_exp(w_adj)) - model.input_dim
     return h
 
 
-def is_acyclic(adjacency):
+def is_acyclic(adjacency, device=None):
     """
     Whether the adjacency matrix is a acyclic graph.
     """
     prod = np.eye(adjacency.shape[0])
+    adjacency, prod = transfer_to_device(adjacency, prod, device=device)
     for _ in range(1, adjacency.shape[0] + 1):
-        prod = np.matmul(adjacency, prod)
-        if np.trace(prod) != 0:
+        prod = torch.matmul(adjacency, prod)
+        if torch.trace(prod) != 0:
             return False
     return True
 

@@ -22,14 +22,14 @@ from .masked_quadratic_regression import MaskedQuadraticRegression
 
 class MaskedModel(torch.nn.Module):
 
-    def __init__(self, model_type, n_samples, n_nodes, pns_mask, hidden_layers,
+    def __init__(self, model_type, n_samples, n_nodes, pns_mask, num_hidden_layers,
                  hidden_dim, l1_graph_penalty, seed, device) -> None:
         super(MaskedModel, self).__init__()
         self.model_type = model_type
         self.n_samples = n_samples
         self.n_nodes = n_nodes
         self.pns_mask = pns_mask
-        self.hidden_layers = hidden_layers
+        self.num_hidden_layers = num_hidden_layers
         self.hidden_dim = hidden_dim
         self.l1_graph_penalty = l1_graph_penalty
         self.seed = seed
@@ -37,7 +37,7 @@ class MaskedModel(torch.nn.Module):
 
         if self.model_type == 'nn':
             self.masked_model = MaskedNN(mask=self.pns_mask,
-                                         hidden_layers=self.hidden_layers,
+                                         num_hidden_layers=self.num_hidden_layers,
                                          hidden_dim=self.hidden_dim,
                                          device=self.device
                                          )

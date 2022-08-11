@@ -19,6 +19,8 @@ from sklearn.preprocessing import scale
 
 from .utils.base import _BaseLiNGAM
 from castle.common import BaseLearner, Tensor
+from castle.common.consts import DIRECT_LINGAM_VALID_PARAMS
+from castle.common.validator import check_args_value
 
 
 class DirectLiNGAM(_BaseLiNGAM, BaseLearner):
@@ -71,6 +73,7 @@ class DirectLiNGAM(_BaseLiNGAM, BaseLearner):
     >>> print(met.metrics)
     """
 
+    @check_args_value(DIRECT_LINGAM_VALID_PARAMS)
     def __init__(self, prior_knowledge=None, measure='pwling', thresh=0.3):
 
         super().__init__()
@@ -79,7 +82,7 @@ class DirectLiNGAM(_BaseLiNGAM, BaseLearner):
         self._measure = measure
         self._thresh = thresh
 
-    def learn(self, data, columns=None):
+    def learn(self, data, columns=None, **kwargs):
         """
         Set up and run the DirectLiNGAM algorithm.
 

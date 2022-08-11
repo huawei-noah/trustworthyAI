@@ -30,6 +30,8 @@ from .helpers.analyze_utils import convert_graph_int_to_adj_mat, \
 
 from castle.common import BaseLearner, Tensor
 from castle.metrics import MetricsDAG
+from castle.common.consts import RL_VALID_PARAMS
+from castle.common.validator import check_args_value
 
 
 class RL(BaseLearner):
@@ -143,9 +145,10 @@ class RL(BaseLearner):
     >>> print(met.metrics)
     """
 
+    @check_args_value(RL_VALID_PARAMS)
     def __init__(self, encoder_type='TransformerEncoder', 
                  hidden_dim=64, 
-                 num_heads=16, 
+                 num_heads=16,
                  num_stacks=6, 
                  residual=False, 
                  decoder_type='SingleLayerDecoder', 
@@ -162,24 +165,18 @@ class RL(BaseLearner):
                  reg_type='LR', 
                  lambda_iter_num=1000, 
                  lambda_flag_default=True, 
-                 score_bd_tight=False, 
-                 lambda1_update=1.0, 
+                 score_bd_tight=False,
                  lambda2_update=10, 
                  score_lower=0.0, 
-                 score_upper=0.0, 
-                 lambda2_lower=-1.0, 
-                 lambda2_upper=-1.0, 
+                 score_upper=0.0,
                  seed=8, 
                  nb_epoch=20000, 
                  lr1_start=0.001,
                  lr1_decay_step=5000, 
                  lr1_decay_rate=0.96, 
                  alpha=0.99, 
-                 init_baseline=-1.0, 
-                 temperature=3.0, 
-                 C=10.0, 
-                 l1_graph_reg=0.0, 
-                 inference_mode=True, 
+                 init_baseline=-1.0,
+                 l1_graph_reg=0.0,
                  verbose=False, 
                  device_type='cpu', 
                  device_ids=0):
@@ -206,12 +203,9 @@ class RL(BaseLearner):
         self.lambda_iter_num = lambda_iter_num
         self.lambda_flag_default = lambda_flag_default
         self.score_bd_tight = score_bd_tight
-        self.lambda1_update = lambda1_update
         self.lambda2_update = lambda2_update
         self.score_lower = score_lower
         self.score_upper = score_upper
-        self.lambda2_lower = lambda2_lower
-        self.lambda2_upper = lambda2_upper
         self.seed = seed
         self.nb_epoch = nb_epoch
         self.lr1_start = lr1_start
@@ -219,10 +213,7 @@ class RL(BaseLearner):
         self.lr1_decay_rate = lr1_decay_rate
         self.alpha = alpha
         self.init_baseline = init_baseline
-        self.temperature = temperature
-        self.C = C
         self.l1_graph_reg = l1_graph_reg
-        self.inference_mode = inference_mode
         self.verbose = verbose
         self.device_type = device_type
         self.device_ids = device_ids
