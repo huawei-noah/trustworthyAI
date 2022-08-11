@@ -18,7 +18,7 @@ gCastle is a causal structure learning toolchain developed by [Huawei Noah's Ark
 | [ANM](https://webdav.tuebingen.mpg.de/causality/NIPS2008-Hoyer.pdf) | IID/Function-based | Nonlinear causal discovery with additive noise models | v1.0.3 |
 | [DirectLiNGAM](https://arxiv.org/abs/1101.2489) | IID/Function-based | A direct learning algorithm for linear non-Gaussian acyclic model (LiNGAM) | v1.0.3 |
 | [ICALiNGAM](https://dl.acm.org/doi/10.5555/1248547.1248619) | IID/Function-based | An ICA-based learning algorithm for linear non-Gaussian acyclic model (LiNGAM) | v1.0.3 |
-| [GES](https://www.jmlr.org/papers/volume3/chickering02b/chickering02b.pdf?ref=https://githubhelp.com) | IID/Score-based | A classical Greedy Equivalence Search algorithm | v1.0.3 |
+| [GES](https://www.jmlr.org/papers/volume3/chickering02b/chickering02b.pdf) | IID/Score-based | A classical Greedy Equivalence Search algorithm | v1.0.3 |
 | [PNL](https://arxiv.org/abs/1205.2599) | IID/Funtion-based | Causal discovery based on the post-nonlinear causal assumption | v1.0.3 |
 | [NOTEARS](https://arxiv.org/abs/1803.01422) | IID/Gradient-based | A gradient-based algorithm for linear data models (typically with least-squares loss) | v1.0.3 |
 | [NOTEARS-MLP](https://arxiv.org/abs/1909.13189) | IID/Gradient-based | A gradient-based algorithm using neural network modeling for non-linear causal relationships | v1.0.3 |
