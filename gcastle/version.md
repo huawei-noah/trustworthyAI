@@ -3,6 +3,7 @@
 1. Add new algorithms: DAG-GNN,GES and PNL.
 2. Pytorch implementation for GAE algorithm.
 3. PC algorithm supporting prior knowleges injection.
+4. Test code for all implemented algorithms.
 
 ### v1.0.3rc3 main updates
 
