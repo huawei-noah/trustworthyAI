@@ -4,7 +4,7 @@
 
 [中文版本](https://github.com/huawei-noah/trustworthyAI/tree/master/gcastle/README.cn.md)
 
-Version 1.0.3 (2022/08/08)
+Version 1.0.3 (2022/08/11)
 
 ## Introduction
 
