@@ -21,7 +21,7 @@
 | [ANM](https://webdav.tuebingen.mpg.de/causality/NIPS2008-Hoyer.pdf) | IID/Function-based | 一种非线性的加性噪声因果模型 | v1.0.3 |
 | [DirectLiNGAM](https://arxiv.org/abs/1101.2489) | IID/Function-based | 一种线性非高斯无环模型的直接学习方法 | v1.0.3 |
 | [ICALiNGAM](https://dl.acm.org/doi/10.5555/1248547.1248619) | IID/Function-based | 一种线性非高斯无环模型的因果学习算法 | v1.0.3 |
-| [GES](https://www.jmlr.org/papers/volume3/chickering02b/chickering02b.pdf?ref=https://githubhelp.com) | IID/Score-based | 一种经典的基于贪婪等价搜索的结构学习算法 | v1.0.3 |
+| [GES](https://www.jmlr.org/papers/volume3/chickering02b/chickering02b.pdf) | IID/Score-based | 一种经典的基于贪婪等价搜索的结构学习算法 | v1.0.3 |
 | [PNL](https://arxiv.org/abs/1205.2599) | IID/Funtion-based | 一种基于后非线性假设的因果发现方法 | v1.0.3 |
 | [NOTEARS](https://arxiv.org/abs/1803.01422) | IID/Gradient-based | 一种基于梯度、针对线性数据模型的因果结构学习算法 | v1.0.3 |
 | [NOTEARS-MLP](https://arxiv.org/abs/1909.13189) | IID/Gradient-based | 一种深度可微分、基于神经网络建模的因果结构学习算法 | v1.0.3 |
