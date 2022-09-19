@@ -2,6 +2,14 @@
 
 This repository is a collection of trustworthy AI related works from Huawei Noah's Ark Lab.  
 
+PCIC 2022 Causal Inference Competition is proceeding, look forward to your participation！
+
+Track 1：[Causal Transfer Learning for Time Seiries Data](https://competition.huaweicloud.com/information/1000041792/introduction)
+
+Track 2: [Causal Inference and Recommendation](https://competition.huaweicloud.com/information/1000041793/introduction)
+
+
+
 ### gCastle
 
 - A causal structure learning toolchain containing various functionalities related to causal learning and evaluation. A tech report describing the toolbox is available [here](https://arxiv.org/abs/2111.15155).
