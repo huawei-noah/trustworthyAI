@@ -54,6 +54,7 @@ def get_session_maker(engine):
 def get_session():
     """
     Creating a Session Instance.
+
     Returns
     -------
     session: sqlalchemy.orm.session.Session.

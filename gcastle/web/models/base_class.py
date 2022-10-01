@@ -49,7 +49,9 @@ class DataSetApi(object):
     @classmethod
     def get_inline_dataset_names(cls):
         """
-        Combine the task ID and task name into a built-in dataset and obtain the list of built-in dataset names.        Returns
+        Combine the task ID and task name into a built-in dataset and obtain the list of built-in dataset names.
+
+        Returns
         -------
 
         """
@@ -99,10 +101,10 @@ class DataSetApi(object):
             else:
                 return None
 
-            data_type = str(data_df.dtypes.unique()[0])
-            if len(data_df.dtypes.unique()) == 1 and ('float' in data_type or 'int' in data_type):
+            data_types = map(str, data_df.dtypes.unique())
+            is_not_number = lambda dt: not ('float' in dt or 'int' in dt)
+            if len(list(filter(is_not_number, data_types))) == 0:
                 return data_df.shape[1]
-
         return None
 
     @classmethod
@@ -117,7 +119,7 @@ class DataSetApi(object):
         Returns
         -------
         dataset: str
-            name(inline) or dataset path(customize)
+            name (inline) or dataset path (customize)
         """
         task = TaskApi().get_task(task_id)
         if task:
@@ -140,7 +142,7 @@ class AlgorithmApi(object):
     Attributes
     ----------
     session : class sessionmaker
-    Database Connection Session.
+        Database Connection Session.
     """
     def __init__(self, name, params):
         self.name = name
