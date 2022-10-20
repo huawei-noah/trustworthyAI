@@ -1,4 +1,4 @@
-Here information of cauality related competitions arranged by Noah's Ark Lab can be found, 
+Any information on causality-related competitions arranged by Noah's Ark Lab can be found here, 
 including any related code such as submission examples and baselines.
 
 ### PCIC 2021
