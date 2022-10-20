@@ -16,6 +16,11 @@ Track 2: [Causal Inference and Recommendation](https://competition.huaweicloud.c
 - A causal structure learning toolchain containing various functionalities related to causal learning and evaluation. A tech report describing the toolbox is available [here](https://arxiv.org/abs/2111.15155).
 - The package offers a number of causal discovery algorithms, most of which are gradient-based, hence the name: **g**radient-based **Ca**usal **st**ructure **le**arning pipeline.
 
+### Competition
+
+- Information and baselines for causality-related competitions arranged by Noah's Ark Lab.
+
+
 ### Datasets
 
 - Code for generating synthetic datasets and real-world datasets that we have open-sourced.
