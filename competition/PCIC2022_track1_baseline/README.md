@@ -1,3 +1,4 @@
-This baseline method orginates from the paper: [Time series domain adaptation via sparse associative structure alignment](https://arxiv.org/abs/2012.11797).
+Baseline for track 1 of the PCIC 2022 competition.  
+The method used orginates from the paper "[Time series domain adaptation via sparse associative structure alignment](https://arxiv.org/abs/2012.11797)".
 
-You can design more complicated methods based on this fundamental code.
+You can design more complicated methods based on this foundational code.
