@@ -18,7 +18,7 @@ Track 2: [Causal Inference and Recommendation](https://competition.huaweicloud.c
 
 ### Competition
 
-- Information and baselines for causaility related competitions arranged by Noah's Ark Lab.
+- Information and baselines for causality-related competitions arranged by Noah's Ark Lab.
 
 
 ### Datasets
