@@ -16,7 +16,8 @@ We release a very challenging [dataset](https://github.com/zhushy/causal-dataset
 
 The real datasets (id:10, 21, 22) used in [PCIC Causal Discovery Competition 2021 ](https://competition.huaweicloud.com/information/1000041487/introduction) have been made available online: [link](https://github.com/gcastle-hub/dataset).
 
-This following is the  results of some competitive causal discovery algorithms on the real-world alarm datasets used in PCIC Competition 2021.We believe the best performance in the following table is the SOTA , welcome to contact us to update this table if you have got the better performance using another public algorithms.  
+The following table contains F1-scores of some competitive causal discovery algorithms on these datasets. 
+We believe the THP algorithm (last line) is the current SOTA. You are welcome to contact us if you have another (public) algorithm that obtains good scores and we will add it to the table.
 |  Algorithm  | 18V_55N_Wireless | 24V_439N_Microwave | 25V_474N_Microwave | paper                                                          |
 |--------------| ---------------- | ------------------ | ------------------ | ------------------------------------------------------------------- |
 | PC           | 0.4299           | 0.2270              | 0.1923             | [link](https://philarchive.org/archive/SPICPA-2)                            |
