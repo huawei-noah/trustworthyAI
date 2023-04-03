@@ -572,8 +572,8 @@ def hsic_test(x, y, alpha=0.05, normalize=True):
     Returns
     -------
     out: int, 0 or 1
-        If 0, x and y are independent.
-        If 1, x and y are not independent.
+        If 0, x and y are not independent.
+        If 1, x and y are independent.
 
     Examples
     --------
@@ -583,9 +583,9 @@ def hsic_test(x, y, alpha=0.05, normalize=True):
     >>> print(hsic_test(x[:, [0]], x[:, [1]]))
     1
 
-    >>> np.random.seed(12)
-    >>> x = np.random.rand(500, 2)
-    >>> print(hsic_test(x[:, [0]], x[:, [1]]))
+    >>> x = np.random.rand(500, 1)
+    >>> z = x * 2
+    >>> print(hsic_test(x, z))
     0
     """
 
