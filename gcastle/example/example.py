@@ -24,6 +24,7 @@ from castle.algorithms import DirectLiNGAM, ICALiNGAM
 from castle.algorithms import GraNDAG, CORL, RL
 from castle.algorithms import NotearsLowRank, NotearsNonlinear, Notears
 from castle.algorithms import MCSL, GOLEM
+from castle.algorithms import GES
 from castle.common import GraphDAG
 from castle.metrics import MetricsDAG
 from castle.datasets import DAG, IIDSimulation, Topology, THPSimulation
@@ -42,7 +43,8 @@ INLINE_ALGORITHMS = {
     "CORL": CORL,
     "TTPM": TTPM,
     "MCSL": MCSL,
-    "GOLEM": GOLEM
+    "GOLEM": GOLEM,
+    "GES": GES,
 }
 
 
