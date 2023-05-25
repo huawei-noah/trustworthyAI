@@ -78,8 +78,7 @@ class TTPM(BaseLearner):
             'topology_matrix should be two dimension'
         assert topology_matrix.shape[0] == topology_matrix.shape[1],\
             'The topology_matrix should be square.'
-        self._topo = nx.from_numpy_matrix(topology_matrix,
-                                          create_using=nx.Graph)
+        self._topo = nx.Graph(topology_matrix)
         # initialize instance variables
         self._penalty = penalty
         self._delta = delta
@@ -312,8 +311,7 @@ class TTPM(BaseLearner):
         events vector: the exogenous base intensity of each event.
         """
 
-        causal_g = nx.from_numpy_matrix((edge_mat - np.eye(self._N, self._N)),
-                                        create_using=nx.DiGraph)
+        causal_g = nx.DiGraph((edge_mat - np.eye(self._N, self._N)))
 
         if not nx.is_directed_acyclic_graph(causal_g):
             return -100000000000000, \
