@@ -322,7 +322,7 @@ class IIDSimulation(object):
             if len(noise_scale) != d:
                 raise ValueError('noise scale must be a scalar or has length d')
             scale_vec = noise_scale
-        G_nx =  nx.from_numpy_matrix(W, create_using=nx.DiGraph)
+        G_nx = nx.DiGraph(W)
         if not nx.is_directed_acyclic_graph(G_nx):
             raise ValueError('W must be a DAG')
         if np.isinf(n):  # population risk for linear gauss SEM
@@ -413,7 +413,7 @@ class IIDSimulation(object):
             scale_vec = noise_scale
 
         X = np.zeros([n, d])
-        G_nx =  nx.from_numpy_matrix(B, create_using=nx.DiGraph)
+        G_nx = nx.DiGraph(B)
         ordered_vertices = list(nx.topological_sort(G_nx))
         assert len(ordered_vertices) == d
         for j in ordered_vertices:
@@ -594,8 +594,7 @@ class THPSimulation(object):
 
         self._causal_matrix = (causal_matrix != 0).astype(int)
 
-        self._topo = nx.from_numpy_matrix(topology_matrix,
-                                          create_using=nx.Graph)
+        self._topo = nx.Graph(topology_matrix)
 
         self._mu_range = mu_range
         self._alpha_range = alpha_range
