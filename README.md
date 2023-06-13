@@ -3,11 +3,9 @@
 This repository is a collection of trustworthy AI related works from Huawei Noah's Ark Lab.  
 
 ---
-The PCIC 2022 Causal Inference Competition has launched, looking forward to your participation！
+The NeurIPS 2023 Causal Structure Learning Competition has released, looking forward to your participation！
 
-Track 1: [Causal Transfer Learning for Time Seiries Data](https://competition.huaweicloud.com/information/1000041792/introduction)
-
-Track 2: [Causal Inference and Recommendation](https://competition.huaweicloud.com/information/1000041793/introduction)
+[NeurIPS 2023|CSL Competition](https://gcastle-hub.github.io/csl-competition/)
 
 ---
 
