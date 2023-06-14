@@ -28,8 +28,8 @@ class PrioriKnowledge(object):
     Attributes
     ----------
     matrix: np.ndarray
-        0  : i does not have a directed path to j;
-        1  : i has a directed path to j;
+        0  : i does not have a directed edge to j;
+        1  : i has a directed edge to j;
         -1 : No prior background_knowledge is available to know if either of
              the two cases above (0 or 1) is true.
     """
