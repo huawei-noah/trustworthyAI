@@ -39,26 +39,21 @@ from torchvision.utils import save_image
 parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument('--epoch_max',   type=int, default=101,    help="Number of training epochs")
 parser.add_argument('--iter_save',   type=int, default=5, help="Save model every n epochs")
-parser.add_argument('--run',         type=int, default=0,     help="Run ID. In case you want to run replicates")
-parser.add_argument('--train',       type=int, default=1,     help="Flag for training")
-parser.add_argument('--color',       type=int, default=False,     help="Flag for color")
-parser.add_argument('--toy',       type=str, default="pendulum_mask",     help="Flag for toy")
-parser.add_argument('--dag',       type=str, default="sup_dag",     help="Flag for toy")
+parser.add_argument('--toy',       type=str, default="pendulum_mask",     help="The toy dataset")
+parser.add_argument('--dag',       type=str, default="sup_dag",     help="The mode of the training process")
+
 
 args = parser.parse_args()
 device = torch.device("cuda:0" if(torch.cuda.is_available()) else "cpu")
 
 layout = [
 	('model={:s}',  'causalvae'),
-	('run={:04d}', args.run),
-  ('color=True', args.color),
-  ('toy={:s}', str(args.toy))
-
+    ('toy={:s}', str(args.toy))
 ]
 model_name = '_'.join([t.format(v) for (t, v) in layout])
 if args.dag == "sup_dag":
   lvae = sup_dag.CausalVAE(name=model_name, z_dim=16, inference = True).to(device)
-  ut.load_model_by_name(lvae, 0)
+  ut.load_model_by_name(lvae, 70)
 
 if not os.path.exists('./figs_test_vae_pendulum/'): 
   os.makedirs('./figs_test_vae_pendulum/')

@@ -25,7 +25,6 @@ from torch.nn import functional as F
 from torch.nn import Linear
 device = torch.device("cuda:0" if(torch.cuda.is_available()) else "cpu")
 
-
     
 def dag_right_linear(input, weight, bias=None):
     if input.dim() == 2 and bias is not None:
@@ -52,37 +51,37 @@ def dag_left_linear(input, weight, bias=None):
 
 
 class MaskLayer(nn.Module):
-	def __init__(self, z_dim, concept=4,z1_dim=4):
+	def __init__(self, z_dim, concept=4, z2_dim=4):
 		super().__init__()
 		self.z_dim = z_dim
-		self.z1_dim = z1_dim
+		self.z2_dim = z2_dim
 		self.concept = concept
 		
 		self.elu = nn.ELU()
 		self.net1 = nn.Sequential(
-			nn.Linear(z1_dim , 32),
+			nn.Linear(z2_dim , 32),
 			nn.ELU(),
-			nn.Linear(32, z1_dim),
+			nn.Linear(32, z2_dim),
 		)
 		self.net2 = nn.Sequential(
-			nn.Linear(z1_dim , 32),
+			nn.Linear(z2_dim , 32),
 			nn.ELU(),
-			nn.Linear(32, z1_dim),
+			nn.Linear(32, z2_dim),
 		)
 		self.net3 = nn.Sequential(
-			nn.Linear(z1_dim , 32),
+			nn.Linear(z2_dim , 32),
 			nn.ELU(),
-		  nn.Linear(32, z1_dim),
+		  nn.Linear(32, z2_dim),
 		)
 		self.net4 = nn.Sequential(
-			nn.Linear(z1_dim , 32),
+			nn.Linear(z2_dim , 32),
 			nn.ELU(),
-			nn.Linear(32, z1_dim)
+			nn.Linear(32, z2_dim)
 		)
 		self.net = nn.Sequential(
-			nn.Linear(z_dim , 32),
+			nn.Linear(z2_dim , 32),
 			nn.ELU(),
-			nn.Linear(32, z_dim),
+			nn.Linear(32, z2_dim),
 		)
 	def masked(self, z):
 		z = z.view(-1, self.z_dim)
@@ -95,8 +94,8 @@ class MaskLayer(nn.Module):
 		return z
    
 	def mix(self, z):
-		zy = z.view(-1, self.concept*self.z1_dim)
-		if self.z1_dim == 1:
+		zy = z.view(-1, self.concept*self.z2_dim)
+		if self.z2_dim == 1:
 			zy = zy.reshape(zy.size()[0],zy.size()[1],1)
 			if self.concept ==4:
 				zy1, zy2, zy3, zy4= zy[:,0],zy[:,1],zy[:,2],zy[:,3]
@@ -115,51 +114,6 @@ class MaskLayer(nn.Module):
 			h = torch.cat((rx1,rx2,rx3,rx4), dim=1)
 		elif self.concept ==3:
 			h = torch.cat((rx1,rx2,rx3), dim=1)
-		#print(h.size())
-		return h
-   
-class Mix(nn.Module):
-	def __init__(self, z_dim, concept, z1_dim):
-		super().__init__()
-		self.z_dim = z_dim
-		self.z1_dim = z1_dim
-		self.concept = concept
-		
-		self.elu = nn.ELU()
-		self.net1 = nn.Sequential(
-			nn.Linear(z1_dim , 16),
-			nn.ELU(),
-			nn.Linear(16, z1_dim),
-		)
-		self.net2 = nn.Sequential(
-			nn.Linear(z1_dim , 16),
-			nn.ELU(),
-			nn.Linear(16, z1_dim),
-		)
-		self.net3 = nn.Sequential(
-			nn.Linear(z1_dim , 16),
-			nn.ELU(),
-			nn.Linear(16, z1_dim),
-		)
-		self.net4 = nn.Sequential(
-			nn.Linear(z1_dim , 16),
-			nn.ELU(),
-			nn.Linear(16, z1_dim),
-		)
-
-   
-	def mix(self, z):
-		zy = z.view(-1, self.concept*self.z1_dim)
-		if self.z1_dim == 1:
-			zy = zy.reshape(zy.size()[0],zy.size()[1],1)
-			zy1, zy2, zy3, zy4= zy[:,0],zy[:,1],zy[:,2],zy[:,3]
-		else:
-			zy1, zy2, zy3, zy4 = torch.split(zy, self.z_dim//self.concept, dim = 1)
-		rx1 = self.net1(zy1)
-		rx2 = self.net2(zy2)
-		rx3 = self.net3(zy3)
-		rx4 = self.net4(zy4)
-		h = torch.cat((rx1,rx2,rx3,rx4), dim=1) 
 		#print(h.size())
 		return h
 
@@ -241,15 +195,17 @@ class Attention(nn.Module):
     return e, A
     
 class DagLayer(nn.Linear):
-    def __init__(self, in_features, out_features,i = False, bias=False):
+    def __init__(self, in_features, out_features,i = False, bias=False, initial=True):
         super(Linear, self).__init__()
         self.in_features = in_features
         self.out_features = out_features
         self.i = i
         self.a = torch.zeros(out_features,out_features)
         self.a = self.a
-        #self.a[0][1], self.a[0][2], self.a[0][3] = 1,1,1
-        #self.a[1][2], self.a[1][3] = 1,1
+        if initial:
+            self.a[0][1], self.a[0][2], self.a[0][3] = 1,1,1
+            self.a[1][2], self.a[1][3] = 1,1
+
         self.A = nn.Parameter(self.a)
         
         self.b = torch.eye(out_features)
