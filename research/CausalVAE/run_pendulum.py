@@ -39,17 +39,13 @@ parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFo
 
 parser.add_argument('--epoch_max',   type=int, default=101,    help="Number of training epochs")
 parser.add_argument('--iter_save',   type=int, default=5, help="Save model every n epochs")
-parser.add_argument('--run',         type=int, default=0,     help="Run ID. In case you want to run replicates")
-parser.add_argument('--train',       type=int, default=1,     help="Flag for training")
-parser.add_argument('--color',       type=int, default=False,     help="Flag for color")
-parser.add_argument('--toy',       type=str, default="pendulum_mask",     help="Flag for toy")
+parser.add_argument('--toy',       type=str, default="pendulum_mask",     help="The toy dataset")
+parser.add_argument('--initial',       type=bool, default=True,     help="Initialize the dag matrix")
+
 args = parser.parse_args()
 device = torch.device("cuda:0" if(torch.cuda.is_available()) else "cpu")
-def _sigmoid(x):
-    I = torch.eye(x.size()[0]).to(device)
-    x = torch.inverse(I + torch.exp(-x))
-    return x
-    
+
+
 class DeterministicWarmup(object):
 	"""
 	Linear deterministic warm-up as described in
@@ -70,14 +66,12 @@ class DeterministicWarmup(object):
 		return self.t
 layout = [
 	('model={:s}',  'causalvae'),
-	('run={:04d}', args.run),
-	('color=True', args.color),
 	('toy={:s}', str(args.toy))
 ]
 model_name = '_'.join([t.format(v) for (t, v) in layout])
 pprint(vars(args))
 print('Model name:', model_name)
-lvae = CausalVAE(name=model_name, z_dim=16).to(device)
+lvae = CausalVAE(name=model_name, z_dim=16, initial=args.initial).to(device)
 if not os.path.exists('./figs_vae/'): 
 	os.makedirs('./figs_vae/')
 
@@ -97,6 +91,7 @@ def save_model_by_name(model, global_step):
 	state = model.state_dict()
 	torch.save(state, file_path)
 	print('Saved to {}'.format(file_path))
+
 for epoch in range(args.epoch_max):
 	lvae.train()
 	total_loss = 0
@@ -104,28 +99,24 @@ for epoch in range(args.epoch_max):
 	total_kl = 0
 	for u, l in train_dataset:
 		optimizer.zero_grad()
-		#u = torch.bernoulli(u.to(device).reshape(u.size(0), -1))
 		u = u.to(device)
 		L, kl, rec, reconstructed_image,_ = lvae.negative_elbo_bound(u,l,sample = False)
 		
 		dag_param = lvae.dag.A
-		
-		#dag_reg = dag_regularization(dag_param)
 		h_a = _h_A(dag_param, dag_param.size()[0])
 		L = L + 3*h_a + 0.5*h_a*h_a #- torch.norm(dag_param) 
    
    
 		L.backward()
 		optimizer.step()
-		#optimizer.zero_grad()
 
 		total_loss += L.item()
 		total_kl += kl.item() 
 		total_rec += rec.item() 
 
 		m = len(train_dataset)
-		save_image(u[0], 'figs_vae/reconstructed_image_true_{}.png'.format(epoch), normalize = True) 
-		save_image(reconstructed_image[0], 'figs_vae/reconstructed_image_{}.png'.format(epoch), normalize = True) 
+		save_image(u[0], 'figs_vae/reconstructed_image_true_{}.png'.format(epoch), range = (0,1))
+		save_image(reconstructed_image[0], 'figs_vae/reconstructed_image_{}.png'.format(epoch), range = (0,1))
 		
 	if epoch % 1 == 0:
 		print(str(epoch)+' loss:'+str(total_loss/m)+' kl:'+str(total_kl/m)+' rec:'+str(total_rec/m)+'m:' + str(m))
