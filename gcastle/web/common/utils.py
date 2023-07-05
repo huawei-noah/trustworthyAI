@@ -365,7 +365,7 @@ def save_gragh_edges(dag, file_name):
         tem_dag = dag.values
     else:
         tem_dag = dag
-    gragh = nx.from_numpy_array(tem_dag)
+    gragh = nx.from_numpy_array(tem_dag, create_using=nx.DiGraph)
     diagrams = list(gragh.edges)
 
     zero_col = np.where(~tem_dag.any(axis=0))[0]
