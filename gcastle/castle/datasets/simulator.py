@@ -336,12 +336,12 @@ class IIDSimulation(object):
 
         # check if sem_type is a single string
         if isinstance(sem_type, str):
-            # If it is, make it a list of size n with the same value
-            sem_type = [sem_type] * n
+            # If it is, make it a list of size d with the same value
+            sem_type = [sem_type] * d
         elif isinstance(sem_type, list):
-            # If it's a list, check if the length is equal to n
-            if len(sem_type) != n:
-                raise ValueError(f"List size should be equal to {n}")
+            # If it's a list, check if the length is equal to d
+            if len(sem_type) != d:
+                raise ValueError(f"List size should be equal to {d}")
             # ensure all elements in the list are strings
             if not all(isinstance(i, str) for i in sem_type):
                 raise ValueError("All elements in the list should be strings")
