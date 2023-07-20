@@ -272,7 +272,7 @@ class IIDSimulation(object):
     @staticmethod
     def _simulate_linear_sem(W, n, sem_type, noise_scale):
         """
-        Simulate samples from linear SEM with specified type of noise.
+        Simulate samples from linear SEM with specified type(s) of noise.
         For uniform, noise z ~ uniform(-a, a), where a = noise_scale.
 
         Parameters
@@ -281,8 +281,10 @@ class IIDSimulation(object):
             [d, d] weighted adj matrix of DAG.
         n: int
             Number of samples, n=inf mimics population risk.
-        sem_type: str 
-            gauss, exp, gumbel, uniform, logistic.
+        sem_type: str or list of str
+            If str, all variables follow this noise type, e.g., 'gauss', 'exp', 'gumbel', 'uniform', 'logistic'.
+            If list of str, the ith noise variable follows the ith type in the list. 
+            The length of the list should be equal to the number of variables (i.e., d).
         noise_scale: float 
             Scale parameter of noise distribution in linear SEM.
         
