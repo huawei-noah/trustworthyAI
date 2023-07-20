@@ -291,21 +291,21 @@ class IIDSimulation(object):
         X: np.ndarray
             [n, d] sample matrix, [d, d] if n=inf
         """
-        def _simulate_single_equation(X, w, scale):
+        def _simulate_single_equation(X, w, scale, type=None):
             """X: [n, num of parents], w: [num of parents], x: [n]"""
-            if sem_type == 'gauss':
+            if type == 'gauss':
                 z = np.random.normal(scale=scale, size=n)
                 x = X @ w + z
-            elif sem_type == 'exp':
+            elif type == 'exp':
                 z = np.random.exponential(scale=scale, size=n)
                 x = X @ w + z
-            elif sem_type == 'gumbel':
+            elif type == 'gumbel':
                 z = np.random.gumbel(scale=scale, size=n)
                 x = X @ w + z
-            elif sem_type == 'uniform':
+            elif type == 'uniform':
                 z = np.random.uniform(low=-scale, high=scale, size=n)
                 x = X @ w + z
-            elif sem_type == 'logistic':
+            elif type == 'logistic':
                 x = np.random.binomial(1, sigmoid(X @ w)) * 1.0
             else:
                 raise ValueError('Unknown sem type. In a linear model, \
@@ -333,12 +333,27 @@ class IIDSimulation(object):
             else:
                 raise ValueError('population risk not available')
         # empirical risk
+
+        # check if sem_type is a single string
+        if isinstance(sem_type, str):
+            # If it is, make it a list of size n with the same value
+            sem_type = [sem_type] * n
+        elif isinstance(sem_type, list):
+            # If it's a list, check if the length is equal to n
+            if len(sem_type) != n:
+                raise ValueError(f"List size should be equal to {n}")
+            # ensure all elements in the list are strings
+            if not all(isinstance(i, str) for i in sem_type):
+                raise ValueError("All elements in the list should be strings")
+        else:
+            raise TypeError("sem_type should be either a string or a list of strings")
+
         ordered_vertices = list(nx.topological_sort(G_nx))
         assert len(ordered_vertices) == d
         X = np.zeros([n, d])
         for j in ordered_vertices:
             parents = list(G_nx.predecessors(j))
-            X[:, j] = _simulate_single_equation(X[:, parents], W[parents, j], scale_vec[j])
+            X[:, j] = _simulate_single_equation(X[:, parents], W[parents, j], scale_vec[j], sem_type[j])
         return X
 
     @staticmethod
