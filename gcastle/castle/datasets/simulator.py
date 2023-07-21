@@ -293,10 +293,10 @@ class IIDSimulation(object):
         X: np.ndarray
             [n, d] sample matrix, [d, d] if n=inf
         """
-        def _simulate_single_equation(X, w, scale, type):
+        def _simulate_single_equation(X, w, scale, sem_type_single):
             """
             Simulate a single equation in the SEM.
-            The noise type of this equation is determined by the 'type' parameter.
+            The noise type of this equation is determined by the 'sem_type_single' parameter.
             
             Parameters
             ----------
@@ -306,7 +306,7 @@ class IIDSimulation(object):
                 [num of parents] array representing the weights of parent variables.
             scale: float
                 Scale parameter for the noise distribution in the SEM.
-            type: str
+            sem_type_single: str
                 The type of noise to use for this variable. Can be 'gauss', 'exp', 'gumbel', 'uniform', 'logistic'.
         
             Returns
@@ -314,19 +314,19 @@ class IIDSimulation(object):
             x: np.ndarray
                 [n] array representing the values of the simulated variable.
             """
-            if type == 'gauss':
+            if sem_type_single == 'gauss':
                 z = np.random.normal(scale=scale, size=n)
                 x = X @ w + z
-            elif type == 'exp':
+            elif sem_type_single == 'exp':
                 z = np.random.exponential(scale=scale, size=n)
                 x = X @ w + z
-            elif type == 'gumbel':
+            elif sem_type_single == 'gumbel':
                 z = np.random.gumbel(scale=scale, size=n)
                 x = X @ w + z
-            elif type == 'uniform':
+            elif sem_type_single == 'uniform':
                 z = np.random.uniform(low=-scale, high=scale, size=n)
                 x = X @ w + z
-            elif type == 'logistic':
+            elif sem_type_single == 'logistic':
                 x = np.random.binomial(1, sigmoid(X @ w)) * 1.0
             else:
                 raise ValueError('Unknown sem type. In a linear model, \
