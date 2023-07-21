@@ -293,8 +293,27 @@ class IIDSimulation(object):
         X: np.ndarray
             [n, d] sample matrix, [d, d] if n=inf
         """
-        def _simulate_single_equation(X, w, scale, type=None):
-            """X: [n, num of parents], w: [num of parents], x: [n]"""
+        def _simulate_single_equation(X, w, scale, type):
+            """
+            Simulate a single equation in the SEM.
+            The noise type of this equation is determined by the 'type' parameter.
+            
+            Parameters
+            ----------
+            X: np.ndarray
+                [n, num of parents] matrix representing the values of parent variables.
+            w: np.ndarray
+                [num of parents] array representing the weights of parent variables.
+            scale: float
+                Scale parameter for the noise distribution in the SEM.
+            type: str
+                The type of noise to use for this variable. Can be 'gauss', 'exp', 'gumbel', 'uniform', 'logistic'.
+        
+            Returns
+            -------
+            x: np.ndarray
+                [n] array representing the values of the simulated variable.
+            """
             if type == 'gauss':
                 z = np.random.normal(scale=scale, size=n)
                 x = X @ w + z
