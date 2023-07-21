@@ -362,10 +362,10 @@ class IIDSimulation(object):
         elif isinstance(sem_type, list):
             # If it's a list, check if the length is equal to d
             if len(sem_type) != d:
-                raise ValueError(f"List size should be equal to {d}")
+                raise ValueError(f"The length of sem_type needs to be equal to {d} (the number of variables).")
             # ensure all elements in the list are strings
             if not all(isinstance(i, str) for i in sem_type):
-                raise ValueError("All elements in the list should be strings")
+                raise ValueError("All elements in the sem_type list must be strings.")
         else:
             raise TypeError("sem_type should be either a string or a list of strings")
 
