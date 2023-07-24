@@ -272,7 +272,7 @@ class IIDSimulation(object):
     @staticmethod
     def _simulate_linear_sem(W, n, sem_type, noise_scale):
         """
-        Simulate samples from linear SEM with specified type of noise.
+        Simulate samples from linear SEM with specified type(s) of noise.
         For uniform, noise z ~ uniform(-a, a), where a = noise_scale.
 
         Parameters
@@ -281,8 +281,10 @@ class IIDSimulation(object):
             [d, d] weighted adj matrix of DAG.
         n: int
             Number of samples, n=inf mimics population risk.
-        sem_type: str 
-            gauss, exp, gumbel, uniform, logistic.
+        sem_type: str or list of str
+            If str, all variables follow this noise type, e.g., 'gauss', 'exp', 'gumbel', 'uniform', 'logistic'.
+            If list of str, the ith noise variable follows the ith type in the list. 
+            The length of the list should be equal to the number of variables (i.e., d).
         noise_scale: float 
             Scale parameter of noise distribution in linear SEM.
         
@@ -291,21 +293,40 @@ class IIDSimulation(object):
         X: np.ndarray
             [n, d] sample matrix, [d, d] if n=inf
         """
-        def _simulate_single_equation(X, w, scale):
-            """X: [n, num of parents], w: [num of parents], x: [n]"""
-            if sem_type == 'gauss':
+        def _simulate_single_equation(X, w, scale, sem_type_single):
+            """
+            Simulate a single equation in the SEM.
+            The noise type of this equation is determined by the 'sem_type_single' parameter.
+            
+            Parameters
+            ----------
+            X: np.ndarray
+                [n, num of parents] matrix representing the values of parent variables.
+            w: np.ndarray
+                [num of parents] array representing the weights of parent variables.
+            scale: float
+                Scale parameter for the noise distribution in the SEM.
+            sem_type_single: str
+                The type of noise to use for this variable. Can be 'gauss', 'exp', 'gumbel', 'uniform', 'logistic'.
+        
+            Returns
+            -------
+            x: np.ndarray
+                [n] array representing the values of the simulated variable.
+            """
+            if sem_type_single == 'gauss':
                 z = np.random.normal(scale=scale, size=n)
                 x = X @ w + z
-            elif sem_type == 'exp':
+            elif sem_type_single == 'exp':
                 z = np.random.exponential(scale=scale, size=n)
                 x = X @ w + z
-            elif sem_type == 'gumbel':
+            elif sem_type_single == 'gumbel':
                 z = np.random.gumbel(scale=scale, size=n)
                 x = X @ w + z
-            elif sem_type == 'uniform':
+            elif sem_type_single == 'uniform':
                 z = np.random.uniform(low=-scale, high=scale, size=n)
                 x = X @ w + z
-            elif sem_type == 'logistic':
+            elif sem_type_single == 'logistic':
                 x = np.random.binomial(1, sigmoid(X @ w)) * 1.0
             else:
                 raise ValueError('Unknown sem type. In a linear model, \
@@ -333,12 +354,27 @@ class IIDSimulation(object):
             else:
                 raise ValueError('population risk not available')
         # empirical risk
+
+        # check if sem_type is a single string
+        if isinstance(sem_type, str):
+            # If it is, make it a list of size d with the same value
+            sem_type = [sem_type] * d
+        elif isinstance(sem_type, list):
+            # If it's a list, check if the length is equal to d
+            if len(sem_type) != d:
+                raise ValueError(f"The length of sem_type needs to be equal to {d} (the number of variables).")
+            # ensure all elements in the list are strings
+            if not all(isinstance(i, str) for i in sem_type):
+                raise ValueError("All elements in the sem_type list must be strings.")
+        else:
+            raise TypeError("sem_type should be either a string or a list of strings")
+
         ordered_vertices = list(nx.topological_sort(G_nx))
         assert len(ordered_vertices) == d
         X = np.zeros([n, d])
         for j in ordered_vertices:
             parents = list(G_nx.predecessors(j))
-            X[:, j] = _simulate_single_equation(X[:, parents], W[parents, j], scale_vec[j])
+            X[:, j] = _simulate_single_equation(X[:, parents], W[parents, j], scale_vec[j], sem_type[j])
         return X
 
     @staticmethod
