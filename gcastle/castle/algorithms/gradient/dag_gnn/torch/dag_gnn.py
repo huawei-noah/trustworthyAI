@@ -256,6 +256,9 @@ class DAG_GNN(BaseLearner):
                 break
 
         origin_a = origin_a.detach().cpu().numpy()
+        self.non_binarized_causal_matrix = Tensor(origin_a, index=columns, columns=columns)
+        
+        # apply threshold to get binarized causal matrix
         origin_a[np.abs(origin_a) < self.graph_threshold] = 0
         origin_a[np.abs(origin_a) >= self.graph_threshold] = 1
 
