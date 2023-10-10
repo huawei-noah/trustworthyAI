@@ -10,7 +10,7 @@
 | 2             | [Username]     | [Email Address] | [Phone Number]          | [Affiliation] |
 | ...           | ...            | ...             | ...                     | ...           |
 
-Please note that the member table can have a maximum of 5 entries.  The first user in the member table will be considered the team captain, and only the captain's account can be used to submit results during Phase 2.
+Please note that the member table can have a maximum of 5 entries.  **The first user in the member table will be considered the team captain, and only the captain's account can be used to submit results during Phase 2**.
 
 #### 2. Code (.zip file):
 
