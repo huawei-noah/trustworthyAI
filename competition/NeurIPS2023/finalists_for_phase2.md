@@ -1,6 +1,7 @@
 | Serial ID | Team Name        | Captain           | Members                                                |
 | ---- | ---------------- | ----------------- | ------------------------------------------------------ |
-| 1    | FAKEiKUN         | CAI.XUKUN         | CAI.XUKUN; CHEN.YIZHOU; onp; lhz                       |
+| 0    | FAKEiKUN         | CAI.XUKUN         | CAI.XUKUN; CHEN.YIZHOU; onp; lhz                       |
+| 1    |  玻璃海          | harp              | harp; wanzi1993; Fangds; BigMao; qiu_yi                |
 | 2    | Rushoo           | Duxc              | Duxc; felixzhang; yaodi833; Wenbin_xc; yongtaoxie      |
 | 3    | -                | Youran            | Youran; None                                           |
 | 4    | TKOCA            | kakamu            | kakamu; aqing; lyx0913                                 |
