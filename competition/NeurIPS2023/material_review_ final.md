@@ -17,9 +17,9 @@ All participants qualified for phase 2 are required to submit the following mate
 
    - **Conclusion**: Provide comments on your solution, including its merits and drawbacks.
 
-   We strongly recommend following the provided LaTeX template when preparing short papers. 
+   We strongly recommend following the provided [LaTeX template](https://github.com/kelizhang/trustworthyAI/tree/master/competition/NeurIPS2023/template) when preparing short papers. 
 
-The deadline for material submission is 2023/11/10 at 23:59:59 (AoE). Please send your submission to noahlabcausal@huawei.com. You will receive a 'received' confirmation upon successful submission. If you encounter any submission exceptions (e.g., you submit the material but don't receive the 'received' feedback), please don't hesitate to contact us.
+The deadline for material submission is **2023/11/10 at 23:59:59 (AoE)**. Please send your submission to noahlabcausal@huawei.com. You will receive a 'received' confirmation upon successful submission. If you encounter any submission exceptions (e.g., you submit the material but don't receive the 'received' feedback), please don't hesitate to contact us.
 
 ## Final Ranking Calculation Rule
 
@@ -35,7 +35,7 @@ We will calculate your final ranking score based on the following steps:
 3. **Final Score Calculation**: 
    - If your solution passes both the material completeness check and functional testing, we will calculate the final score as follows:
    
-     **Final_Score = 0.5 x Leaderboard_Score + 0.3 x Internal_Dataset_Score + 0.2 x Paper_Quality_Score** 
+     **Final_Score = 0.6 x Leaderboard_Score + 0.3 x Internal_Dataset_Score + 0.1 x Paper_Quality_Score** 
 
    - **Leaderboard_Score**: 
      The value ranges from 0 to 1 and is obtained by executing your submitted code on the datasets (ID: 4, 5, 6) released in phase 2. We will use your Phase 2 leaderboard score if your code can replicate your result within a 2% error deviation. If not, the smaller value between your Phase 2 leaderboard score and our reproduced score will be your new 'leaderboard_score.'
