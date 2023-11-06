@@ -19,7 +19,7 @@ All participants qualified for phase 2 are required to submit the following mate
 
    We strongly recommend following the provided [LaTeX template](https://github.com/kelizhang/trustworthyAI/tree/master/competition/NeurIPS2023/template) when preparing short papers. 
 
-The deadline for material submission is **2023/11/10 at 23:59:59 (AoE)**. Please send your submission to noahlabcausal@huawei.com. You will receive a 'received' confirmation upon successful submission. If you encounter any submission exceptions (e.g., you submit the material but don't receive the 'received' feedback), please don't hesitate to contact us.
+The deadline for material submission is **2023/11/11 at 23:59:59 (AoE)**. Please send your submission to noahlabcausal@huawei.com. **You will receive a 'received' confirmation upon successful submission**. If you encounter any submission exceptions (e.g., you submit the material but don't receive the 'received' feedback), please don't hesitate to contact us.
 
 ## Final Ranking Calculation Rule
 
