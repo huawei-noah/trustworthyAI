@@ -5,7 +5,7 @@ All participants qualified for phase 2 are required to submit the following mate
 1. **Code for Your Solution**
 2. **Short Paper Introducing Your Solution** 
 
-   To reduce the organizers' workload, we will accept only 4-page submissions. You can submit a standalone supplementary (optional) if you need to provide more details about your solution to demonstrate its innovation and competitiveness. Supplementary materials will be reviewed only when your solution passes the material completeness check and functional testing (as mentioned below).
+   To reduce the organizers' workload, we will accept only 4-page submissions. You can submit a standalone supplementary (optional) if you need to provide more details about your solution to demonstrate its innovation and competitiveness. Supplementary materials will be reviewed only when your solution passes the material completeness checking and functional testing (as mentioned below).
 
    Your paper must include at least four sections:
 
