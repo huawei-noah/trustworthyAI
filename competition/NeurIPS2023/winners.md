@@ -1,0 +1,23 @@
+## Winning Teams
+| Prize | Team Name      | Captain           | Members                                                |  Instructor |      Institute         |
+| ---- | ---------------- | ----------------- | ------------------------------------------------------ | ------------------ | ----------- |
+| Gold Prize | XHS | Mingjia Li  | Mingjia Li, Shuo Liu,  Yuanhao Liu   |  Hong Qian, Aimin Zhou  |    -      |
+| Silver Prize |  FAKEiKUN | - | - |    -  |   -  |
+| Silver Prize | ustc-aig |  Hongyi Xie      | Hongyi Xie， Kaiyu Jin  | Hong Xie, Defu Lian| - | - |
+| Bronze Prize | 玻璃海 |   Chen Wang    | Chen Wang, Yuan Li, Dongsheng Fang, Peng Jin, Yi Qiu| - | -  |
+| Bronze Prize | TKOCA  | Nishan Xie     | Nishan Xie, Yuanxin Li, Qing Tan | - | - | 
+| Bronze Prize | Youran |   -   |    Shi and Sun  |    -           |         -   |
+
+- We kindly request each of the winners to **promptly provide missing information, including Captain, Members, and Institute, for the above table**. Please send this information to noahlabcausal@huawei.com at your earliest convenience.
+ 
+ ## Appendix: The specific score on each dataset for winners  
+| Team | dataset(4) | dataset(5) | dataset(6) | dataset(7,private) | dataset(8,private) | dataset(9,private) | avg(4~6) | avg(7~9) | Paper Quality（Reviewer 1） | Paper Quality（Reviewer 2） | Paper Quality（Reviewer 3）| Final Score | Ranking | 
+| :------------------------------------------------ | :-------: | :-------: | :-------: | :-------: | :-------: | :-------: | :------: | :------: | :-------------------------------------------------------: | :-------------------------------------------------------: | :------------------------------------------------------: | :----------------------------------------------: | :----------------------------------------------: | 
+| XHS                                               |   0.759   |   0.989   |   0.836   |   0.193   |   0.886   |   0.189   |  0.862   |  0.422   |                           0.800                           |                           1.000                           |                          0.800                           |                      0.730                       |                        1                         |     
+| FAKEiKUN                                          |   0.699   |   1.000   |   0.745   |   0.246   |   1.000   |   0.302   |  0.815   |  0.516   |                           0.700                           |                           0.700                           |                          0.800                           |                      0.717                       |                        2                         | 
+| ustc-aig                                          |   0.627   |   1.000   |   0.691   |   0.211   |   0.971   |   0.321   |  0.772   |  0.501   |                           0.700                           |                           0.700                           |                          0.600                           |                      0.680                       |                        3                         | 
+| 玻璃海                                            |   0.554   |   1.000   |   0.727   |   0.123   |   0.981   |   0.000   |  0.760   |  0.368   |                           0.600                           |                           0.500                           |                          0.600                           |                      0.623                       |                        4                          | 
+| TKOCA                                             |   0.976   |   1.000   |   0.564   |   0.088   |   0.267   |   0.075   |  0.847   |  0.143   |                           0.600                           |                           0.800                           |                          0.700                           |                      0.621                       |                        5                         |              
+| Youran                                            |   0.699   |   0.978   |   0.564   |   0.140   |   0.238   |   0.245   |  0.747   |  0.208   |                           0.600                           |                           0.600                           |                          0.700                           |                      0.574                       |                        6                         |      
+
+- If your detailed score information is not listed in the above table, but you would like to receive it, please don't hesitate to reach out to us at noahlabcausal@huawei.com.   
