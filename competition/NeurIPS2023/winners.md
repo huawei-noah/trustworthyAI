@@ -7,6 +7,8 @@
 | Bronze Prize | 玻璃海 |   Chen Wang    | Chen Wang, Yuan Li, Dongsheng Fang, Peng Jin, Yi Qiu| - | -  |
 | Bronze Prize | TKOCA  | Nishan Xie     | Nishan Xie, Yuanxin Li, Qing Tan | - | - | 
 | Bronze Prize | Youran |   -   |    Shi and Sun  |    -           |         -   |
+
+- Please each winner feedback the missing information (such as Captain, Members, and Institute) in the above table to noahlabcausal@huawei.com ASAP.
  
  ## Appendix: The specific score on each dataset for winners  
 | Team | dataset(4) | dataset(5) | dataset(6) | dataset(7,private) | dataset(8,private) | dataset(9,private) | avg(4~6) | avg(7~9) | Paper Quality（Reviewer 1） | Paper Quality（Reviewer 2） | Paper Quality（Reviewer 3）| Final Score | Ranking | 
@@ -17,3 +19,5 @@
 | 玻璃海                                            |   0.554   |   1.000   |   0.727   |   0.123   |   0.981   |   0.000   |  0.760   |  0.368   |                           0.600                           |                           0.500                           |                          0.600                           |                      0.623                       |                        4                          | 
 | TKOCA                                             |   0.976   |   1.000   |   0.564   |   0.088   |   0.267   |   0.075   |  0.847   |  0.143   |                           0.600                           |                           0.800                           |                          0.700                           |                      0.621                       |                        5                         |              
 | Youran                                            |   0.699   |   0.978   |   0.564   |   0.140   |   0.238   |   0.245   |  0.747   |  0.208   |                           0.600                           |                           0.600                           |                          0.700                           |                      0.574                       |                        6                         |      
+
+- If your detailed score information is not listed on the above table, however you would like to get it, please feel free to contact noahlabcausal@huawei.com.   
