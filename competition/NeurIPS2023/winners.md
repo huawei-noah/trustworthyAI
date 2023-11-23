@@ -8,7 +8,7 @@
 | Bronze Prize | TKOCA  | Nishan Xie     | Nishan Xie, Yuanxin Li, Qing Tan | - | - | 
 | Bronze Prize | Youran |   -   |    Shi and Sun  |    -           |         -   |
 
-- Please each winner feedback the missing information (such as Captain, Members, and Institute) in the above table to noahlabcausal@huawei.com ASAP.
+- We kindly request each of the winners to **promptly provide missing information, including Captain, Members, and Institute, for the above table**. Please send this information to noahlabcausal@huawei.com at your earliest convenience.
  
  ## Appendix: The specific score on each dataset for winners  
 | Team | dataset(4) | dataset(5) | dataset(6) | dataset(7,private) | dataset(8,private) | dataset(9,private) | avg(4~6) | avg(7~9) | Paper Quality（Reviewer 1） | Paper Quality（Reviewer 2） | Paper Quality（Reviewer 3）| Final Score | Ranking | 
@@ -20,4 +20,4 @@
 | TKOCA                                             |   0.976   |   1.000   |   0.564   |   0.088   |   0.267   |   0.075   |  0.847   |  0.143   |                           0.600                           |                           0.800                           |                          0.700                           |                      0.621                       |                        5                         |              
 | Youran                                            |   0.699   |   0.978   |   0.564   |   0.140   |   0.238   |   0.245   |  0.747   |  0.208   |                           0.600                           |                           0.600                           |                          0.700                           |                      0.574                       |                        6                         |      
 
-- If your detailed score information is not listed on the above table, however you would like to get it, please feel free to contact noahlabcausal@huawei.com.   
+- If your detailed score information is not listed in the above table, but you would like to receive it, please don't hesitate to reach out to us at noahlabcausal@huawei.com.   
