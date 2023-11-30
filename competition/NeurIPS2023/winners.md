@@ -1,9 +1,9 @@
 ## Winning Teams
 | Prize | Team Name      | Captain           | Members                                                |  Instructor |      Institute         |
 | ---- | ---------------- | ----------------- | ------------------------------------------------------ | ------------------ | ----------- |
-| Gold Prize | XHS | Mingjia Li  | Mingjia Li, Shuo Liu,  Yuanhao Liu   |  Hong Qian, Aimin Zhou  |    -      |
+| Gold Prize | XHS | Mingjia Li  | Mingjia Li, Shuo Liu,  Yuanhao Liu   |  Hong Qian, Aimin Zhou  |    Shanghai Institute of AI for Education, East China Normal University     |
 | Silver Prize |  FAKEiKUN | - | - |    -  |   -  |
-| Silver Prize | ustc-aig |  Hongyi Xie      | Hongyi Xie， Kaiyu Jin  | Hong Xie, Defu Lian| - | - |
+| Silver Prize | ustc-aig |  Hongyi Xie      | Hongyi Xie， Kaiyu Jin  | Hong Xie, Defu Lian| University of Science and Technology of China | 
 | Bronze Prize | 玻璃海 |   Chen Wang    | Chen Wang, Yuan Li, Dongsheng Fang, Peng Jin, Yi Qiu| - | -  |
 | Bronze Prize | TKOCA  | Nishan Xie     | Nishan Xie, Yuanxin Li, Qing Tan | - | - | 
 | Bronze Prize | Youran |   -   |    Shi and Sun  |    -           |         -   |
