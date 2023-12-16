@@ -26,7 +26,7 @@ class get_Reward(object):
     _logger = logging.getLogger(__name__)
 
     def __init__(self, batch_num, maxlen, dim, inputdata, sl, su, lambda1_upper, 
-                 score_type='BIC', reg_type='LR', l1_graph_reg=0.0, verbose_flag=True):
+                 score_type='BIC', reg_type='LR', l1_graph_reg=0.0, verbose_flag=True, exponent_type='original'):
         self.batch_num = batch_num
         self.maxlen = maxlen # =d: number of vars
         self.dim = dim
@@ -51,6 +51,7 @@ class get_Reward(object):
 
         self.ones = np.ones((inputdata.shape[0], 1), dtype=np.float32)
         self.poly = PolynomialFeatures()
+        self.exponent_type = exponent_type
 
     def cal_rewards(self, graphs, lambda1, lambda2):
         rewards_batches = []
@@ -148,7 +149,10 @@ class get_Reward(object):
                  + np.sum(graph_batch)*self.bic_penalty
 
         score = self.score_transform(BIC)
-        cycness = np.trace(matrix_exponential(np.array(graph_batch)))- self.maxlen
+        if self.exponent_type == 'original':
+            cycness = np.trace(matrix_exponential(np.array(graph_batch)))- self.maxlen
+        else:
+            raise ValueError('Unknown exponent type')
         reward = score + lambda1 * float(cycness>1e-5) + lambda2*cycness
             
         if self.l1_graph_reg > 0:

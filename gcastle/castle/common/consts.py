@@ -43,7 +43,8 @@ RL_VALID_PARAMS = {
                      'BilinearDecoder', 'NTNDecoder'],
     'decoder_activation': ['tanh', 'relu', 'none'],
     'score_type': ['BIC', 'BIC_different_var'],
-    'reg_type': ['LR', 'QR']
+    'reg_type': ['LR', 'QR'],
+    'exponent_type': ['original']
 }
 
 # GraNDAG
