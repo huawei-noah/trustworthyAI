@@ -7,7 +7,7 @@ do
     sbatch run_experiment.sh \
           --n_nodes $n_nodes \
           --p $p \
-          --seed $2 \
+          --seed $seed \
           --num_samples $num_samples \
           --batch_size $batch_size \
           --nb_epoch $nb_epoch \

@@ -8,4 +8,4 @@
 eval "$(conda shell.bash hook)"
 conda activate cdrl
 
-python run_experimennt.py "$@"
+python run_experiment.py "$@"
