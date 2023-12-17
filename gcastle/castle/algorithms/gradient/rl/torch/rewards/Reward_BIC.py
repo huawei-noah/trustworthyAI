@@ -23,7 +23,7 @@ from sklearn.preprocessing import PolynomialFeatures
 from numba import jit
 
 
-@jit(nopython=True, nogil=True, parallel=True)
+@jit(nopython=True, nogil=True, parallel=False)
 def tr_exp_naive(X, m=200, k_max=10):
     V = np.random.choice(np.array([-1./m, 1./m], dtype=np.float32), size=(m, X.shape[0]))
     B = (V * m)@X
