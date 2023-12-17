@@ -180,7 +180,8 @@ class RL(BaseLearner):
                  verbose=False, 
                  device_type='cpu', 
                  device_ids=0,
-                 exponent_type='original'):
+                 exponent_type='original',
+                 **kwargs):
 
         super().__init__()
 
@@ -219,6 +220,7 @@ class RL(BaseLearner):
         self.device_type = device_type
         self.device_ids = device_ids
         self.exponent_type = exponent_type
+        self.kwargs = kwargs
 
         if torch.cuda.is_available():
             logging.info('GPU is available.')
@@ -332,7 +334,7 @@ class RL(BaseLearner):
         callreward = get_Reward(self.batch_size, self.max_length,
                                 self.input_dimension, training_set.inputdata,
                                 sl, su, lambda1_upper, score_type, reg_type, 
-                                self.l1_graph_reg, False, self.exponent_type)
+                                self.l1_graph_reg, False, self.exponent_type, **self.kwargs)
         logging.info('Finished creating training dataset and reward class')
 
         # Initialize useful variables

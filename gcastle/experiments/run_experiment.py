@@ -62,6 +62,10 @@ if __name__ == '__main__':
     dataset = IIDSimulation(W=weighted_random_dag, n=args.num_samples, method='linear', sem_type='gauss')
     true_dag, X = dataset.B, dataset.X
 
+    additional_kwargs = {}
+    if args.exponent_type == 'trace_naive':
+        additional_kwargs['m'] = 20 * n_nodes
+
     # rl learn
     rl = RL(nb_epoch=args.nb_epoch,
             batch_size=args.batch_size,
@@ -70,7 +74,8 @@ if __name__ == '__main__':
             decoder_hidden_dim=args.hidden_dim,
             normalize=args.normalize,
             exponent_type=args.exponent_type,
-            device_type='gpu' if torch.cuda.is_available() else 'cpu')
+            device_type='gpu' if torch.cuda.is_available() else 'cpu',
+            **additional_kwargs)
     rl.learn(X)
 
     # plot est_dag and true_dag

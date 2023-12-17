@@ -44,7 +44,7 @@ RL_VALID_PARAMS = {
     'decoder_activation': ['tanh', 'relu', 'none'],
     'score_type': ['BIC', 'BIC_different_var'],
     'reg_type': ['LR', 'QR'],
-    'exponent_type': ['original']
+    'exponent_type': ['original', 'trace_naive']
 }
 
 # GraNDAG

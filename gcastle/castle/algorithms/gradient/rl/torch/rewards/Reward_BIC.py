@@ -20,13 +20,28 @@ from scipy.spatial.distance import pdist
 from sklearn.gaussian_process import GaussianProcessRegressor as GPR
 from sklearn.preprocessing import PolynomialFeatures
 
+from numba import jit
+
+
+@jit(nopython=True, nogil=True, parallel=True)
+def tr_exp_naive(X, m=200, k_max=10):
+    V = np.random.choice(np.array([-1./m, 1./m], dtype=np.float32), size=(m, X.shape[0]))
+    B = (V * m)@X
+    res = np.sum(B * V)
+    fk = 1
+    for k in range(2, k_max):
+        fk *= k
+        B = B@X
+        res += np.sum((B / fk) * V)
+    return np.abs(res)
+
 
 class get_Reward(object):
 
     _logger = logging.getLogger(__name__)
 
     def __init__(self, batch_num, maxlen, dim, inputdata, sl, su, lambda1_upper, 
-                 score_type='BIC', reg_type='LR', l1_graph_reg=0.0, verbose_flag=True, exponent_type='original'):
+                 score_type='BIC', reg_type='LR', l1_graph_reg=0.0, verbose_flag=True, exponent_type='original', **kwargs):
         self.batch_num = batch_num
         self.maxlen = maxlen # =d: number of vars
         self.dim = dim
@@ -52,6 +67,7 @@ class get_Reward(object):
         self.ones = np.ones((inputdata.shape[0], 1), dtype=np.float32)
         self.poly = PolynomialFeatures()
         self.exponent_type = exponent_type
+        self.m = kwargs.get('m', 200)
 
     def cal_rewards(self, graphs, lambda1, lambda2):
         rewards_batches = []
@@ -150,7 +166,9 @@ class get_Reward(object):
 
         score = self.score_transform(BIC)
         if self.exponent_type == 'original':
-            cycness = np.trace(matrix_exponential(np.array(graph_batch)))- self.maxlen
+            cycness = np.trace(matrix_exponential(np.array(graph_batch))) - self.maxlen
+        elif self.exponent_type == 'trace_naive':
+            cycness = tr_exp_naive(np.array(graph_batch, dtype=np.float32), m=self.m, k_max=10)
         else:
             raise ValueError('Unknown exponent type')
         reward = score + lambda1 * float(cycness>1e-5) + lambda2*cycness
