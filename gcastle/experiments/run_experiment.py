@@ -64,7 +64,7 @@ if __name__ == '__main__':
 
     additional_kwargs = {}
     if args.exponent_type == 'trace_naive':
-        additional_kwargs['m'] = 20 * n_nodes
+        additional_kwargs['m'] = 200
 
     # rl learn
     rl = RL(nb_epoch=args.nb_epoch,
