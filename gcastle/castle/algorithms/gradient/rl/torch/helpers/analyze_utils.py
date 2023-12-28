@@ -21,7 +21,7 @@ from sklearn.preprocessing import PolynomialFeatures
 def graph_prunned_by_coef(graph_batch, X, th=0.3):
     """
     for a given graph, pruning the edge according to edge weights;
-    linear regression for each causal regresison for edge weights and then thresholding
+    linear regression for each causal regression for edge weights and then thresholding
     :param graph_batch: graph
     :param X: dataset
     :return:
@@ -57,7 +57,7 @@ def graph_prunned_by_coef(graph_batch, X, th=0.3):
 def graph_prunned_by_coef_2nd(graph_batch, X, th=0.3):
     """
     for a given graph, pruning the edge according to edge weights;
-    quadratic regression for each causal regresison for edge weights and then thresholding
+    quadratic regression for each causal regression for edge weights and then thresholding
     :param graph_batch: graph
     :param X: dataset
     :return:
@@ -75,7 +75,7 @@ def graph_prunned_by_coef_2nd(graph_batch, X, th=0.3):
 
         X_train = X[:, col]
         X_train_expand = poly.fit_transform(X_train)[:, 1:]
-        X_train_expand_names =  poly.get_feature_names()[1:]
+        X_train_expand_names = poly.get_feature_names_out()[1:]
         
         y = X[:, i]
         reg.fit(X_train_expand, y)
