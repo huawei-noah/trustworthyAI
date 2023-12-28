@@ -23,4 +23,6 @@ jobs:
         cd tests
         coverage run -m unittest test_all_castle.py
     - name: Upload Coverage to Codecov
-      uses: codecov/codecov-action@v2
+      uses: codecov/codecov-action@v4
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
