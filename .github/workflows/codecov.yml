@@ -23,4 +23,4 @@ jobs:
         cd tests
         coverage run -m unittest test_all_castle.py
     - name: Upload Coverage to Codecov
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v2
