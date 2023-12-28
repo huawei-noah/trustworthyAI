@@ -9,7 +9,7 @@
 
 [![PyPI - Version](https://img.shields.io/pypi/v/gcastle)](https://pypi.org/project/gcastle/)
 [![codecov](https://codecov.io/gh/shaido987/trustworthyAI/graph/badge.svg?token=TS0BG6CEI1)](https://codecov.io/gh/shaido987/trustworthyAI)
-
+[![Python - Version](https://img.shields.io/badge/python-3.6+-green)]()
 
 ## 简介
 
