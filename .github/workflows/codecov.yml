@@ -22,7 +22,6 @@ jobs:
         pip install -r ./requirements.txt
         cd tests
         coverage run -m unittest test_all_castle.py
+        coverage xml
     - name: Upload Coverage to Codecov
-      uses: codecov/codecov-action@v4
-      env:
-        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      uses: codecov/codecov-action@v2
