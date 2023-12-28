@@ -18,8 +18,9 @@ jobs:
     - name: Generate Report
       run: |
         pip install coverage
+        cd gcastle
         pip install -r ./requirements.txt
-        cd gcastle/tests
+        cd tests
         coverage run -m unittest test_all_castle.py
     - name: Upload Coverage to Codecov
       uses: codecov/codecov-action@v3
