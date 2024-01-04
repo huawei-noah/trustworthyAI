@@ -78,7 +78,7 @@ class GAE(BaseLearner):
     h_thresh: float, default: 1e-8
         Tolerance of optimization problem
     graph_thresh: float, default: 0.3
-        Threshold to filter out small values in graph
+        Threshold to filter out small values in the graph
     early_stopping: bool, default: False
         Whether to use early stopping
     early_stopping_thresh: float, default: 1.0
@@ -157,7 +157,7 @@ class GAE(BaseLearner):
 
     def learn(self, data, columns=None, **kwargs):
 
-        x = torch.from_numpy(data)
+        x = torch.from_numpy(data).to(self.device)
 
         self.n, self.d = x.shape[:2]
         if x.ndim == 2:
