@@ -12,11 +12,12 @@ This repository is a collection of trustworthy AI related works from Huawei Noah
 ### Competition
 
 - Information and baselines for causality-related competitions arranged by Noah's Ark Lab.
-
+- Previous competitions were held at PCIC 2021, PCIC 2022, and NeurIPS 2023.
 
 ### Datasets
 
-- Code for generating synthetic datasets and real-world datasets that we have open-sourced.
+- Real-world datasets released by Huawei Noah's Ark Lab.
+- Code for generating various synthetic datasets.
 
 ### Research 
  
