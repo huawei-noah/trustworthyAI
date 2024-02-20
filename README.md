@@ -3,11 +3,6 @@
 This repository is a collection of trustworthy AI related works from Huawei Noah's Ark Lab.  
 
 ---
-The NeurIPS 2023 Causal Structure Learning Competition has released, looking forward to your participation！
-
-[NeurIPS 2023|CSL Competition](https://gcastle-hub.github.io/csl-competition/)
-
----
 
 ### gCastle
 
@@ -25,5 +20,5 @@ The NeurIPS 2023 Causal Structure Learning Competition has released, looking for
 
 ### Research 
  
-- Research works related to causaility. We will continously add new methods here.
+- Research works related to causality. We will continuously add new methods here.
 - Currently contains implementations of CausalVAE, GAE, and causal discovery with reinforcement learning.
