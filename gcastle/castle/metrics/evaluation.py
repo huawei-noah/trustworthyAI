@@ -120,11 +120,11 @@ class MetricsDAG(object):
         d = B_true.shape[0]
         
         # linear index of nonzeros
-        pred_und = np.flatnonzero(B_est == -1)
+        pred_und = np.concatenate([np.flatnonzero(B_est == -1), np.flatnonzero(B_est.T == -1)])
         pred = np.flatnonzero(B_est == 1)
         cond = np.flatnonzero(B_true)
         cond_reversed = np.flatnonzero(B_true.T)
-        cond_skeleton = np.concatenate([cond, cond_reversed])
+        cond_skeleton = np.unique(np.concatenate([cond, cond_reversed]))
         # true pos
         true_pos = np.intersect1d(pred, cond, assume_unique=True)
         # treat undirected edge favorably
