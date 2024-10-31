@@ -222,7 +222,7 @@ class TTPM(BaseLearner):
         self._get_effect_tensor_decays()
         # Initialize the adjacency matrix
         edge_mat = np.eye(self._N, self._N)
-        edge_mat[self.priori_knowledge.matrix == 1] += 1 # only add the required edges to edge_mat
+        edge_mat[self.priori_knowledge.matrix == 1] = 1 # only add the required edges to edge_mat
         result = self._em(edge_mat)
         l_ret = result[0]
         
