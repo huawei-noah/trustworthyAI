@@ -18,6 +18,7 @@ import random
 import torch
 import logging
 import numpy as np
+import pandas as pd
 
 from castle.common import BaseLearner, Tensor
 from .trainers.al_trainer import ALTrainer
@@ -156,6 +157,13 @@ class GAE(BaseLearner):
         self.device = device
 
     def learn(self, data, columns=None, **kwargs):
+        # Check if data is a pandas DataFrame or numpy array
+        if isinstance(data, pd.DataFrame):
+            data = data.values  # Convert DataFrame to numpy array
+        elif isinstance(data, np.ndarray):
+            pass
+        else:
+            raise TypeError("Unsupported data type. Data must be a pandas DataFrame or a numpy array.")
 
         x = torch.from_numpy(data).to(self.device)
 
