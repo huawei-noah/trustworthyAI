@@ -189,8 +189,8 @@ class GOLEM(BaseLearner):
         ------
         B_result: np.ndarray
             [d, d] estimated binary matrix (with thresholding).
-        W_result: np.ndarray
-            [d, d] estimated weighted matrix.
+		W_result: np.ndarray
+			[d, d] estimated weighted matrix.
         
         Hyperparameters
         ---------------
