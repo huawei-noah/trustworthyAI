@@ -68,7 +68,10 @@ class GOLEM(BaseLearner):
     Attributes
     ----------
     causal_matrix : numpy.ndarray
-        Learned causal structure matrix
+        Learned causal structure matrix (binary)
+
+	weight_causal_matrix: numpy.ndarray
+		Learned causal structure matrix (weighted)
 
     References
     ----------
@@ -167,9 +170,10 @@ class GOLEM(BaseLearner):
 
         X = Tensor(data, columns=columns)
         
-        causal_matrix = self._golem(X)
-        self.causal_matrix = Tensor(causal_matrix, index=X.columns,
-                                    columns=X.columns)
+        causal_matrix, weight_causal_matrix = self._golem(X)
+        self.causal_matrix = Tensor(causal_matrix, index=X.columns, columns=X.columns)
+        self.weight_causal_matrix = Tensor(weight_causal_matrix, index=X.columns, columns=X.columns)
+
 
     def _golem(self, X):
         """
@@ -184,6 +188,8 @@ class GOLEM(BaseLearner):
         Return
         ------
         B_result: np.ndarray
+            [d, d] estimated binary matrix (with thresholding).
+        W_result: np.ndarray
             [d, d] estimated weighted matrix.
         
         Hyperparameters
@@ -221,7 +227,8 @@ class GOLEM(BaseLearner):
                     i, score, likelihood, h))
 
         # Post-process estimated solution and compute results
-        B_processed = postprocess(B_est.cpu().detach().numpy(), graph_thres=0.3)
+        W_result = B_est.cpu().detach().numpy()
+        B_processed = postprocess(W_result, self.graph_thres)
         B_result = (B_processed != 0).astype(int)
 
-        return B_result
+        return B_result, W_result
