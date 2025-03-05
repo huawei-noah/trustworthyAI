@@ -98,7 +98,7 @@ class DAG(object):
         for i in sampled_pa:
             candidate = set(range(i + 1, d))
             candidate = candidate - set(sampled_ch)
-            sampled_ch.append(sample(candidate, 1)[0])
+            sampled_ch.append(sample(list(candidate), 1)[0])
             B[i, sampled_ch[-1]] = 1
         remaining_pa = list(set(range(d)) - set(sampled_pa))
         remaining_ch = list(set(range(d)) - set(sampled_ch))
@@ -125,7 +125,7 @@ class DAG(object):
         while len(M) > 2 * rank:
             keys = set(M.keys())
             rmv_cand = keys & (remaining_pa_set | remaining_ch_set)
-            p = sample(rmv_cand, 1)[0]
+            p = sample(list(rmv_cand), 1)[0]
             c = M[p]
             # destroy p-c
             bigraph.remove_edge(p, c)

@@ -31,7 +31,7 @@ We will calculate your final ranking score based on the following steps:
 
 2. **Functional Testing**: 
    - If you pass the material completeness check, we will proceed to test your code to ensure it can run and produce results within an acceptable time frame (within 12 hours, using CPU environments such as Intel(R)-Xeon(R) E5-2680V2 2.8-3.6GHz). If your solution requires GPU or similar computing devices, we will contact you individually to confirm the details.
-   -  If you fail to pass the Functional Testing, your final ranking score will be 0.
+   - If you fail to pass the Functional Testing, your final ranking score will be 0.
 
 3. **Final Score Calculation**: 
    - If your solution passes both the material completeness check and functional testing, we will calculate the final score as follows:

@@ -1,12 +1,12 @@
 ## Winning Teams
 | Prize | Team Name      | Captain           | Members                                                |  Instructor |      Institute         |
 | ---- | ---------------- | ----------------- | ------------------------------------------------------ | ------------------ | ----------- |
-| Gold Prize | XHS | Mingjia Li  | Mingjia Li, Shuo Liu,  Yuanhao Liu   |  Hong Qian, Aimin Zhou  |    -      |
-| Silver Prize |  FAKEiKUN | - | - |    -  |   -  |
-| Silver Prize | ustc-aig |  Hongyi Xie      | Hongyi Xie， Kaiyu Jin  | Hong Xie, Defu Lian| - | - |
-| Bronze Prize | 玻璃海 |   Chen Wang    | Chen Wang, Yuan Li, Dongsheng Fang, Peng Jin, Yi Qiu| - | -  |
-| Bronze Prize | TKOCA  | Nishan Xie     | Nishan Xie, Yuanxin Li, Qing Tan | - | - | 
-| Bronze Prize | Youran |   -   |    Shi and Sun  |    -           |         -   |
+| Gold Prize | XHS | Mingjia Li  | Mingjia Li, Shuo Liu,  Yuanhao Liu, Junhao Shen   |  Hong Qian, Aimin Zhou  |    Shanghai Institute of AI for Education and School of Computer Science and Technology, East China Normal University     |
+| Silver Prize |  FAKEiKUN | Chen Yizhou | Chen Yizhou,Anxiang Zeng,Guangda Huzhang,Huanzhi Liu |    -  |   Shopee, Nanyang Technological University  |
+| Silver Prize | ustc-aig |  Hongyi Xie      | Hongyi Xie， Kaiyu Jin  | Hong Xie, Defu Lian| University of Science and Technology of China | 
+| Bronze Prize | 玻璃海 |   Chen Wang    | Chen Wang, Yuan Li, Dongsheng Fang, Peng Jin, Yi Qiu| - | idealinfo.com  |
+| Bronze Prize | TKOCA  | Nishan Xie     | Nishan Xie, Yuanxin Li, Qing Tan | Lingzhong Meng, Rui Li and Yukuan Yang | University of Chinese Academy of Sciences | 
+| Bronze Prize | Youran |   Youran   |    Youran Sun，Naichen Shi  |    -  |         Tsinghua University，University of Michigan   |
 
 - We kindly request each of the winners to **promptly provide missing information, including Captain, Members, and Institute, for the above table**. Please send this information to noahlabcausal@huawei.com at your earliest convenience.
  

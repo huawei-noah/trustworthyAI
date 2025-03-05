@@ -4,13 +4,19 @@
 
 [中文版本](https://github.com/huawei-noah/trustworthyAI/tree/master/gcastle/README.cn.md)
 
-Version 1.0.3 (2022/08/11)
+Version 1.0.4.rc1 (2023/12/29)  
+
+[![PyPI - Version](https://img.shields.io/pypi/v/gcastle?logo=pypi&logoColor=FFE873)](https://pypi.org/project/gcastle/)
+[![codecov](https://codecov.io/gh/shaido987/trustworthyAI/graph/badge.svg?token=TS0BG6CEI1)](https://codecov.io/gh/shaido987/trustworthyAI)
+[![Python - Version](https://img.shields.io/badge/python-3.6+-green?logo=python)]()
+[![arXiv](https://img.shields.io/badge/arXiv-2111.15155-b31b1b.svg)](https://arxiv.org/abs/2111.15155)
+
 
 ## Introduction
 
-gCastle is a causal structure learning toolchain developed by [Huawei Noah's Ark Lab](https://www.noahlab.com.hk/#/home). The package contains various functionality related to causal learning and evaluation, including: 
+gCastle is a causal structure learning toolchain developed by [Huawei Noah's Ark Lab](https://www.noahlab.com.hk/#/home). The package contains various functionalities related to causal learning and evaluation, including: 
 * Data generation and processing: data simulation, data reading operators, and data pre-processing operators（such as prior injection and variable selection).
-* Causal structure learning: causal structure learning methods, including both classic and recently developed methods, especially gradient-based ones that can handle large problems.
+* Causal structure learning: causal structure learning methods, including classic and recently developed methods, especially gradient-based ones that can handle large problems.
 * Evaluation metrics: various commonly used metrics for causal structure learning, including F1, SHD, FDR, TPR, FDR, NNZ, etc.
 
 ## Algorithm List
@@ -22,13 +28,13 @@ gCastle is a causal structure learning toolchain developed by [Huawei Noah's Ark
 | [DirectLiNGAM](https://arxiv.org/abs/1101.2489) | IID/Function-based | A direct learning algorithm for linear non-Gaussian acyclic model (LiNGAM) | v1.0.3 |
 | [ICALiNGAM](https://dl.acm.org/doi/10.5555/1248547.1248619) | IID/Function-based | An ICA-based learning algorithm for linear non-Gaussian acyclic model (LiNGAM) | v1.0.3 |
 | [GES](https://www.jmlr.org/papers/volume3/chickering02b/chickering02b.pdf) | IID/Score-based | A classical Greedy Equivalence Search algorithm | v1.0.3 |
-| [PNL](https://arxiv.org/abs/1205.2599) | IID/Funtion-based | Causal discovery based on the post-nonlinear causal assumption | v1.0.3 |
+| [PNL](https://arxiv.org/abs/1205.2599) | IID/Function-based | Causal discovery based on the post-nonlinear causal assumption | v1.0.3 |
 | [NOTEARS](https://arxiv.org/abs/1803.01422) | IID/Gradient-based | A gradient-based algorithm for linear data models (typically with least-squares loss) | v1.0.3 |
 | [NOTEARS-MLP](https://arxiv.org/abs/1909.13189) | IID/Gradient-based | A gradient-based algorithm using neural network modeling for non-linear causal relationships | v1.0.3 |
 | [NOTEARS-SOB](https://arxiv.org/abs/1909.13189) | IID/Gradient-based | A gradient-based algorithm using Sobolev space modeling for non-linear causal relationships | v1.0.3 |
 | [NOTEARS-lOW-RANK](https://arxiv.org/abs/2006.05691) | IID/Gradient-based | Adapting NOTEARS for large problems with low-rank causal graphs | v1.0.3 |
 | [DAG-GNN](https://arxiv.org/abs/1904.10098) | IID/Gradient-based | DAG Structure Learning with Graph Neural Networks | v1.0.3 |
-| [GOLEM](https://arxiv.org/abs/2006.10201) | IID/Gradient-based | A more efficient version of NOTEARS that can reduce number of optimization iterations | v1.0.3 |
+| [GOLEM](https://arxiv.org/abs/2006.10201) | IID/Gradient-based | A more efficient version of NOTEARS that can reduce the number of optimization iterations | v1.0.3 |
 | [GraNDAG](https://arxiv.org/abs/1906.02226) | IID/Gradient-based | A gradient-based algorithm using neural network modeling for non-linear additive noise data  | v1.0.3 |
 | [MCSL](https://arxiv.org/abs/1910.08527) | IID/Gradient-based | A gradient-based algorithm for non-linear additive noise data by learning the binary adjacency matrix| v1.0.3 |
 | [GAE](https://arxiv.org/abs/1911.07420) | IID/Gradient-based | A gradient-based algorithm using graph autoencoder to model non-linear causal relationships| v1.0.3 |
@@ -56,7 +62,7 @@ gCastle requires:
 
 ### PIP installation
 ```bash
-pip install gcastle==1.0.3
+pip install gcastle==1.0.4rc1
 ```
 
 ## Usage Example (PC algorithm)
@@ -88,7 +94,7 @@ You can visit [examples](https://github.com/huawei-noah/trustworthyAI/tree/maste
 
 
 ## Citation
-If you find gCastle useful in your research, please consider citing the the following [paper](https://arxiv.org/abs/2111.15155):
+If you find gCastle useful in your research, please consider citing the following [paper](https://arxiv.org/abs/2111.15155):
 ```
 @misc{zhang2021gcastle,
   title={gCastle: A Python Toolbox for Causal Discovery}, 
@@ -101,4 +107,4 @@ If you find gCastle useful in your research, please consider citing the the foll
 ```
 
 ## Next Up & Contributing
-This is the first released version of gCastle, we'll be continuously complementing and optimizing the code and documentation. We welcome new contributors of all experience levels, the specifications about how to contribute code will be coming out soon. If you have any questions or suggestions (such as, contributing new algorithms, optimizing code, improving documentation), please submit an issue here. We will reply as soon as possible.
+This is the first released version of gCastle, we'll be continuously complementing and optimizing the code and documentation. We welcome new contributors of all experience levels, the specifications about how to contribute code will be coming out soon. If you have any questions or suggestions (such as contributing new algorithms, optimizing code, or improving documentation), please submit an issue here. We will get back to you as soon as possible.

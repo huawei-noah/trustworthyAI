@@ -15,28 +15,23 @@ from torch.nn import functional as F
 device = torch.device("cuda:0" if(torch.cuda.is_available()) else "cpu")
 
 
-
 class CausalVAE(nn.Module):
-    def __init__(self, nn='mask', name='vae', z_dim=16, z1_dim=4, z2_dim=4, inference = False):
+    def __init__(self, nn='mask', name='vae', z_dim=16, z1_dim=4, z2_dim=4, inference = False, initial=True):
         super().__init__()
         self.name = name
-        self.z_dim = z_dim
-        self.z1_dim = z1_dim
-        self.z2_dim = z2_dim
+        self.z_dim = z_dim # the full dimension
+        self.z1_dim = z1_dim # number of concepts
+        self.z2_dim = z2_dim # the dimension of each concepts
         self.channel = 4
         self.scale = np.array([[20,15],[2,2],[59.5,26.5], [10.5, 4.5]])
 
         nn = getattr(nns, nn)
         self.enc = nn.Encoder(self.z_dim, self.channel)
         self.dec = nn.Decoder_DAG(self.z_dim,self.z1_dim, self.z2_dim)
-        self.dag = nn.DagLayer(self.z1_dim, self.z1_dim, i = inference)
+        self.dag = nn.DagLayer(self.z1_dim, self.z1_dim, i = inference, initial=initial)
         self.attn = nn.Attention(self.z2_dim)
-        self.mask_z = nn.MaskLayer(self.z_dim,concept=self.z1_dim)
-        self.mask_u = nn.MaskLayer(self.z1_dim,concept=self.z1_dim,z1_dim=1)
-
-        self.z_prior_m = torch.nn.Parameter(torch.zeros(1), requires_grad=False)
-        self.z_prior_v = torch.nn.Parameter(torch.ones(1), requires_grad=False)
-        self.z_prior = (self.z_prior_m, self.z_prior_v)
+        self.mask_z = nn.MaskLayer(self.z_dim, concept=self.z1_dim, z2_dim=self.z2_dim)
+        self.mask_u = nn.MaskLayer(self.z1_dim, concept=self.z1_dim, z2_dim=1)
 
     def negative_elbo_bound(self, x, label, mask = None, sample = False, adj = None, lambdav=0.001):
         """
@@ -107,7 +102,7 @@ class CausalVAE(nn.Module):
 
 
     def loss(self, x):
-        nelbo, kl, rec = self.negative_elbo_bound(x)
+        nelbo, kl, rec, _, _ = self.negative_elbo_bound(x)
         loss = nelbo
 
         summaries = dict((
@@ -126,11 +121,6 @@ class CausalVAE(nn.Module):
     def compute_sigmoid_given(self, z):
         logits = self.dec.decode(z)
         return torch.sigmoid(logits)
-
-    def sample_z(self, batch):
-        return ut.sample_gaussian(
-            self.z_prior[0].expand(batch, self.z_dim),
-            self.z_prior[1].expand(batch, self.z_dim))
 
     def sample_x(self, batch):
         z = self.sample_z(batch)

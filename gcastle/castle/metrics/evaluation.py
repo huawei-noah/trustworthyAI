@@ -120,11 +120,11 @@ class MetricsDAG(object):
         d = B_true.shape[0]
         
         # linear index of nonzeros
-        pred_und = np.flatnonzero(B_est == -1)
+        pred_und = np.concatenate([np.flatnonzero(B_est == -1), np.flatnonzero(B_est.T == -1)])
         pred = np.flatnonzero(B_est == 1)
         cond = np.flatnonzero(B_true)
         cond_reversed = np.flatnonzero(B_true.T)
-        cond_skeleton = np.concatenate([cond, cond_reversed])
+        cond_skeleton = np.unique(np.concatenate([cond, cond_reversed]))
         # true pos
         true_pos = np.intersect1d(pred, cond, assume_unique=True)
         # treat undirected edge favorably
@@ -190,9 +190,15 @@ class MetricsDAG(object):
         assert num_true!=0
         
         # true_positives
-        num_tp =  (W_p + W_true).applymap(lambda elem:1 if elem==2 else 0).sum(axis=1).sum()
+        if pd.__version__ >= "2.1.0":
+            num_tp = (W_p + W_true).map(lambda elem: 1 if elem == 2 else 0).sum(axis=1).sum()
+        else:
+            num_tp =  (W_p + W_true).applymap(lambda elem:1 if elem==2 else 0).sum(axis=1).sum()
         # False Positives + Reversed Edges
-        num_fn_r = (W_p - W_true).applymap(lambda elem:1 if elem==1 else 0).sum(axis=1).sum()
+        if pd.__version__ >= "2.1.0":
+            num_fn_r = (W_p - W_true).map(lambda elem: 1 if elem == 1 else 0).sum(axis=1).sum()
+        else:
+            num_fn_r = (W_p - W_true).applymap(lambda elem:1 if elem==1 else 0).sum(axis=1).sum()
         score = np.max((num_tp-num_fn_r,0))/num_true
         
         return score
@@ -218,7 +224,10 @@ class MetricsDAG(object):
         """
 
         assert(W_p.shape==W_true.shape and W_p.shape[0]==W_p.shape[1])
-        TP = (W_p + W_true).applymap(lambda elem:1 if elem==2 else 0).sum(axis=1).sum()
+        if pd.__version__ >= "2.1.0":
+            TP = (W_p + W_true).map(lambda elem: 1 if elem == 2 else 0).sum(axis=1).sum()
+        else:
+            TP = (W_p + W_true).applymap(lambda elem:1 if elem==2 else 0).sum(axis=1).sum()
         TP_FP = W_p.sum(axis=1).sum()
         TP_FN = W_true.sum(axis=1).sum()
         precision = TP/TP_FP

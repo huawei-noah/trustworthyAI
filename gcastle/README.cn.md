@@ -5,7 +5,12 @@
 
 [English Version](https://github.com/huawei-noah/trustworthyAI/tree/master/gcastle/README.md)
 
-1.0.3 版本(2022/08/11)
+1.0.4.rc1 版本(2023/12/29)  
+
+[![PyPI - Version](https://img.shields.io/pypi/v/gcastle?logo=pypi&logoColor=FFE873)](https://pypi.org/project/gcastle/)
+[![codecov](https://codecov.io/gh/shaido987/trustworthyAI/graph/badge.svg?token=TS0BG6CEI1)](https://codecov.io/gh/shaido987/trustworthyAI)
+[![Python - Version](https://img.shields.io/badge/python-3.6+-green?logo=python)]()
+[![arXiv](https://img.shields.io/badge/arXiv-2111.15155-b31b1b.svg)](https://arxiv.org/abs/2111.15155)
 
 ## 简介
 
@@ -56,7 +61,7 @@
 
 ### PIP安装
 ```bash
-pip install gcastle==1.0.3
+pip install gcastle==1.0.4rc1
 ```
 
 ## 算法使用指导
