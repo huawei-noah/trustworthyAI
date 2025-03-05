@@ -1,0 +1,967 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>common &mdash; gCastle  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+    <link rel="shortcut icon" href="../_static/favicon.png"/>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="datasets" href="castle.datasets.html" />
+    <link rel="prev" title="algorithms" href="castle.algorithms.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            gCastle
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="castle.html">castle</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="castle.algorithms.html">algorithms</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">common</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-castle.common.independence_tests">independence_tests</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#castle.common.independence_tests.CITest"><code class="docutils literal notranslate"><span class="pre">CITest</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#castle.common.independence_tests.hsic_test"><code class="docutils literal notranslate"><span class="pre">hsic_test()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#castle.common.independence_tests.power_divergence"><code class="docutils literal notranslate"><span class="pre">power_divergence()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-castle.common.plot_dag">plot_dag</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#castle.common.plot_dag.GraphDAG"><code class="docutils literal notranslate"><span class="pre">GraphDAG</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-castle.common.priori_knowledge">priori_knowledge</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#castle.common.priori_knowledge.PrioriKnowledge"><code class="docutils literal notranslate"><span class="pre">PrioriKnowledge</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#castle.common.priori_knowledge.orient_by_priori_knowledge"><code class="docutils literal notranslate"><span class="pre">orient_by_priori_knowledge()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="castle.datasets.html">datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="castle.metrics.html">metrics</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">gCastle</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="castle.html">castle</a></li>
+      <li class="breadcrumb-item active">common</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/castle/castle.common.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="common">
+<h1>common<a class="headerlink" href="#common" title="Link to this heading"></a></h1>
+<section id="module-castle.common.independence_tests">
+<span id="independence-tests"></span><h2>independence_tests<a class="headerlink" href="#module-castle.common.independence_tests" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="castle.common.independence_tests.CITest">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">castle.common.independence_tests.</span></span><span class="sig-name descname"><span class="pre">CITest</span></span><a class="reference internal" href="../_modules/castle/common/independence_tests.html#CITest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.common.independence_tests.CITest" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class of conditional independence test that contains multiple method</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="castle.common.independence_tests.CITest.chi2_test">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">chi2_test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/castle/common/independence_tests.html#CITest.chi2_test"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.common.independence_tests.CITest.chi2_test" title="Link to this definition"></a></dt>
+<dd><p>Chi-square conditional independence test.</p>
+<p>Tests the null hypothesis that x is independent from y given z.</p>
+<section id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>data<span class="classifier">numpy.ndarray</span></dt><dd><p>The dataset on which to test the independence condition.</p>
+</dd>
+<dt>x<span class="classifier">int</span></dt><dd><p>A variable in data set</p>
+</dd>
+<dt>y<span class="classifier">int</span></dt><dd><p>A variable in data set</p>
+</dd>
+<dt>z<span class="classifier">List, default []</span></dt><dd><p>A list of variable names contained in the data set, different
+from x and y. This is the separating set that (potentially)
+makes x and y independent.</p>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h3>Returns<a class="headerlink" href="#returns" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>chi2<span class="classifier">float</span></dt><dd><p>The test statistic.</p>
+</dd>
+<dt>dof<span class="classifier">int</span></dt><dd><p>Degrees of freedom</p>
+</dd>
+<dt>p_value<span class="classifier">float</span></dt><dd><p>The p-value of the test</p>
+</dd>
+</dl>
+</section>
+<section id="examples">
+<h3>Examples<a class="headerlink" href="#examples" title="Link to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">23</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">chi2</span><span class="p">,</span> <span class="n">dof</span><span class="p">,</span> <span class="n">p_value</span> <span class="o">=</span> <span class="n">CITest</span><span class="o">.</span><span class="n">chi2_test</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">[])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">chi2</span><span class="p">,</span> <span class="n">dof</span><span class="p">,</span> <span class="n">p_value</span><span class="p">)</span>
+<span class="go">20.542792795683862 16 0.19676171971325737</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">chi2</span><span class="p">,</span> <span class="n">dof</span><span class="p">,</span> <span class="n">p_value</span> <span class="o">=</span> <span class="n">CITest</span><span class="o">.</span><span class="n">chi2_test</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">chi2</span><span class="p">,</span> <span class="n">dof</span><span class="p">,</span> <span class="n">p_value</span><span class="p">)</span>
+<span class="go">90.66096270618675 80 0.19483257969931803</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">chi2</span><span class="p">,</span> <span class="n">dof</span><span class="p">,</span> <span class="n">p_value</span> <span class="o">=</span> <span class="n">CITest</span><span class="o">.</span><span class="n">chi2_test</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">chi2</span><span class="p">,</span> <span class="n">dof</span><span class="p">,</span> <span class="n">p_value</span><span class="p">)</span>
+<span class="go">401.830906690841 400 0.46485969015873324</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="castle.common.independence_tests.CITest.cressie_read">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cressie_read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/castle/common/independence_tests.html#CITest.cressie_read"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.common.independence_tests.CITest.cressie_read" title="Link to this definition"></a></dt>
+<dd><p>Cressie Read statistic for conditional independence[1].</p>
+<p>Tests the null hypothesis that x is independent of y given z.</p>
+<section id="references">
+<h3>References<a class="headerlink" href="#references" title="Link to this heading"></a></h3>
+<p>[1] Cressie, Noel, and Timothy RC Read.
+“Multinomial goodness‐of‐fit tests.” Journal of the Royal Statistical
+Society: Series B (Methodological) 46.3 (1984): 440-464.</p>
+</section>
+<section id="id1">
+<h3>Parameters<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>data<span class="classifier">numpy.ndarray</span></dt><dd><p>The dataset on which to test the independence condition.</p>
+</dd>
+<dt>x<span class="classifier">int</span></dt><dd><p>A variable in data set</p>
+</dd>
+<dt>y<span class="classifier">int</span></dt><dd><p>A variable in data set</p>
+</dd>
+<dt>z<span class="classifier">List, default []</span></dt><dd><p>A list of variable names contained in the data set, different
+from x and y. This is the separating set that (potentially)
+makes x and y independent.</p>
+</dd>
+</dl>
+</section>
+<section id="id2">
+<h3>Returns<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>chi2<span class="classifier">float</span></dt><dd><p>The test statistic.</p>
+</dd>
+<dt>dof<span class="classifier">int</span></dt><dd><p>Degrees of freedom</p>
+</dd>
+<dt>p_value<span class="classifier">float</span></dt><dd><p>The p-value of the test</p>
+</dd>
+</dl>
+</section>
+<section id="id3">
+<h3>Examples<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">23</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">chi2</span><span class="p">,</span> <span class="n">dof</span><span class="p">,</span> <span class="n">p_value</span> <span class="o">=</span> <span class="n">CITest</span><span class="o">.</span><span class="n">cressie_read</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">[])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">chi2</span><span class="p">,</span> <span class="n">dof</span><span class="p">,</span> <span class="n">p_value</span><span class="p">)</span>
+<span class="go">20.537851851639562 16 0.19696641879639076</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">chi2</span><span class="p">,</span> <span class="n">dof</span><span class="p">,</span> <span class="n">p_value</span> <span class="o">=</span> <span class="n">CITest</span><span class="o">.</span><span class="n">cressie_read</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">chi2</span><span class="p">,</span> <span class="n">dof</span><span class="p">,</span> <span class="n">p_value</span><span class="p">)</span>
+<span class="go">90.45257795422611 80 0.19903833818274186</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">chi2</span><span class="p">,</span> <span class="n">dof</span><span class="p">,</span> <span class="n">p_value</span> <span class="o">=</span> <span class="n">CITest</span><span class="o">.</span><span class="n">cressie_read</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">chi2</span><span class="p">,</span> <span class="n">dof</span><span class="p">,</span> <span class="n">p_value</span><span class="p">)</span>
+<span class="go">404.24753197461905 400 0.43124831946260705</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="castle.common.independence_tests.CITest.fisherz_test">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fisherz_test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/castle/common/independence_tests.html#CITest.fisherz_test"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.common.independence_tests.CITest.fisherz_test" title="Link to this definition"></a></dt>
+<dd><p>Fisher’s z-transform for conditional independence test</p>
+<section id="id4">
+<h3>Parameters<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>data<span class="classifier">ndarray</span></dt><dd><p>The dataset on which to test the independence condition.</p>
+</dd>
+<dt>x<span class="classifier">int</span></dt><dd><p>A variable in data set</p>
+</dd>
+<dt>y<span class="classifier">int</span></dt><dd><p>A variable in data set</p>
+</dd>
+<dt>z<span class="classifier">List, default []</span></dt><dd><p>A list of variable names contained in the data set different
+from x and y. This is the separating set that (potentially)
+makes x and y independent.</p>
+</dd>
+</dl>
+</section>
+<section id="id5">
+<h3>Returns<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
+<p>_: None
+_: None
+p: float</p>
+<blockquote>
+<div><p>the p-value of conditional independence.</p>
+</div></blockquote>
+</section>
+<section id="id6">
+<h3>Examples<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">23</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">2500</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p_value</span> <span class="o">=</span> <span class="n">CITest</span><span class="o">.</span><span class="n">fisherz_test</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">[])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">p_value</span><span class="p">)</span>
+<span class="go">0.011609430716781555</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p_value</span> <span class="o">=</span> <span class="n">CITest</span><span class="o">.</span><span class="n">fisherz_test</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">p_value</span><span class="p">)</span>
+<span class="go">0.01137523908727811</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p_value</span> <span class="o">=</span> <span class="n">CITest</span><span class="o">.</span><span class="n">fisherz_test</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">p_value</span><span class="p">)</span>
+<span class="go">0.011448214156529746</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="castle.common.independence_tests.CITest.freeman_tukey">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">freeman_tukey</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/castle/common/independence_tests.html#CITest.freeman_tukey"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.common.independence_tests.CITest.freeman_tukey" title="Link to this definition"></a></dt>
+<dd><p>Freeman Tuckey test for conditional independence [1].</p>
+<p>Tests the null hypothesis that x is independent of y given z.</p>
+<section id="id7">
+<h3>References<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
+<p>[1] Read, Campbell B. “Freeman—Tukey chi-squared goodness-of-fit
+statistics.” Statistics &amp; probability letters 18.4 (1993): 271-278.</p>
+</section>
+<section id="id8">
+<h3>Parameters<a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>data<span class="classifier">numpy.ndarray</span></dt><dd><p>The dataset on which to test the independence condition.</p>
+</dd>
+<dt>x<span class="classifier">int</span></dt><dd><p>A variable in data set</p>
+</dd>
+<dt>y<span class="classifier">int</span></dt><dd><p>A variable in data set</p>
+</dd>
+<dt>z<span class="classifier">List, default []</span></dt><dd><p>A list of variable names contained in the data set, different
+from x and y. This is the separating set that (potentially)
+makes x and y independent.</p>
+</dd>
+</dl>
+</section>
+<section id="id9">
+<h3>Returns<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>chi2<span class="classifier">float</span></dt><dd><p>The test statistic.</p>
+</dd>
+<dt>dof<span class="classifier">int</span></dt><dd><p>Degrees of freedom</p>
+</dd>
+<dt>p_value<span class="classifier">float</span></dt><dd><p>The p-value of the test</p>
+</dd>
+</dl>
+</section>
+<section id="id10">
+<h3>Examples<a class="headerlink" href="#id10" title="Link to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">23</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">chi2</span><span class="p">,</span> <span class="n">dof</span><span class="p">,</span> <span class="n">p_value</span> <span class="o">=</span> <span class="n">CITest</span><span class="o">.</span><span class="n">freeman_tukey</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">[])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">chi2</span><span class="p">,</span> <span class="n">dof</span><span class="p">,</span> <span class="n">p_value</span><span class="p">)</span>
+<span class="go">20.586757281527213 16 0.19494739343907877</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">chi2</span><span class="p">,</span> <span class="n">dof</span><span class="p">,</span> <span class="n">p_value</span> <span class="o">=</span> <span class="n">CITest</span><span class="o">.</span><span class="n">freeman_tukey</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">chi2</span><span class="p">,</span> <span class="n">dof</span><span class="p">,</span> <span class="n">p_value</span><span class="p">)</span>
+<span class="go">91.06391187965758 80 0.18687227769183953</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">chi2</span><span class="p">,</span> <span class="n">dof</span><span class="p">,</span> <span class="n">p_value</span> <span class="o">=</span> <span class="n">CITest</span><span class="o">.</span><span class="n">freeman_tukey</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">chi2</span><span class="p">,</span> <span class="n">dof</span><span class="p">,</span> <span class="n">p_value</span><span class="p">)</span>
+<span class="go">nan 400 nan</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="castle.common.independence_tests.CITest.g2_test">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">g2_test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/castle/common/independence_tests.html#CITest.g2_test"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.common.independence_tests.CITest.g2_test" title="Link to this definition"></a></dt>
+<dd><p>G squared test for conditional independence. Also commonly known as G-test,
+likelihood-ratio or maximum likelihood statistical significance test.
+Tests the null hypothesis that x is independent of y given z.</p>
+<section id="id11">
+<h3>Parameters<a class="headerlink" href="#id11" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>data<span class="classifier">numpy.ndarray</span></dt><dd><p>The dataset on which to test the independence condition.</p>
+</dd>
+<dt>x<span class="classifier">int</span></dt><dd><p>A variable in data set</p>
+</dd>
+<dt>y<span class="classifier">int</span></dt><dd><p>A variable in data set</p>
+</dd>
+<dt>z<span class="classifier">List, default []</span></dt><dd><p>A list of variable names contained in the data set, different from X and Y.
+This is the separating set that (potentially) makes X and Y independent.</p>
+</dd>
+</dl>
+</section>
+<section id="id12">
+<h3>Returns<a class="headerlink" href="#id12" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>chi2<span class="classifier">float</span></dt><dd><p>The test statistic.</p>
+</dd>
+<dt>dof<span class="classifier">int</span></dt><dd><p>Degrees of freedom</p>
+</dd>
+<dt>p_value<span class="classifier">float</span></dt><dd><p>The p-value of the test</p>
+</dd>
+</dl>
+</section>
+<section id="id13">
+<h3>Examples<a class="headerlink" href="#id13" title="Link to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">23</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">chi2</span><span class="p">,</span> <span class="n">dof</span><span class="p">,</span> <span class="n">p_value</span> <span class="o">=</span> <span class="n">CITest</span><span class="o">.</span><span class="n">g2_test</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">[])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">chi2</span><span class="p">,</span> <span class="n">dof</span><span class="p">,</span> <span class="n">p_value</span><span class="p">)</span>
+<span class="go">20.55310657691933 16 0.19633494733361465</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">chi2</span><span class="p">,</span> <span class="n">dof</span><span class="p">,</span> <span class="n">p_value</span> <span class="o">=</span> <span class="n">CITest</span><span class="o">.</span><span class="n">g2_test</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">chi2</span><span class="p">,</span> <span class="n">dof</span><span class="p">,</span> <span class="n">p_value</span><span class="p">)</span>
+<span class="go">90.54473365450676 80 0.1971708971451276</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">chi2</span><span class="p">,</span> <span class="n">dof</span><span class="p">,</span> <span class="n">p_value</span> <span class="o">=</span> <span class="n">CITest</span><span class="o">.</span><span class="n">g2_test</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">chi2</span><span class="p">,</span> <span class="n">dof</span><span class="p">,</span> <span class="n">p_value</span><span class="p">)</span>
+<span class="go">429.0926603059854 400 0.15195497920948475</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="castle.common.independence_tests.CITest.modify_log_likelihood">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">modify_log_likelihood</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/castle/common/independence_tests.html#CITest.modify_log_likelihood"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.common.independence_tests.CITest.modify_log_likelihood" title="Link to this definition"></a></dt>
+<dd><p>Modified log likelihood ratio test for conditional independence.</p>
+<p>Tests the null hypothesis that x is independent of y given z.</p>
+<section id="id14">
+<h3>Parameters<a class="headerlink" href="#id14" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>data<span class="classifier">numpy.ndarray</span></dt><dd><p>The dataset on which to test the independence condition.</p>
+</dd>
+<dt>x<span class="classifier">int</span></dt><dd><p>A variable in data set</p>
+</dd>
+<dt>y<span class="classifier">int</span></dt><dd><p>A variable in data set</p>
+</dd>
+<dt>z<span class="classifier">List, default []</span></dt><dd><p>A list of variable names contained in the data set, different
+from x and y. This is the separating set that (potentially)
+makes x and y independent.</p>
+</dd>
+</dl>
+</section>
+<section id="id15">
+<h3>Returns<a class="headerlink" href="#id15" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>chi2<span class="classifier">float</span></dt><dd><p>The test statistic.</p>
+</dd>
+<dt>dof<span class="classifier">int</span></dt><dd><p>Degrees of freedom</p>
+</dd>
+<dt>p_value<span class="classifier">float</span></dt><dd><p>The p-value of the test</p>
+</dd>
+</dl>
+</section>
+<section id="id16">
+<h3>Examples<a class="headerlink" href="#id16" title="Link to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">23</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">chi2</span><span class="p">,</span> <span class="n">dof</span><span class="p">,</span> <span class="n">p_value</span> <span class="o">=</span> <span class="n">CITest</span><span class="o">.</span><span class="n">modify_log_likelihood</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">[])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">chi2</span><span class="p">,</span> <span class="n">dof</span><span class="p">,</span> <span class="n">p_value</span><span class="p">)</span>
+<span class="go">20.639717717727184 16 0.19277870421685392</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">chi2</span><span class="p">,</span> <span class="n">dof</span><span class="p">,</span> <span class="n">p_value</span> <span class="o">=</span> <span class="n">CITest</span><span class="o">.</span><span class="n">modify_log_likelihood</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">chi2</span><span class="p">,</span> <span class="n">dof</span><span class="p">,</span> <span class="n">p_value</span><span class="p">)</span>
+<span class="go">91.97967547179121 80 0.16962335307180806</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">chi2</span><span class="p">,</span> <span class="n">dof</span><span class="p">,</span> <span class="n">p_value</span> <span class="o">=</span> <span class="n">CITest</span><span class="o">.</span><span class="n">modify_log_likelihood</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">chi2</span><span class="p">,</span> <span class="n">dof</span><span class="p">,</span> <span class="n">p_value</span><span class="p">)</span>
+<span class="go">inf 400 0.0</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="castle.common.independence_tests.CITest.neyman">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">neyman</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/castle/common/independence_tests.html#CITest.neyman"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.common.independence_tests.CITest.neyman" title="Link to this definition"></a></dt>
+<dd><p>Neyman’s test for conditional independence[1].</p>
+<p>Tests the null hypothesis that x is independent of y given z.</p>
+<section id="id17">
+<h3>References<a class="headerlink" href="#id17" title="Link to this heading"></a></h3>
+<p>[1] <a class="reference external" href="https://en.wikipedia.org/wiki/Neyman%E2%80%93Pearson_lemma">https://en.wikipedia.org/wiki/Neyman%E2%80%93Pearson_lemma</a></p>
+</section>
+<section id="id18">
+<h3>Parameters<a class="headerlink" href="#id18" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>data<span class="classifier">numpy.ndarray</span></dt><dd><p>The dataset on which to test the independence condition.</p>
+</dd>
+<dt>x<span class="classifier">int</span></dt><dd><p>A variable in data set</p>
+</dd>
+<dt>y<span class="classifier">int</span></dt><dd><p>A variable in data set</p>
+</dd>
+<dt>z<span class="classifier">List, default []</span></dt><dd><p>A list of variable names contained in the data set, different
+from x and y. This is the separating set that (potentially)
+makes x and y independent.</p>
+</dd>
+</dl>
+</section>
+<section id="id19">
+<h3>Returns<a class="headerlink" href="#id19" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>chi2<span class="classifier">float</span></dt><dd><p>The test statistic.</p>
+</dd>
+<dt>dof<span class="classifier">int</span></dt><dd><p>Degrees of freedom</p>
+</dd>
+<dt>p_value<span class="classifier">float</span></dt><dd><p>The p-value of the test</p>
+</dd>
+</dl>
+</section>
+<section id="id20">
+<h3>Examples<a class="headerlink" href="#id20" title="Link to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">23</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">chi2</span><span class="p">,</span> <span class="n">dof</span><span class="p">,</span> <span class="n">p_value</span> <span class="o">=</span> <span class="n">CITest</span><span class="o">.</span><span class="n">neyman</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">[])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">chi2</span><span class="p">,</span> <span class="n">dof</span><span class="p">,</span> <span class="n">p_value</span><span class="p">)</span>
+<span class="go">20.804888528281907 16 0.1861329703686255</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">chi2</span><span class="p">,</span> <span class="n">dof</span><span class="p">,</span> <span class="n">p_value</span> <span class="o">=</span> <span class="n">CITest</span><span class="o">.</span><span class="n">neyman</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">chi2</span><span class="p">,</span> <span class="n">dof</span><span class="p">,</span> <span class="n">p_value</span><span class="p">)</span>
+<span class="go">95.07200788651971 80 0.11980672825724373</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">chi2</span><span class="p">,</span> <span class="n">dof</span><span class="p">,</span> <span class="n">p_value</span> <span class="o">=</span> <span class="n">CITest</span><span class="o">.</span><span class="n">neyman</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">chi2</span><span class="p">,</span> <span class="n">dof</span><span class="p">,</span> <span class="n">p_value</span><span class="p">)</span>
+<span class="go">nan 400 nan</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="castle.common.independence_tests.hsic_test">
+<span class="sig-prename descclassname"><span class="pre">castle.common.independence_tests.</span></span><span class="sig-name descname"><span class="pre">hsic_test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/castle/common/independence_tests.html#hsic_test"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.common.independence_tests.hsic_test" title="Link to this definition"></a></dt>
+<dd><p>Hilbert-Schmidt independence criterion</p>
+<p>HSIC with a Gaussian kernel for the independence test,
+where we used the gamma distribution as an approximation for the
+distribution of the HSIC.</p>
+<section id="id21">
+<h3>References<a class="headerlink" href="#id21" title="Link to this heading"></a></h3>
+<p><a class="reference external" href="https://papers.nips.cc/paper/3201-a-kernel-statistical-test-of-independence.pdf">https://papers.nips.cc/paper/3201-a-kernel-statistical-test-of-independence.pdf</a></p>
+</section>
+<section id="id22">
+<h3>Parameters<a class="headerlink" href="#id22" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>x: numpy array</dt><dd><p>Data of the first variable. (n, dim_x) numpy array.</p>
+</dd>
+<dt>y: numpy array</dt><dd><p>Data of the second variable. (n, dim_y) numpy array.</p>
+</dd>
+<dt>alpha<span class="classifier">float, default 0.05</span></dt><dd><p>significance level</p>
+</dd>
+<dt>normalize: bool, default True</dt><dd><p>whether use data normalization</p>
+</dd>
+</dl>
+</section>
+<section id="id23">
+<h3>Returns<a class="headerlink" href="#id23" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>out: int, 0 or 1</dt><dd><p>If 0, x and y are not independent.
+If 1, x and y are independent.</p>
+</dd>
+</dl>
+</section>
+<section id="id24">
+<h3>Examples<a class="headerlink" href="#id24" title="Link to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">hsic_test</span><span class="p">(</span><span class="n">x</span><span class="p">[:,</span> <span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">x</span><span class="p">[:,</span> <span class="p">[</span><span class="mi">1</span><span class="p">]]))</span>
+<span class="go">1</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">z</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">hsic_test</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">z</span><span class="p">))</span>
+<span class="go">0</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="castle.common.independence_tests.power_divergence">
+<span class="sig-prename descclassname"><span class="pre">castle.common.independence_tests.</span></span><span class="sig-name descname"><span class="pre">power_divergence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lambda_</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/castle/common/independence_tests.html#power_divergence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.common.independence_tests.power_divergence" title="Link to this definition"></a></dt>
+<dd><p>This function tests the null hypothesis that the categorical data.</p>
+<p>The null hypothesis for the test is x is independent of y given z.
+A lot of the frequency comparison based statistics
+(eg. chi-square, G-test etc) belong to power divergence family,
+and are special cases of this test.</p>
+<section id="id25">
+<h3>Parameters<a class="headerlink" href="#id25" title="Link to this heading"></a></h3>
+<dl>
+<dt>data<span class="classifier">numpy.ndarray</span></dt><dd><p>The dataset on which to test the independence condition.</p>
+</dd>
+<dt>x<span class="classifier">int</span></dt><dd><p>A variable in data set</p>
+</dd>
+<dt>y<span class="classifier">int</span></dt><dd><p>A variable in data set</p>
+</dd>
+<dt>z<span class="classifier">List, default []</span></dt><dd><p>A list of variable names contained in the data set, different from X and Y.
+This is the separating set that (potentially) makes X and Y independent.</p>
+</dd>
+<dt><a href="#id52"><span class="problematic" id="id53">lambda_</span></a><span class="classifier">float or str, optional</span></dt><dd><p>By default, the statistic computed in this test is Pearson’s
+chi-squared statistic <a class="footnote-reference brackets" href="#id31" id="id26" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>.  <cite>lambda_</cite> allows a statistic from the
+Cressie-Read power divergence family <a class="footnote-reference brackets" href="#id32" id="id27" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a> to be used instead.
+For convenience, <cite>lambda_</cite> may be assigned one of the following
+strings, in which case the corresponding numerical value is used:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>String              Value   Description
+&quot;pearson&quot;             1     Pearson&#39;s chi-squared statistic.
+                            In this case, the function is
+                            equivalent to `stats.chisquare`.
+&quot;log-likelihood&quot;      0     Log-likelihood ratio. Also known as
+                            the G-test [3]_.
+&quot;freeman-tukey&quot;      -1/2   Freeman-Tukey statistic.
+&quot;mod-log-likelihood&quot; -1     Modified log-likelihood ratio.
+&quot;neyman&quot;             -2     Neyman&#39;s statistic.
+&quot;cressie-read&quot;        2/3   The power recommended in [5]_.
+</pre></div>
+</div>
+</dd>
+</dl>
+</section>
+<section id="id28">
+<h3>Returns<a class="headerlink" href="#id28" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>chi2<span class="classifier">float</span></dt><dd><p>The test statistic.</p>
+</dd>
+<dt>dof<span class="classifier">int</span></dt><dd><p>Degrees of freedom</p>
+</dd>
+<dt>p_value<span class="classifier">float</span></dt><dd><p>The p-value of the test</p>
+</dd>
+</dl>
+</section>
+<section id="id29">
+<h3>References<a class="headerlink" href="#id29" title="Link to this heading"></a></h3>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id30" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<p>Lowry, Richard.  “Concepts and Applications of Inferential
+Statistics”. Chapter 8.
+<a class="reference external" href="https://web.archive.org/web/20171015035606/http://faculty.vassar.edu/lowry/ch8pt1.html">https://web.archive.org/web/20171015035606/http://faculty.vassar.edu/lowry/ch8pt1.html</a></p>
+</aside>
+<aside class="footnote brackets" id="id31" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id26">2</a><span class="fn-bracket">]</span></span>
+<p>“Chi-squared test”, <a class="reference external" href="https://en.wikipedia.org/wiki/Chi-squared_test">https://en.wikipedia.org/wiki/Chi-squared_test</a></p>
+</aside>
+<aside class="footnote brackets" id="id32" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id27">3</a><span class="fn-bracket">]</span></span>
+<p>“G-test”, <a class="reference external" href="https://en.wikipedia.org/wiki/G-test">https://en.wikipedia.org/wiki/G-test</a></p>
+</aside>
+<aside class="footnote brackets" id="id33" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></span>
+<p>Sokal, R. R. and Rohlf, F. J. “Biometry: the principles and
+practice of statistics in biological research”, New York: Freeman
+(1981)</p>
+</aside>
+<aside class="footnote brackets" id="id34" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></span>
+<p>Cressie, N. and Read, T. R. C., “Multinomial Goodness-of-Fit
+Tests”, J. Royal Stat. Soc. Series B, Vol. 46, No. 3 (1984),
+pp. 440-464.</p>
+</aside>
+</aside>
+</section>
+<section id="see-also">
+<h3>See Also<a class="headerlink" href="#see-also" title="Link to this heading"></a></h3>
+<p>scipy.stats.power_divergence
+scipy.stats.chi2_contingency</p>
+</section>
+<section id="id35">
+<h3>Examples<a class="headerlink" href="#id35" title="Link to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">23</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">data</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">chi2</span><span class="p">,</span> <span class="n">dof</span><span class="p">,</span> <span class="n">p_value</span> <span class="o">=</span> <span class="n">power_divergence</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">[])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">chi2</span><span class="p">,</span> <span class="n">dof</span><span class="p">,</span> <span class="n">p_value</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mf">16.005291005291006</span> <span class="mi">16</span> <span class="mf">0.45259159404543464</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">chi2</span><span class="p">,</span> <span class="n">dof</span><span class="p">,</span> <span class="n">p_value</span> <span class="o">=</span> <span class="n">power_divergence</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">chi2</span><span class="p">,</span> <span class="n">dof</span><span class="p">,</span> <span class="n">p_value</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mf">25.333333333333336</span> <span class="mi">25</span> <span class="mf">0.4438225249645223</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">chi2</span><span class="p">,</span> <span class="n">dof</span><span class="p">,</span> <span class="n">p_value</span> <span class="o">=</span> <span class="n">power_divergence</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">chi2</span><span class="p">,</span> <span class="n">dof</span><span class="p">,</span> <span class="n">p_value</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mf">0.0</span> <span class="mi">5</span> <span class="mf">1.0</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+</section>
+<section id="module-castle.common.plot_dag">
+<span id="plot-dag"></span><h2>plot_dag<a class="headerlink" href="#module-castle.common.plot_dag" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="castle.common.plot_dag.GraphDAG">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">castle.common.plot_dag.</span></span><span class="sig-name descname"><span class="pre">GraphDAG</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">est_dag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">true_dag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/castle/common/plot_dag.html#GraphDAG"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.common.plot_dag.GraphDAG" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Visualization for causal discovery learning results.</p>
+<section id="id36">
+<h3>Parameters<a class="headerlink" href="#id36" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>est_dag: np.ndarray</dt><dd><p>The DAG matrix to be estimated.</p>
+</dd>
+<dt>true_dag: np.ndarray</dt><dd><p>The true DAG matrix.</p>
+</dd>
+<dt>show: bool</dt><dd><p>Select whether to display pictures.</p>
+</dd>
+<dt>save_name: str</dt><dd><p>The file name of the image to be saved.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+<section id="module-castle.common.priori_knowledge">
+<span id="priori-knowledge"></span><h2>priori_knowledge<a class="headerlink" href="#module-castle.common.priori_knowledge" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="castle.common.priori_knowledge.PrioriKnowledge">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">castle.common.priori_knowledge.</span></span><span class="sig-name descname"><span class="pre">PrioriKnowledge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_nodes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/castle/common/priori_knowledge.html#PrioriKnowledge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.common.priori_knowledge.PrioriKnowledge" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class for a priori knowledge.</p>
+<section id="id37">
+<h3>Parameters<a class="headerlink" href="#id37" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>n_nodes: int</dt><dd><p>denotes the number of nodes</p>
+</dd>
+</dl>
+</section>
+<section id="attributes">
+<h3>Attributes<a class="headerlink" href="#attributes" title="Link to this heading"></a></h3>
+<dl>
+<dt>matrix: np.ndarray</dt><dd><p>0  : i does not have a directed edge to j;
+1  : i has a directed edge to j;
+-1 : No prior background_knowledge is available to know if either of</p>
+<blockquote>
+<div><p>the two cases above (0 or 1) is true.</p>
+</div></blockquote>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="castle.common.priori_knowledge.PrioriKnowledge.add_forbidden_edge">
+<span class="sig-name descname"><span class="pre">add_forbidden_edge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/castle/common/priori_knowledge.html#PrioriKnowledge.add_forbidden_edge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.common.priori_knowledge.PrioriKnowledge.add_forbidden_edge" title="Link to this definition"></a></dt>
+<dd><p>Add a forbidden edge between <cite>i</cite> and <cite>j</cite>.</p>
+<section id="id38">
+<h4>Parameters<a class="headerlink" href="#id38" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>i: int</dt><dd><p>denotes location of the source node</p>
+</dd>
+<dt>j: int</dt><dd><p>denotes location of the target node</p>
+</dd>
+</dl>
+</section>
+<section id="id39">
+<h4>Examples<a class="headerlink" href="#id39" title="Link to this heading"></a></h4>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">PrioriKnowledge</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">add_forbidden_edge</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">matrix</span><span class="p">)</span>
+<span class="go">[[ 0  0 -1 -1]</span>
+<span class="go"> [-1  0 -1 -1]</span>
+<span class="go"> [-1 -1  0 -1]</span>
+<span class="go"> [-1 -1 -1  0]]</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="castle.common.priori_knowledge.PrioriKnowledge.add_forbidden_edges">
+<span class="sig-name descname"><span class="pre">add_forbidden_edges</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edges</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/castle/common/priori_knowledge.html#PrioriKnowledge.add_forbidden_edges"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.common.priori_knowledge.PrioriKnowledge.add_forbidden_edges" title="Link to this definition"></a></dt>
+<dd><p>Add multiple forbidden edges using a list of tuples.</p>
+<section id="id40">
+<h4>Parameters<a class="headerlink" href="#id40" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>edges: list</dt><dd><p>list of (i, j)</p>
+</dd>
+</dl>
+</section>
+<section id="id41">
+<h4>Examples<a class="headerlink" href="#id41" title="Link to this heading"></a></h4>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">PrioriKnowledge</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">add_forbidden_edges</span><span class="p">([(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">matrix</span><span class="p">)</span>
+<span class="go">[[ 0  0 -1 -1]</span>
+<span class="go"> [-1  0  0 -1]</span>
+<span class="go"> [-1 -1  0 -1]</span>
+<span class="go"> [-1 -1 -1  0]]</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="castle.common.priori_knowledge.PrioriKnowledge.add_required_edge">
+<span class="sig-name descname"><span class="pre">add_required_edge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/castle/common/priori_knowledge.html#PrioriKnowledge.add_required_edge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.common.priori_knowledge.PrioriKnowledge.add_required_edge" title="Link to this definition"></a></dt>
+<dd><p>Add a required edge <cite>i–&gt;j</cite>.</p>
+<section id="id42">
+<h4>Parameters<a class="headerlink" href="#id42" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>i: int</dt><dd><p>denotes location of the source node</p>
+</dd>
+<dt>j: int</dt><dd><p>denotes location of the target node</p>
+</dd>
+</dl>
+</section>
+<section id="id43">
+<h4>Examples<a class="headerlink" href="#id43" title="Link to this heading"></a></h4>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">PrioriKnowledge</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">add_required_edge</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">matrix</span><span class="p">)</span>
+<span class="go">[[ 0  1 -1 -1]</span>
+<span class="go"> [-1  0 -1 -1]</span>
+<span class="go"> [-1 -1  0 -1]</span>
+<span class="go"> [-1 -1 -1  0]]</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="castle.common.priori_knowledge.PrioriKnowledge.add_required_edges">
+<span class="sig-name descname"><span class="pre">add_required_edges</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edges</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/castle/common/priori_knowledge.html#PrioriKnowledge.add_required_edges"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.common.priori_knowledge.PrioriKnowledge.add_required_edges" title="Link to this definition"></a></dt>
+<dd><p>Add multiple required edges using a list of tuples.</p>
+<section id="id44">
+<h4>Parameters<a class="headerlink" href="#id44" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>edges: list</dt><dd><p>list of (i, j)</p>
+</dd>
+</dl>
+</section>
+<section id="id45">
+<h4>Examples<a class="headerlink" href="#id45" title="Link to this heading"></a></h4>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">PrioriKnowledge</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">add_required_edges</span><span class="p">([(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">matrix</span><span class="p">)</span>
+<span class="go">[[ 0  1 -1 -1]</span>
+<span class="go"> [-1  0  1 -1]</span>
+<span class="go"> [-1 -1  0 -1]</span>
+<span class="go"> [-1 -1 -1  0]]</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="castle.common.priori_knowledge.PrioriKnowledge.add_undirected_edge">
+<span class="sig-name descname"><span class="pre">add_undirected_edge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/castle/common/priori_knowledge.html#PrioriKnowledge.add_undirected_edge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.common.priori_knowledge.PrioriKnowledge.add_undirected_edge" title="Link to this definition"></a></dt>
+<dd><p>Add an edge with unknown direction <cite>i—j</cite>.</p>
+<section id="id46">
+<h4>Parameters<a class="headerlink" href="#id46" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>i: int</dt><dd><p>denotes location of the source node</p>
+</dd>
+<dt>j: int</dt><dd><p>denotes location of the target node</p>
+</dd>
+</dl>
+</section>
+<section id="id47">
+<h4>Examples<a class="headerlink" href="#id47" title="Link to this heading"></a></h4>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">PrioriKnowledge</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">add_undirected_edge</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">matrix</span><span class="p">)</span>
+<span class="go">[[ 0  1 -1 -1]</span>
+<span class="go"> [ 1  0 -1 -1]</span>
+<span class="go"> [-1 -1  0 -1]</span>
+<span class="go"> [-1 -1 -1  0]]</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="castle.common.priori_knowledge.PrioriKnowledge.add_undirected_edges">
+<span class="sig-name descname"><span class="pre">add_undirected_edges</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edges</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/castle/common/priori_knowledge.html#PrioriKnowledge.add_undirected_edges"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.common.priori_knowledge.PrioriKnowledge.add_undirected_edges" title="Link to this definition"></a></dt>
+<dd><p>Add multiple edges with unknown direction by using a list of tuples.</p>
+<section id="id48">
+<h4>Parameters<a class="headerlink" href="#id48" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>edges: list</dt><dd><p>list of (i, j)</p>
+</dd>
+</dl>
+</section>
+<section id="id49">
+<h4>Examples<a class="headerlink" href="#id49" title="Link to this heading"></a></h4>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">PrioriKnowledge</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">add_undirected_edges</span><span class="p">([(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">matrix</span><span class="p">)</span>
+<span class="go">[[ 0  1 -1 -1]</span>
+<span class="go"> [ 1  0  1 -1]</span>
+<span class="go"> [-1  1  0 -1]</span>
+<span class="go"> [-1 -1 -1  0]]</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="castle.common.priori_knowledge.PrioriKnowledge.is_forbidden">
+<span class="sig-name descname"><span class="pre">is_forbidden</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../_modules/castle/common/priori_knowledge.html#PrioriKnowledge.is_forbidden"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.common.priori_knowledge.PrioriKnowledge.is_forbidden" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="castle.common.priori_knowledge.PrioriKnowledge.is_required">
+<span class="sig-name descname"><span class="pre">is_required</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../_modules/castle/common/priori_knowledge.html#PrioriKnowledge.is_required"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.common.priori_knowledge.PrioriKnowledge.is_required" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="castle.common.priori_knowledge.PrioriKnowledge.remove_edge">
+<span class="sig-name descname"><span class="pre">remove_edge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/castle/common/priori_knowledge.html#PrioriKnowledge.remove_edge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.common.priori_knowledge.PrioriKnowledge.remove_edge" title="Link to this definition"></a></dt>
+<dd><p>Remove any edges i—j and j—i.</p>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="castle.common.priori_knowledge.orient_by_priori_knowledge">
+<span class="sig-prename descclassname"><span class="pre">castle.common.priori_knowledge.</span></span><span class="sig-name descname"><span class="pre">orient_by_priori_knowledge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">skeleton</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">priori_knowledge</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/castle/common/priori_knowledge.html#orient_by_priori_knowledge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.common.priori_knowledge.orient_by_priori_knowledge" title="Link to this definition"></a></dt>
+<dd><p>Orient the direction of all edges based on a priori knowledge.</p>
+<section id="id50">
+<h3>Parameters<a class="headerlink" href="#id50" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>skeleton: np.ndarray</dt><dd><p>a skeleton matrix</p>
+</dd>
+<dt>priori_knowledge: PrioriKnowledge</dt><dd><p>a class object</p>
+</dd>
+</dl>
+</section>
+<section id="id51">
+<h3>Returns<a class="headerlink" href="#id51" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>out: np.ndarray</dt><dd><p>where out[i, j] = out[j, i] = 0 indicates <cite>i   j</cite>;
+out[i, j] = 1 and out[j, i] = 0 indicates <cite>i–&gt;j</cite>;
+out[i, j] = 1 and out[j, i] = 1 indicates <cite>i—j</cite>;</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="castle.algorithms.html" class="btn btn-neutral float-left" title="algorithms" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="castle.datasets.html" class="btn btn-neutral float-right" title="datasets" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Huawei Noah&#39;s Ark Lab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

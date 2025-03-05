@@ -1,0 +1,431 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>castle.algorithms.gradient.dag_gnn.torch.dag_gnn &mdash; gCastle 1.0.4rc1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/css/theme.css?v=e59714d7" />
+
+  
+    <link rel="shortcut icon" href="../../../../../../_static/favicon.png"/>
+      <script src="../../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../../_static/documentation_options.js?v=3cd93504"></script>
+      <script src="../../../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../../index.html" class="icon icon-home">
+            gCastle
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../castle/castle.html">castle</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../../index.html">gCastle</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">castle.algorithms.gradient.dag_gnn.torch.dag_gnn</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for castle.algorithms.gradient.dag_gnn.torch.dag_gnn</h1><div class="highlight"><pre>
+<span></span><span class="c1"># coding = utf-8</span>
+<span class="c1"># Copyright (C) 2022. Huawei Technologies Co., Ltd. All rights reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#     http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.optim</span> <span class="k">as</span> <span class="nn">optim</span>
+<span class="kn">from</span> <span class="nn">torch.optim</span> <span class="kn">import</span> <span class="n">lr_scheduler</span>
+<span class="kn">from</span> <span class="nn">torch.autograd</span> <span class="kn">import</span> <span class="n">Variable</span>
+
+<span class="kn">from</span> <span class="nn">castle.common</span> <span class="kn">import</span> <span class="n">BaseLearner</span><span class="p">,</span> <span class="n">Tensor</span>
+<span class="kn">from</span> <span class="nn">castle.common</span> <span class="kn">import</span> <span class="n">consts</span>
+<span class="kn">from</span> <span class="nn">castle.common.validator</span> <span class="kn">import</span> <span class="n">check_args_value</span>
+
+<span class="kn">from</span> <span class="nn">castle.algorithms.gradient.dag_gnn.torch.utils</span> <span class="kn">import</span> <span class="n">functions</span> <span class="k">as</span> <span class="n">func</span>
+<span class="kn">from</span> <span class="nn">castle.algorithms.gradient.dag_gnn.torch.models.modules</span> <span class="kn">import</span> <span class="n">Encoder</span><span class="p">,</span> <span class="n">Decoder</span>
+
+
+<span class="k">def</span> <span class="nf">set_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Referred from:</span>
+<span class="sd">    - https://stackoverflow.com/questions/38469632/tensorflow-non-repeatable-results</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;PYTHONHASHSEED&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+
+<div class="viewcode-block" id="DAG_GNN">
+<a class="viewcode-back" href="../../../../../../castle/castle.algorithms.html#castle.algorithms.DAG_GNN">[docs]</a>
+<span class="k">class</span> <span class="nc">DAG_GNN</span><span class="p">(</span><span class="n">BaseLearner</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;DAG Structure Learning with Graph Neural Networks</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    https://arxiv.org/pdf/1904.10098.pdf</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    encoder_type: str, default: &#39;mlp&#39;</span>
+<span class="sd">        choose an encoder, &#39;mlp&#39; or &#39;sem&#39;.</span>
+<span class="sd">    decoder_type: str, detault: &#39;mlp&#39;</span>
+<span class="sd">        choose a decoder, &#39;mlp&#39; or &#39;sem&#39;.</span>
+<span class="sd">    encoder_hidden: int, default: 64</span>
+<span class="sd">        MLP encoder hidden layer dimension, just one hidden layer.</span>
+<span class="sd">    latent_dim: int, default equal to input dimension</span>
+<span class="sd">        encoder output dimension</span>
+<span class="sd">    decoder_hidden: int, default: 64</span>
+<span class="sd">        MLP decoder hidden layer dimension, just one hidden layer.</span>
+<span class="sd">    encoder_dropout: float, default: 0.0</span>
+<span class="sd">        Dropout rate (1 - keep probability).</span>
+<span class="sd">    decoder_dropout: float, default: 0.0</span>
+<span class="sd">        Dropout rate (1 - keep probability).</span>
+<span class="sd">    epochs: int, default: 300</span>
+<span class="sd">        train epochs</span>
+<span class="sd">    k_max_iter: int, default: 1e2</span>
+<span class="sd">        the max iteration number for searching lambda and c.</span>
+<span class="sd">    batch_size: int, default: 100</span>
+<span class="sd">        Sample size of each training batch</span>
+<span class="sd">    lr: float, default: 3e-3</span>
+<span class="sd">        learning rate</span>
+<span class="sd">    lr_decay: int, default: 200</span>
+<span class="sd">        Period of learning rate decay.</span>
+<span class="sd">    gamma: float, default: 1.0</span>
+<span class="sd">        Multiplicative factor of learning rate decay.</span>
+<span class="sd">    lambda_a: float, default: 0.0</span>
+<span class="sd">        coefficient for DAG constraint h(A).</span>
+<span class="sd">    c_a: float, default: 1.0</span>
+<span class="sd">        coefficient for absolute value h(A).</span>
+<span class="sd">    c_a_thresh: float, default: 1e20</span>
+<span class="sd">        control loop by c_a</span>
+<span class="sd">    eta: int, default: 10</span>
+<span class="sd">        use for update c_a, greater equal than 1.</span>
+<span class="sd">    multiply_h: float, default: 0.25</span>
+<span class="sd">        use for judge whether update c_a.</span>
+<span class="sd">    tau_a: float, default: 0.0</span>
+<span class="sd">        coefficient for L-1 norm of A.</span>
+<span class="sd">    h_tolerance: float, default: 1e-8</span>
+<span class="sd">        the tolerance of error of h(A) to zero.</span>
+<span class="sd">    use_a_connect_loss: bool, default: False</span>
+<span class="sd">        flag to use A connect loss</span>
+<span class="sd">    use_a_positiver_loss: bool, default: False</span>
+<span class="sd">        flag to enforce A must have positive values</span>
+<span class="sd">    graph_threshold: float, default: 0.3</span>
+<span class="sd">        threshold for learned adjacency matrix binarization.</span>
+<span class="sd">        greater equal to graph_threshold denotes has causal relationship.</span>
+<span class="sd">    optimizer: str, default: &#39;Adam&#39;</span>
+<span class="sd">        choose optimizer, &#39;Adam&#39; or &#39;SGD&#39;</span>
+<span class="sd">    seed: int, default: 42</span>
+<span class="sd">        random seed</span>
+<span class="sd">    device_type: str, default: cpu</span>
+<span class="sd">        ``cpu`` or ``gpu``</span>
+<span class="sd">    device_ids: int or str, default None</span>
+<span class="sd">        CUDA devices, it&#39;s effective when ``use_gpu`` is True.</span>
+<span class="sd">        For single-device modules, ``device_ids`` can be int or str, e.g. 0 or &#39;0&#39;,</span>
+<span class="sd">        For multi-device modules, ``device_ids`` must be str, format like &#39;0, 1&#39;.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from castle.algorithms.gradient.dag_gnn.torch import DAG_GNN</span>
+<span class="sd">    &gt;&gt;&gt; from castle.datasets import load_dataset</span>
+<span class="sd">    &gt;&gt;&gt; from castle.common import GraphDAG</span>
+<span class="sd">    &gt;&gt;&gt; from castle.metrics import MetricsDAG</span>
+<span class="sd">    &gt;&gt;&gt; X, true_dag, _ = load_dataset(&#39;IID_Test&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; m = DAG_GNN()</span>
+<span class="sd">    &gt;&gt;&gt; m.learn(X)</span>
+<span class="sd">    &gt;&gt;&gt; GraphDAG(m.causal_matrix, true_dag)</span>
+<span class="sd">    &gt;&gt;&gt; met = MetricsDAG(m.causal_matrix, true_dag)</span>
+<span class="sd">    &gt;&gt;&gt; print(met.metrics)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@check_args_value</span><span class="p">(</span><span class="n">consts</span><span class="o">.</span><span class="n">GNN_VALID_PARAMS</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">encoder_type</span><span class="o">=</span><span class="s1">&#39;mlp&#39;</span><span class="p">,</span> <span class="n">decoder_type</span><span class="o">=</span><span class="s1">&#39;mlp&#39;</span><span class="p">,</span>
+                 <span class="n">encoder_hidden</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">latent_dim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">decoder_hidden</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span>
+                 <span class="n">encoder_dropout</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">decoder_dropout</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">k_max_iter</span><span class="o">=</span><span class="mf">1e2</span><span class="p">,</span> <span class="n">tau_a</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">batch_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">3e-3</span><span class="p">,</span> <span class="n">lr_decay</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">init_lambda_a</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">init_c_a</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+                 <span class="n">c_a_thresh</span><span class="o">=</span><span class="mf">1e20</span><span class="p">,</span> <span class="n">eta</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">multiply_h</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">h_tolerance</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span>
+                 <span class="n">use_a_connect_loss</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">use_a_positiver_loss</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">graph_threshold</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
+                 <span class="n">optimizer</span><span class="o">=</span><span class="s1">&#39;adam&#39;</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">device_type</span><span class="o">=</span><span class="s1">&#39;cpu&#39;</span><span class="p">,</span> <span class="n">device_ids</span><span class="o">=</span><span class="s1">&#39;0&#39;</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">DAG_GNN</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">encoder_type</span> <span class="o">=</span> <span class="n">encoder_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">decoder_type</span> <span class="o">=</span> <span class="n">decoder_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">encoder_hidden</span> <span class="o">=</span> <span class="n">encoder_hidden</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">latent_dim</span> <span class="o">=</span> <span class="n">latent_dim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">decoder_hidden</span> <span class="o">=</span> <span class="n">decoder_hidden</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">encoder_dropout</span> <span class="o">=</span> <span class="n">encoder_dropout</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">decoder_dropout</span> <span class="o">=</span> <span class="n">decoder_dropout</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">epochs</span> <span class="o">=</span> <span class="n">epochs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">k_max_iter</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">k_max_iter</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lr</span> <span class="o">=</span> <span class="n">lr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lr_decay</span> <span class="o">=</span> <span class="n">lr_decay</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="n">gamma</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_lambda_a</span> <span class="o">=</span> <span class="n">init_lambda_a</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_c_a</span> <span class="o">=</span> <span class="n">init_c_a</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c_a_thresh</span> <span class="o">=</span> <span class="n">c_a_thresh</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eta</span> <span class="o">=</span> <span class="n">eta</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">multiply_h</span> <span class="o">=</span> <span class="n">multiply_h</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tau_a</span> <span class="o">=</span> <span class="n">tau_a</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">h_tolerance</span> <span class="o">=</span> <span class="n">h_tolerance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_a_connect_loss</span> <span class="o">=</span> <span class="n">use_a_connect_loss</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_a_positiver_loss</span> <span class="o">=</span> <span class="n">use_a_positiver_loss</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">graph_threshold</span> <span class="o">=</span> <span class="n">graph_threshold</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">seed</span> <span class="o">=</span> <span class="n">seed</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device_type</span> <span class="o">=</span> <span class="n">device_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device_ids</span> <span class="o">=</span> <span class="n">device_ids</span>
+
+        <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;GPU is available.&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;GPU is unavailable.&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">device_type</span> <span class="o">==</span> <span class="s1">&#39;gpu&#39;</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;GPU is unavailable, &quot;</span>
+                                 <span class="s2">&quot;please set device_type = &#39;cpu&#39;.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">device_type</span> <span class="o">==</span> <span class="s1">&#39;gpu&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">device_ids</span><span class="p">:</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;CUDA_VISIBLE_DEVICES&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device_ids</span><span class="p">)</span>
+            <span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s1">&#39;cuda&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s1">&#39;cpu&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">device</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_dim</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">learn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+        <span class="n">set_seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seed</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_nodes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_dim</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">latent_dim</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">latent_dim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_dim</span>
+        <span class="n">train_loader</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="n">get_dataloader</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+
+        <span class="c1"># =====initialize encoder and decoder=====</span>
+        <span class="n">adj_A</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">n_nodes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_nodes</span><span class="p">),</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span> <span class="o">=</span> <span class="n">Encoder</span><span class="p">(</span><span class="n">input_dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">input_dim</span><span class="p">,</span>
+                               <span class="n">hidden_dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">encoder_hidden</span><span class="p">,</span>
+                               <span class="n">output_dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">latent_dim</span><span class="p">,</span>
+                               <span class="n">adj_A</span><span class="o">=</span><span class="n">adj_A</span><span class="p">,</span>
+                               <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">,</span>
+                               <span class="n">encoder_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">encoder_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                               <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span> <span class="o">=</span> <span class="n">Decoder</span><span class="p">(</span><span class="n">input_dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">latent_dim</span><span class="p">,</span>
+                               <span class="n">hidden_dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">decoder_hidden</span><span class="p">,</span>
+                               <span class="n">output_dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">input_dim</span><span class="p">,</span>
+                               <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">,</span>
+                               <span class="n">decoder_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">decoder_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                               <span class="p">)</span>
+        <span class="c1"># =====initialize optimizer=====</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;adam&#39;</span><span class="p">:</span>
+            <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">([{</span><span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="o">.</span><span class="n">parameters</span><span class="p">()},</span>
+                                    <span class="p">{</span><span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span><span class="o">.</span><span class="n">parameters</span><span class="p">()}],</span>
+                                   <span class="n">lr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lr</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;sgd&#39;</span><span class="p">:</span>
+            <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">SGD</span><span class="p">([{</span><span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="o">.</span><span class="n">parameters</span><span class="p">()},</span>
+                                   <span class="p">{</span><span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span><span class="o">.</span><span class="n">parameters</span><span class="p">()}],</span>
+                                  <span class="n">lr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lr</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scheduler</span> <span class="o">=</span> <span class="n">lr_scheduler</span><span class="o">.</span><span class="n">StepLR</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">step_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lr_decay</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">gamma</span><span class="p">)</span>
+
+        <span class="c1">################################</span>
+        <span class="c1"># main training</span>
+        <span class="c1">################################</span>
+        <span class="n">c_a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_c_a</span>
+        <span class="n">lambda_a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_lambda_a</span>
+        <span class="n">h_a_new</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+        <span class="n">h_a_old</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+        <span class="n">elbo_loss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+        <span class="n">best_elbo_loss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+        <span class="n">origin_a</span> <span class="o">=</span> <span class="n">adj_A</span>
+        <span class="n">epoch</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">step_k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">k_max_iter</span><span class="p">):</span>
+            <span class="k">while</span> <span class="n">c_a</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_a_thresh</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">epochs</span><span class="p">):</span>
+                    <span class="n">elbo_loss</span><span class="p">,</span> <span class="n">origin_a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_train</span><span class="p">(</span><span class="n">train_loader</span><span class="o">=</span><span class="n">train_loader</span><span class="p">,</span>
+                                                      <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>
+                                                      <span class="n">lambda_a</span><span class="o">=</span><span class="n">lambda_a</span><span class="p">,</span>
+                                                      <span class="n">c_a</span><span class="o">=</span><span class="n">c_a</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">elbo_loss</span> <span class="o">&lt;</span> <span class="n">best_elbo_loss</span><span class="p">:</span>
+                        <span class="n">best_elbo_loss</span> <span class="o">=</span> <span class="n">elbo_loss</span>
+                <span class="k">if</span> <span class="n">elbo_loss</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">best_elbo_loss</span><span class="p">:</span>
+                    <span class="k">break</span>
+                <span class="c1"># update parameters</span>
+                <span class="n">a_new</span> <span class="o">=</span> <span class="n">origin_a</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+                <span class="n">h_a_new</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="n">_h_A</span><span class="p">(</span><span class="n">a_new</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_nodes</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">h_a_new</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">multiply_h</span> <span class="o">*</span> <span class="n">h_a_old</span><span class="p">:</span>
+                    <span class="n">c_a</span> <span class="o">*=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eta</span>  <span class="c1"># eta</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">break</span>
+            <span class="c1"># update parameters</span>
+            <span class="c1"># h_A, adj_A are computed in loss anyway, so no need to store</span>
+            <span class="n">h_a_old</span> <span class="o">=</span> <span class="n">h_a_new</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Iter: </span><span class="si">{</span><span class="n">step_k</span><span class="si">}</span><span class="s2">, epoch: </span><span class="si">{</span><span class="n">epoch</span><span class="si">}</span><span class="s2">, h_new: </span><span class="si">{</span><span class="n">h_a_old</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">lambda_a</span> <span class="o">+=</span> <span class="n">c_a</span> <span class="o">*</span> <span class="n">h_a_new</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">h_a_old</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">h_tolerance</span><span class="p">:</span>
+                <span class="k">break</span>
+
+        <span class="n">origin_a</span> <span class="o">=</span> <span class="n">origin_a</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+        <span class="n">origin_a</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">origin_a</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph_threshold</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">origin_a</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">origin_a</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph_threshold</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">causal_matrix</span> <span class="o">=</span> <span class="n">Tensor</span><span class="p">(</span><span class="n">origin_a</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">columns</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train_loader</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">lambda_a</span><span class="p">,</span> <span class="n">c_a</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+
+        <span class="c1"># update optimizer</span>
+        <span class="n">optimizer</span><span class="p">,</span> <span class="n">lr</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="n">update_optimizer</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lr</span><span class="p">,</span> <span class="n">c_a</span><span class="p">)</span>
+
+        <span class="n">nll_train</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">kl_train</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">origin_a</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">batch_idx</span><span class="p">,</span> <span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">relations</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">train_loader</span><span class="p">):</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">Variable</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">double</span><span class="p">()</span>
+
+            <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+
+            <span class="n">logits</span><span class="p">,</span> <span class="n">origin_a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">z_gap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="o">.</span><span class="n">z</span>
+            <span class="n">z_positive</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="o">.</span><span class="n">z_positive</span>
+            <span class="n">wa</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="o">.</span><span class="n">wa</span>
+
+            <span class="n">x_pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">adj_A</span><span class="o">=</span><span class="n">origin_a</span><span class="p">,</span> <span class="n">wa</span><span class="o">=</span><span class="n">wa</span><span class="p">)</span>    <span class="c1"># X_hat</span>
+
+            <span class="c1"># reconstruction accuracy loss</span>
+            <span class="n">loss_nll</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="n">nll_gaussian</span><span class="p">(</span><span class="n">x_pred</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+
+            <span class="c1"># KL loss</span>
+            <span class="n">loss_kl</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="n">kl_gaussian_sem</span><span class="p">(</span><span class="n">logits</span><span class="p">)</span>
+
+            <span class="c1"># ELBO loss:</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="n">loss_kl</span> <span class="o">+</span> <span class="n">loss_nll</span>
+
+            <span class="c1"># add A loss</span>
+            <span class="n">one_adj_a</span> <span class="o">=</span> <span class="n">origin_a</span>  <span class="c1"># torch.mean(adj_A_tilt_decoder, dim =0)</span>
+            <span class="n">sparse_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tau_a</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">one_adj_a</span><span class="p">))</span>
+
+            <span class="c1"># other loss term</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_a_connect_loss</span><span class="p">:</span>
+                <span class="n">connect_gap</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="n">a_connect_loss</span><span class="p">(</span><span class="n">one_adj_a</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph_threshold</span><span class="p">,</span> <span class="n">z_gap</span><span class="p">)</span>
+                <span class="n">loss</span> <span class="o">+=</span> <span class="n">lambda_a</span> <span class="o">*</span> <span class="n">connect_gap</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">c_a</span> <span class="o">*</span> <span class="n">connect_gap</span> <span class="o">*</span> <span class="n">connect_gap</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_a_positiver_loss</span><span class="p">:</span>
+                <span class="n">positive_gap</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="n">a_positive_loss</span><span class="p">(</span><span class="n">one_adj_a</span><span class="p">,</span> <span class="n">z_positive</span><span class="p">)</span>
+                <span class="n">loss</span> <span class="o">+=</span> <span class="mf">.1</span> <span class="o">*</span> <span class="p">(</span><span class="n">lambda_a</span> <span class="o">*</span> <span class="n">positive_gap</span>
+                              <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">c_a</span> <span class="o">*</span> <span class="n">positive_gap</span> <span class="o">*</span> <span class="n">positive_gap</span><span class="p">)</span>
+            <span class="c1"># compute h(A)</span>
+            <span class="n">h_A</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="n">_h_A</span><span class="p">(</span><span class="n">origin_a</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_nodes</span><span class="p">)</span>
+            <span class="n">loss</span> <span class="o">+=</span> <span class="p">(</span><span class="n">lambda_a</span> <span class="o">*</span> <span class="n">h_A</span>
+                     <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">c_a</span> <span class="o">*</span> <span class="n">h_A</span> <span class="o">*</span> <span class="n">h_A</span>
+                     <span class="o">+</span> <span class="mf">100.</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">origin_a</span> <span class="o">*</span> <span class="n">origin_a</span><span class="p">)</span>
+                     <span class="o">+</span> <span class="n">sparse_loss</span><span class="p">)</span>  <span class="c1"># +  0.01 * torch.sum(variance * variance)</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">loss</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The loss value is Nan, &quot;</span>
+                                 <span class="sa">f</span><span class="s2">&quot;suggest to set optimizer=&#39;adam&#39; to solve it. &quot;</span>
+                                 <span class="sa">f</span><span class="s2">&quot;If you already set, please check your code whether has other problems.&quot;</span><span class="p">)</span>
+            <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+            <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">scheduler</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+
+            <span class="n">nll_train</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loss_nll</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
+            <span class="n">kl_train</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loss_kl</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">kl_train</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">nll_train</span><span class="p">)),</span> <span class="n">origin_a</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Huawei Noah&#39;s Lab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

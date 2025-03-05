@@ -1,0 +1,1848 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>algorithms &mdash; gCastle  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+    <link rel="shortcut icon" href="../_static/favicon.png"/>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="common" href="castle.common.html" />
+    <link rel="prev" title="castle" href="castle.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            gCastle
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="castle.html">castle</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">algorithms</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-castle.algorithms">ANMNonlinear</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#castle.algorithms.ANMNonlinear"><code class="docutils literal notranslate"><span class="pre">ANMNonlinear</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-0">GES</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#castle.algorithms.GES"><code class="docutils literal notranslate"><span class="pre">GES</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-1">DirectLiNGAM</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#castle.algorithms.DirectLiNGAM"><code class="docutils literal notranslate"><span class="pre">DirectLiNGAM</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-2">ICALiNGAM</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#castle.algorithms.ICALiNGAM"><code class="docutils literal notranslate"><span class="pre">ICALiNGAM</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-3">PC</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#castle.algorithms.PC"><code class="docutils literal notranslate"><span class="pre">PC</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-4">TTPM</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#castle.algorithms.TTPM"><code class="docutils literal notranslate"><span class="pre">TTPM</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-5">CORL</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#castle.algorithms.CORL"><code class="docutils literal notranslate"><span class="pre">CORL</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-6">DAG_GNN</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#castle.algorithms.DAG_GNN"><code class="docutils literal notranslate"><span class="pre">DAG_GNN</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-7">GAE</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#castle.algorithms.GAE"><code class="docutils literal notranslate"><span class="pre">GAE</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-8">GraNDAG</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#castle.algorithms.GraNDAG"><code class="docutils literal notranslate"><span class="pre">GraNDAG</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-9">MCSL</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#castle.algorithms.MCSL"><code class="docutils literal notranslate"><span class="pre">MCSL</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-10">Notears</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#castle.algorithms.Notears"><code class="docutils literal notranslate"><span class="pre">Notears</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-11">NotearsLowRank</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#castle.algorithms.NotearsLowRank"><code class="docutils literal notranslate"><span class="pre">NotearsLowRank</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-12">GOLEM</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#castle.algorithms.GOLEM"><code class="docutils literal notranslate"><span class="pre">GOLEM</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-13">NotearsNonlinear</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#castle.algorithms.NotearsNonlinear"><code class="docutils literal notranslate"><span class="pre">NotearsNonlinear</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-14">PNL</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#castle.algorithms.PNL"><code class="docutils literal notranslate"><span class="pre">PNL</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-15">RL</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#castle.algorithms.RL"><code class="docutils literal notranslate"><span class="pre">RL</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="castle.common.html">common</a></li>
+<li class="toctree-l2"><a class="reference internal" href="castle.datasets.html">datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="castle.metrics.html">metrics</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">gCastle</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="castle.html">castle</a></li>
+      <li class="breadcrumb-item active">algorithms</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/castle/castle.algorithms.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="algorithms">
+<h1>algorithms<a class="headerlink" href="#algorithms" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<section id="module-castle.algorithms">
+<span id="anmnonlinear"></span><h2>ANMNonlinear<a class="headerlink" href="#module-castle.algorithms" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="castle.algorithms.ANMNonlinear">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">castle.algorithms.</span></span><span class="sig-name descname"><span class="pre">ANMNonlinear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/castle/algorithms/anm/_anm.html#ANMNonlinear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.algorithms.ANMNonlinear" title="Link to this definition"></a></dt>
+<dd><p>Nonlinear causal discovery with additive noise models</p>
+<p>Use GPML with Gaussian kernel and independent Gaussian noise,
+optimizing the hyper-parameters for each regression individually.
+For the independence test, we implemented the HSIC with a Gaussian kernel,
+where we used the gamma distribution as an approximation for the
+distribution of the HSIC under the null hypothesis of independence
+in order to calculate the p-value of the test result.</p>
+<section id="references">
+<h3>References<a class="headerlink" href="#references" title="Link to this heading"></a></h3>
+<p>Hoyer, Patrik O and Janzing, Dominik and Mooij, Joris M and Peters,
+Jonas and Schölkopf, Bernhard,
+“Nonlinear causal discovery with additive noise models”, NIPS 2009</p>
+</section>
+<section id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>alpha<span class="classifier">float, default 0.05</span></dt><dd><p>significance level be used to compute threshold</p>
+</dd>
+</dl>
+</section>
+<section id="attributes">
+<h3>Attributes<a class="headerlink" href="#attributes" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>causal_matrix<span class="classifier">array like shape of (n_features, n_features)</span></dt><dd><p>Learned causal structure matrix.</p>
+</dd>
+</dl>
+</section>
+<section id="examples">
+<h3>Examples<a class="headerlink" href="#examples" title="Link to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">GraphDAG</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">MetricsDAG</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">DAG</span><span class="p">,</span> <span class="n">IIDSimulation</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.algorithms.anm</span><span class="w"> </span><span class="kn">import</span> <span class="n">ANMNonlinear</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">weighted_random_dag</span> <span class="o">=</span> <span class="n">DAG</span><span class="o">.</span><span class="n">erdos_renyi</span><span class="p">(</span><span class="n">n_nodes</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">n_edges</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                                     <span class="n">weight_range</span><span class="o">=</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">),</span> <span class="n">seed</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dataset</span> <span class="o">=</span> <span class="n">IIDSimulation</span><span class="p">(</span><span class="n">W</span><span class="o">=</span><span class="n">weighted_random_dag</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                        <span class="n">method</span><span class="o">=</span><span class="s1">&#39;nonlinear&#39;</span><span class="p">,</span> <span class="n">sem_type</span><span class="o">=</span><span class="s1">&#39;gp-add&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">true_dag</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">B</span><span class="p">,</span> <span class="n">dataset</span><span class="o">.</span><span class="n">X</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">anm</span> <span class="o">=</span> <span class="n">ANMNonlinear</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">anm</span><span class="o">.</span><span class="n">learn</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">X</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># plot predict_dag and true_dag</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">GraphDAG</span><span class="p">(</span><span class="n">anm</span><span class="o">.</span><span class="n">causal_matrix</span><span class="p">,</span> <span class="n">true_dag</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">save_name</span><span class="o">=</span><span class="s1">&#39;result&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>you can also provide more parameters to use it. like the flowing:
+&gt;&gt;&gt; from sklearn.gaussian_process.kernels import Matern, RBF
+&gt;&gt;&gt; kernel = Matern(nu=1.5)
+&gt;&gt;&gt; # kernel = 1.0 * RBF(1.0)
+&gt;&gt;&gt; anm = ANMNonlinear(alpha=0.05)
+&gt;&gt;&gt; anm.learn(data=X, regressor=GPR(kernel=kernel))
+&gt;&gt;&gt; # plot predict_dag and true_dag
+&gt;&gt;&gt; GraphDAG(anm.causal_matrix, true_dag, show=False, save_name=’result’)</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="castle.algorithms.ANMNonlinear.anm_estimate">
+<span class="sig-name descname"><span class="pre">anm_estimate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regressor=&lt;castle.algorithms.anm._anm.GPR</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_method=&lt;function</span> <span class="pre">hsic_test&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/castle/algorithms/anm/_anm.html#ANMNonlinear.anm_estimate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.algorithms.ANMNonlinear.anm_estimate" title="Link to this definition"></a></dt>
+<dd><p>Compute the fitness score of the ANM model in the x-&gt;y direction.</p>
+<section id="id1">
+<h4>Parameters<a class="headerlink" href="#id1" title="Link to this heading"></a></h4>
+<dl>
+<dt>x: array</dt><dd><p>Variable seen as cause</p>
+</dd>
+<dt>y: array</dt><dd><p>Variable seen as effect</p>
+</dd>
+<dt>regressor: Class</dt><dd><p>Nonlinear regression estimator, if not provided, it is GPR.
+If user defined, must implement <cite>estimate</cite> method. such as :</p>
+<blockquote>
+<div><p><cite>regressor.estimate(x, y)</cite></p>
+</div></blockquote>
+</dd>
+<dt>test_method: callable, default test_method</dt><dd><p>independence test method, if not provided, it is HSIC.
+If user defined, must accept three arguments–x, y and keyword
+argument–alpha. such as :</p>
+<blockquote>
+<div><p><cite>test_method(x, y, alpha=0.05)</cite></p>
+</div></blockquote>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h4>Returns<a class="headerlink" href="#returns" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>out: int, 0 or 1</dt><dd><p>If 1, residuals n is independent of x, then accept x –&gt; y
+If 0, residuals n is not independent of x, then reject x –&gt; y</p>
+</dd>
+</dl>
+</section>
+<section id="id2">
+<h4>Examples<a class="headerlink" href="#id2" title="Link to this heading"></a></h4>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.algorithms.anm</span><span class="w"> </span><span class="kn">import</span> <span class="n">ANMNonlinear</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">anm</span> <span class="o">=</span> <span class="n">ANMNonlinear</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">anm</span><span class="o">.</span><span class="n">anm_estimate</span><span class="p">(</span><span class="n">x</span><span class="p">[:,</span> <span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">x</span><span class="p">[:,</span> <span class="p">[</span><span class="mi">1</span><span class="p">]]))</span>
+<span class="go">1</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="castle.algorithms.ANMNonlinear.learn">
+<span class="sig-name descname"><span class="pre">learn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regressor=&lt;castle.algorithms.anm._anm.GPR</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_method=&lt;function</span> <span class="pre">hsic_test&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/castle/algorithms/anm/_anm.html#ANMNonlinear.learn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.algorithms.ANMNonlinear.learn" title="Link to this definition"></a></dt>
+<dd><p>Set up and run the ANM_Nonlinear algorithm.</p>
+<section id="id3">
+<h4>Parameters<a class="headerlink" href="#id3" title="Link to this heading"></a></h4>
+<dl>
+<dt>data: numpy.ndarray or Tensor</dt><dd><p>Training data.</p>
+</dd>
+<dt>columns<span class="classifier">Index or array-like</span></dt><dd><p>Column labels to use for resulting tensor. Will default to
+RangeIndex (0, 1, 2, …, n) if no column labels are provided.</p>
+</dd>
+<dt>regressor: Class</dt><dd><p>Nonlinear regression estimator, if not provided, it is GPR.
+If user defined, must implement <cite>estimate</cite> method. such as :</p>
+<blockquote>
+<div><p><cite>regressor.estimate(x, y)</cite></p>
+</div></blockquote>
+</dd>
+<dt>test_method: callable, default test_method</dt><dd><p>independence test method, if not provided, it is HSIC.
+If user defined, must accept three arguments–x, y and keyword
+argument–alpha. such as :</p>
+<blockquote>
+<div><p><cite>test_method(x, y, alpha=0.05)</cite></p>
+</div></blockquote>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+</section>
+<section id="module-0">
+<span id="ges"></span><h2>GES<a class="headerlink" href="#module-0" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="castle.algorithms.GES">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">castle.algorithms.</span></span><span class="sig-name descname"><span class="pre">GES</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">criterion</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'bic'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'scatter'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/castle/algorithms/ges/ges.html#GES"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.algorithms.GES" title="Link to this definition"></a></dt>
+<dd><p>Greedy equivalence search for causal discovering</p>
+<section id="id4">
+<h3>References<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<p>[1]: <a class="reference external" href="https://www.sciencedirect.com/science/article/pii/S0888613X12001636">https://www.sciencedirect.com/science/article/pii/S0888613X12001636</a>
+[2]: <a class="reference external" href="https://www.jmlr.org/papers/volume3/chickering02b/chickering02b.pdf">https://www.jmlr.org/papers/volume3/chickering02b/chickering02b.pdf</a></p>
+</section>
+<section id="id5">
+<h3>Parameters<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
+<dl>
+<dt>criterion: str for DecomposableScore object</dt><dd><p>scoring criterion, one of [‘bic’, ‘bdeu’].</p>
+<dl>
+<dt>Notes:</dt><dd><ol class="arabic simple">
+<li><p>‘bdeu’ just for discrete variable.</p></li>
+</ol>
+<p>2. if you want to customize criterion, you must create a class
+and inherit the base class <cite>DecomposableScore</cite> in module
+<cite>ges.score.local_scores</cite></p>
+</dd>
+</dl>
+</dd>
+<dt>method: str</dt><dd><p>effective when <cite>criterion=’bic’</cite>, one of [‘r2’, ‘scatter’].</p>
+</dd>
+<dt>k: float, default: 0.001</dt><dd><p>structure prior, effective when <cite>criterion=’bdeu’</cite>.</p>
+</dd>
+<dt>N: int, default: 10</dt><dd><p>prior equivalent sample size, effective when <cite>criterion=’bdeu’</cite></p>
+</dd>
+</dl>
+</section>
+<section id="id6">
+<h3>Examples<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">GraphDAG</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">MetricsDAG</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_dataset</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">X</span><span class="p">,</span> <span class="n">true_dag</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;IID_Test&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">algo</span> <span class="o">=</span> <span class="n">GES</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">algo</span><span class="o">.</span><span class="n">learn</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">GraphDAG</span><span class="p">(</span><span class="n">algo</span><span class="o">.</span><span class="n">causal_matrix</span><span class="p">,</span> <span class="n">true_dag</span><span class="p">,</span> <span class="n">save_name</span><span class="o">=</span><span class="s1">&#39;result_pc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">met</span> <span class="o">=</span> <span class="n">MetricsDAG</span><span class="p">(</span><span class="n">algo</span><span class="o">.</span><span class="n">causal_matrix</span><span class="p">,</span> <span class="n">true_dag</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">met</span><span class="o">.</span><span class="n">metrics</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+</section>
+<section id="module-1">
+<span id="directlingam"></span><h2>DirectLiNGAM<a class="headerlink" href="#module-1" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="castle.algorithms.DirectLiNGAM">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">castle.algorithms.</span></span><span class="sig-name descname"><span class="pre">DirectLiNGAM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prior_knowledge</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">measure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pwling'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/castle/algorithms/lingam/direct_lingam.html#DirectLiNGAM"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.algorithms.DirectLiNGAM" title="Link to this definition"></a></dt>
+<dd><p>DirectLiNGAM Algorithm.
+A direct learning algorithm for linear non-Gaussian acyclic model (LiNGAM).
+Implementation of DirectLiNGAM Algorithm <a href="#id106"><span class="problematic" id="id7">[1]_</span></a> <a class="footnote-reference brackets" href="#id16" id="id8" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>, Construct a DirectLiNGAM model.</p>
+<section id="id9">
+<h3>Parameters<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
+<dl>
+<dt>prior_knowledge<span class="classifier">array-like, shape (n_features, n_features), optional (default=None)</span></dt><dd><p>Prior knowledge used for causal discovery, where <code class="docutils literal notranslate"><span class="pre">n_features</span></code> is the number of features.</p>
+<p>The elements of prior knowledge matrix are defined as follows <a href="#id107"><span class="problematic" id="id10">[1]_</span></a>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">0</span></code> : <span class="math notranslate nohighlight">\(x_i\)</span> does not have a directed path to <span class="math notranslate nohighlight">\(x_j\)</span></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">1</span></code> : <span class="math notranslate nohighlight">\(x_i\)</span> has a directed path to <span class="math notranslate nohighlight">\(x_j\)</span></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-1</span></code> : No prior knowledge is available to know if either of the two cases above (0 or 1) is true.</p></li>
+</ul>
+</dd>
+<dt>measure<span class="classifier">{‘pwling’, ‘kernel’}, default=’pwling’</span></dt><dd><p>Measure to evaluate independence: ‘pwling’ <a class="footnote-reference brackets" href="#id16" id="id11" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> or ‘kernel’ <a href="#id108"><span class="problematic" id="id12">[1]_</span></a>.</p>
+</dd>
+<dt>thresh<span class="classifier">float,  default=’0.3’</span></dt><dd><p>Drop edge if <a href="#id88"><span class="problematic" id="id89">|weight|</span></a> &lt; threshold</p>
+</dd>
+</dl>
+</section>
+<section id="id13">
+<h3>Attributes<a class="headerlink" href="#id13" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>causal_matrix<span class="classifier">numpy.ndarray</span></dt><dd><p>Learned causal structure matrix.</p>
+</dd>
+<dt>weight_causal_matrix: numpy.ndarray</dt><dd><p>Learned weighted causal structure matrix.</p>
+</dd>
+</dl>
+</section>
+<section id="id14">
+<h3>References<a class="headerlink" href="#id14" title="Link to this heading"></a></h3>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id15" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<p>S. Shimizu, T. Inazumi, Y. Sogawa, A. Hyvärinen, Y. Kawahara, T. Washio, P. O. Hoyer and K. Bollen. 
+DirectLiNGAM: A direct method for learning a linear non-Gaussian structural equation model. 
+Journal of Machine Learning Research, 12(Apr): 1225–1248, 2011.</p>
+</aside>
+<aside class="footnote brackets" id="id16" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id8">1</a>,<a role="doc-backlink" href="#id11">2</a>)</span>
+<p>A. Hyvärinen and S. M. Smith. Pairwise likelihood ratios for estimation of non-Gaussian structural eauation models. 
+Journal of Machine Learning Research 14:111-152, 2013.</p>
+</aside>
+</aside>
+</section>
+<section id="id17">
+<h3>Examples<a class="headerlink" href="#id17" title="Link to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.algorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">DirectLiNGAM</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_dataset</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">GraphDAG</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">MetricsDAG</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span><span class="p">,</span> <span class="n">true_dag</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;IID_Test&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="n">DirectLiNGAM</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n</span><span class="o">.</span><span class="n">learn</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">GraphDAG</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">causal_matrix</span><span class="p">,</span> <span class="n">true_dag</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">met</span> <span class="o">=</span> <span class="n">MetricsDAG</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">causal_matrix</span><span class="p">,</span> <span class="n">true_dag</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">met</span><span class="o">.</span><span class="n">metrics</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="castle.algorithms.DirectLiNGAM.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/castle/algorithms/lingam/direct_lingam.html#DirectLiNGAM.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.algorithms.DirectLiNGAM.fit" title="Link to this definition"></a></dt>
+<dd><p>Fit the model to X.</p>
+<section id="id18">
+<h4>Parameters<a class="headerlink" href="#id18" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>X<span class="classifier">array-like, shape (n_samples, n_features)</span></dt><dd><p>Training data, where <code class="docutils literal notranslate"><span class="pre">n_samples</span></code> is the number of samples
+and <code class="docutils literal notranslate"><span class="pre">n_features</span></code> is the number of features.</p>
+</dd>
+</dl>
+</section>
+<section id="id19">
+<h4>Returns<a class="headerlink" href="#id19" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>self<span class="classifier">object</span></dt><dd><p>Returns the instance itself.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="castle.algorithms.DirectLiNGAM.learn">
+<span class="sig-name descname"><span class="pre">learn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/castle/algorithms/lingam/direct_lingam.html#DirectLiNGAM.learn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.algorithms.DirectLiNGAM.learn" title="Link to this definition"></a></dt>
+<dd><p>Set up and run the DirectLiNGAM algorithm.</p>
+<section id="id20">
+<h4>Parameters<a class="headerlink" href="#id20" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>data: castle.Tensor or numpy.ndarray</dt><dd><p>The castle.Tensor or numpy.ndarray format data you want to learn.</p>
+</dd>
+<dt>columns<span class="classifier">Index or array-like</span></dt><dd><p>Column labels to use for resulting tensor. Will default to
+RangeIndex (0, 1, 2, …, n) if no column labels are provided.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+</section>
+<section id="module-2">
+<span id="icalingam"></span><h2>ICALiNGAM<a class="headerlink" href="#module-2" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="castle.algorithms.ICALiNGAM">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">castle.algorithms.</span></span><span class="sig-name descname"><span class="pre">ICALiNGAM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">random_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/castle/algorithms/lingam/ica_lingam.html#ICALiNGAM"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.algorithms.ICALiNGAM" title="Link to this definition"></a></dt>
+<dd><p>ICALiNGAM Algorithm.
+An ICA-based learning algorithm for linear non-Gaussian acyclic model (LiNGAM).
+Implementation of ICA-based LiNGAM Algorithm <a href="#id109"><span class="problematic" id="id21">[1]_</span></a>, Construct a ICA-based LiNGAM model.</p>
+<section id="id22">
+<h3>Parameters<a class="headerlink" href="#id22" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>random_state<span class="classifier">int, optional (default=None)</span></dt><dd><p><code class="docutils literal notranslate"><span class="pre">random_state</span></code> is the seed used by the random number generator.</p>
+</dd>
+<dt>max_iter<span class="classifier">int, optional (default=1000)</span></dt><dd><p>The maximum number of iterations of FastICA.</p>
+</dd>
+<dt>thresh<span class="classifier">float,  default=’0.3’</span></dt><dd><p>Drop edge if <a href="#id90"><span class="problematic" id="id91">|weight|</span></a> &lt; threshold</p>
+</dd>
+</dl>
+</section>
+<section id="id23">
+<h3>Attributes<a class="headerlink" href="#id23" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>causal_matrix<span class="classifier">numpy.ndarray</span></dt><dd><p>Learned causal structure matrix</p>
+</dd>
+<dt>weight_causal_matrix: numpy.ndarray</dt><dd><p>Learned weighted causal structure matrix.</p>
+</dd>
+</dl>
+</section>
+<section id="id24">
+<h3>References<a class="headerlink" href="#id24" title="Link to this heading"></a></h3>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id25" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<p>S. Shimizu, P. O. Hoyer, A. Hyvärinen, and A. J. Kerminen. 
+A linear non-gaussian acyclic model for causal discovery. 
+Journal of Machine Learning Research, 7:2003-2030, 2006.</p>
+</aside>
+</aside>
+</section>
+<section id="id26">
+<h3>Examples<a class="headerlink" href="#id26" title="Link to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.algorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">ICALiNGAM</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_dataset</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">GraphDAG</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">MetricsDAG</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span><span class="p">,</span> <span class="n">true_dag</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;IID_Test&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="n">ICALiNGAM</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n</span><span class="o">.</span><span class="n">learn</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">GraphDAG</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">causal_matrix</span><span class="p">,</span> <span class="n">true_dag</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">met</span> <span class="o">=</span> <span class="n">MetricsDAG</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">causal_matrix</span><span class="p">,</span> <span class="n">true_dag</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">met</span><span class="o">.</span><span class="n">metrics</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="castle.algorithms.ICALiNGAM.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/castle/algorithms/lingam/ica_lingam.html#ICALiNGAM.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.algorithms.ICALiNGAM.fit" title="Link to this definition"></a></dt>
+<dd><p>Fit the model to X.</p>
+<section id="id27">
+<h4>Parameters<a class="headerlink" href="#id27" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>X<span class="classifier">array-like, shape (n_samples, n_features)</span></dt><dd><p>Training data, where <code class="docutils literal notranslate"><span class="pre">n_samples</span></code> is the number of samples
+and <code class="docutils literal notranslate"><span class="pre">n_features</span></code> is the number of features.</p>
+</dd>
+</dl>
+</section>
+<section id="id28">
+<h4>Returns<a class="headerlink" href="#id28" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>self<span class="classifier">object</span></dt><dd><p>Returns the instance of self.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="castle.algorithms.ICALiNGAM.learn">
+<span class="sig-name descname"><span class="pre">learn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/castle/algorithms/lingam/ica_lingam.html#ICALiNGAM.learn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.algorithms.ICALiNGAM.learn" title="Link to this definition"></a></dt>
+<dd><p>Set up and run the ICALiNGAM algorithm.</p>
+<dl class="simple">
+<dt>columns<span class="classifier">Index or array-like</span></dt><dd><p>Column labels to use for resulting tensor. Will default to
+RangeIndex (0, 1, 2, …, n) if no column labels are provided.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+</section>
+<section id="module-3">
+<span id="pc"></span><h2>PC<a class="headerlink" href="#module-3" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="castle.algorithms.PC">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">castle.algorithms.</span></span><span class="sig-name descname"><span class="pre">PC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">variant</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'original'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ci_test</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'fisherz'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">priori_knowledge</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/castle/algorithms/pc/pc.html#PC"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.algorithms.PC" title="Link to this definition"></a></dt>
+<dd><p>PC algorithm</p>
+<p>A classic causal discovery algorithm based on conditional independence tests.</p>
+<section id="id29">
+<h3>References<a class="headerlink" href="#id29" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>[1] original-PC</dt><dd><p><a class="reference external" href="https://www.jmlr.org/papers/volume8/kalisch07a/kalisch07a.pdf">https://www.jmlr.org/papers/volume8/kalisch07a/kalisch07a.pdf</a></p>
+</dd>
+<dt>[2] stable-PC</dt><dd><p><a class="reference external" href="https://arxiv.org/pdf/1211.3295.pdf">https://arxiv.org/pdf/1211.3295.pdf</a></p>
+</dd>
+<dt>[3] parallel-PC</dt><dd><p><a class="reference external" href="https://arxiv.org/pdf/1502.02454.pdf">https://arxiv.org/pdf/1502.02454.pdf</a></p>
+</dd>
+</dl>
+</section>
+<section id="id30">
+<h3>Parameters<a class="headerlink" href="#id30" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>variant<span class="classifier">str</span></dt><dd><p>A variant of PC-algorithm, one of [<cite>original</cite>, <cite>stable</cite>, <cite>parallel</cite>].</p>
+</dd>
+<dt>alpha: float, default 0.05</dt><dd><p>Significance level.</p>
+</dd>
+<dt>ci_test<span class="classifier">str, callable</span></dt><dd><p>ci_test method, if str, must be one of [<cite>fisherz</cite>, <cite>g2</cite>, <cite>chi2</cite>]
+See more: <cite>castle.common.independence_tests.CITest</cite></p>
+</dd>
+<dt>priori_knowledge: PrioriKnowledge</dt><dd><p>a class object PrioriKnowledge</p>
+</dd>
+</dl>
+</section>
+<section id="id31">
+<h3>Attributes<a class="headerlink" href="#id31" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>causal_matrix<span class="classifier">array</span></dt><dd><p>Learned causal structure matrix.</p>
+</dd>
+</dl>
+</section>
+<section id="id32">
+<h3>Examples<a class="headerlink" href="#id32" title="Link to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">GraphDAG</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">MetricsDAG</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_dataset</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">X</span><span class="p">,</span> <span class="n">true_dag</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;IID_Test&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pc</span> <span class="o">=</span> <span class="n">PC</span><span class="p">(</span><span class="n">variant</span><span class="o">=</span><span class="s1">&#39;stable&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pc</span><span class="o">.</span><span class="n">learn</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">GraphDAG</span><span class="p">(</span><span class="n">pc</span><span class="o">.</span><span class="n">causal_matrix</span><span class="p">,</span> <span class="n">true_dag</span><span class="p">,</span> <span class="n">save_name</span><span class="o">=</span><span class="s1">&#39;result_pc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">met</span> <span class="o">=</span> <span class="n">MetricsDAG</span><span class="p">(</span><span class="n">pc</span><span class="o">.</span><span class="n">causal_matrix</span><span class="p">,</span> <span class="n">true_dag</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">met</span><span class="o">.</span><span class="n">metrics</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pc</span> <span class="o">=</span> <span class="n">PC</span><span class="p">(</span><span class="n">variant</span><span class="o">=</span><span class="s1">&#39;parallel&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pc</span><span class="o">.</span><span class="n">learn</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">p_cores</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">GraphDAG</span><span class="p">(</span><span class="n">pc</span><span class="o">.</span><span class="n">causal_matrix</span><span class="p">,</span> <span class="n">true_dag</span><span class="p">,</span> <span class="n">save_name</span><span class="o">=</span><span class="s1">&#39;result_pc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">met</span> <span class="o">=</span> <span class="n">MetricsDAG</span><span class="p">(</span><span class="n">pc</span><span class="o">.</span><span class="n">causal_matrix</span><span class="p">,</span> <span class="n">true_dag</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">met</span><span class="o">.</span><span class="n">metrics</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="castle.algorithms.PC.learn">
+<span class="sig-name descname"><span class="pre">learn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/castle/algorithms/pc/pc.html#PC.learn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.algorithms.PC.learn" title="Link to this definition"></a></dt>
+<dd><p>Set up and run the PC algorithm.</p>
+<section id="id33">
+<h4>Parameters<a class="headerlink" href="#id33" title="Link to this heading"></a></h4>
+<dl>
+<dt>data: array or Tensor</dt><dd><p>Training data</p>
+</dd>
+<dt>columns<span class="classifier">Index or array-like</span></dt><dd><p>Column labels to use for resulting tensor. Will default to
+RangeIndex (0, 1, 2, …, n) if no column labels are provided.</p>
+</dd>
+<dt>kwargs: [optional]</dt><dd><dl class="simple">
+<dt>p_cores<span class="classifier">int</span></dt><dd><p>number of CPU cores to be used</p>
+</dd>
+<dt>s<span class="classifier">boolean</span></dt><dd><p>memory-efficient indicator</p>
+</dd>
+<dt>batch<span class="classifier">int</span></dt><dd><p>number of edges per batch</p>
+</dd>
+</dl>
+<p>if s is None or False, or without batch, batch=|J|.
+<a href="#id92"><span class="problematic" id="id93">|J|</span></a> denote number of all pairs of adjacency vertices (X, Y) in G.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+</section>
+<section id="module-4">
+<span id="ttpm"></span><h2>TTPM<a class="headerlink" href="#module-4" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="castle.algorithms.TTPM">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">castle.algorithms.</span></span><span class="sig-name descname"><span class="pre">TTPM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">topology_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_hop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">penalty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'BIC'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">priori_knowledge</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/castle/algorithms/ttpm/ttpm.html#TTPM"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.algorithms.TTPM" title="Link to this definition"></a></dt>
+<dd><p>TTPM Algorithm.</p>
+<dl class="simple">
+<dt>A causal structure learning algorithm based on Topological Hawkes process</dt><dd><p>for spatio-temporal event sequences.</p>
+</dd>
+</dl>
+<section id="id34">
+<h3>Parameters<a class="headerlink" href="#id34" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>topology_matrix: np.matrix</dt><dd><p>Interpreted as an adjacency matrix to generate the graph.
+It should have two dimensions, and should be square.</p>
+</dd>
+<dt>delta: float, default=0.1</dt><dd><p>Time decaying coefficient for the exponential kernel.</p>
+</dd>
+<dt>epsilon: int, default=1</dt><dd><p>BIC penalty coefficient.</p>
+</dd>
+<dt>max_hop: positive int, default=6</dt><dd><p>The maximum considered hops in the topology,
+when <code class="docutils literal notranslate"><span class="pre">max_hop=0</span></code>, it is divided by nodes, regardless of topology.</p>
+</dd>
+<dt>penalty: str, default=BIC</dt><dd><p>Two optional values: ‘BIC’ or ‘AIC’.</p>
+</dd>
+<dt>max_iter: int</dt><dd><p>Maximum number of iterations.</p>
+</dd>
+<dt>priori_knowledge: PrioriKnowledge, default=None</dt><dd><p>a class object PrioriKnowledge</p>
+</dd>
+</dl>
+</section>
+<section id="id35">
+<h3>Examples<a class="headerlink" href="#id35" title="Link to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">GraphDAG</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">MetricsDAG</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_dataset</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.algorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">TTPM</span>
+<span class="go"># Data Simulation for TTPM</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span><span class="p">,</span> <span class="n">true_causal_matrix</span><span class="p">,</span> <span class="n">topology_matrix</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;THP_Test&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ttpm</span> <span class="o">=</span> <span class="n">TTPM</span><span class="p">(</span><span class="n">topology_matrix</span><span class="p">,</span> <span class="n">max_hop</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ttpm</span><span class="o">.</span><span class="n">learn</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">causal_matrix</span> <span class="o">=</span> <span class="n">ttpm</span><span class="o">.</span><span class="n">causal_matrix</span>
+<span class="go"># plot est_dag and true_dag</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">GraphDAG</span><span class="p">(</span><span class="n">ttpm</span><span class="o">.</span><span class="n">causal_matrix</span><span class="p">,</span> <span class="n">true_causal_matrix</span><span class="p">)</span>
+<span class="go"># calculate accuracy</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ret_metrix</span> <span class="o">=</span> <span class="n">MetricsDAG</span><span class="p">(</span><span class="n">ttpm</span><span class="o">.</span><span class="n">causal_matrix</span><span class="p">,</span> <span class="n">true_causal_matrix</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ret_metrix</span><span class="o">.</span><span class="n">metrics</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="castle.algorithms.TTPM.learn">
+<span class="sig-name descname"><span class="pre">learn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tensor</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/castle/algorithms/ttpm/ttpm.html#TTPM.learn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.algorithms.TTPM.learn" title="Link to this definition"></a></dt>
+<dd><p>Set up and run the TTPM algorithm.</p>
+<section id="id36">
+<h4>Parameters<a class="headerlink" href="#id36" title="Link to this heading"></a></h4>
+<dl>
+<dt>tensor:  pandas.DataFrame</dt><dd><p>(V 1.0.0, we’ll eliminate this constraint in the next version)
+The tensor is supposed to contain three cols:</p>
+<blockquote>
+<div><p>[‘event’, ‘timestamp’, ‘node’]</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Description of the three columns:</dt><dd><p>event: event name (type).
+timestamp: occurrence timestamp of event, i.e., ‘1615962101.0’.
+node: topological node where the event happened.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+</section>
+<section id="module-5">
+<span id="corl"></span><h2>CORL<a class="headerlink" href="#module-5" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="castle.algorithms.CORL">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">castle.algorithms.</span></span><span class="sig-name descname"><span class="pre">CORL</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">64</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">embed_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">256</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encoder_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'transformer'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encoder_heads</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encoder_blocks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encoder_dropout_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decoder_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lstm'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reward_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'episodic'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reward_score_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'BIC'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reward_regression_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'LR'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reward_gpr_alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iteration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lambda_iter_num</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">500</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">actor_lr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">critic_lr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.99</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_baseline</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random_seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cpu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device_ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/castle/algorithms/gradient/corl/torch/corl.html#CORL"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.algorithms.CORL" title="Link to this definition"></a></dt>
+<dd><p>Causal discovery with Ordering-based Reinforcement Learning</p>
+<p>A RL- and order-based algorithm that improves the efficiency and scalability
+of previous RL-based approach, contains CORL1 with <code class="docutils literal notranslate"><span class="pre">episodic</span></code> reward type
+and CORL2 with <code class="docutils literal notranslate"><span class="pre">dense</span></code> reward type``.</p>
+<section id="id37">
+<h3>References<a class="headerlink" href="#id37" title="Link to this heading"></a></h3>
+<p><a class="reference external" href="https://arxiv.org/abs/2105.06631">https://arxiv.org/abs/2105.06631</a></p>
+</section>
+<section id="id38">
+<h3>Parameters<a class="headerlink" href="#id38" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>batch_size: int, default: 64</dt><dd><p>training batch size</p>
+</dd>
+<dt>input_dim: int, default: 64</dt><dd><p>dimension of input data</p>
+</dd>
+<dt>embed_dim: int, default: 256</dt><dd><p>dimension of embedding layer output</p>
+</dd>
+<dt>normalize: bool, default: False</dt><dd><p>whether normalization for input data</p>
+</dd>
+<dt>encoder_name: str, default: ‘transformer’</dt><dd><p>Encoder name, must be one of [‘transformer’, ‘lstm’, ‘mlp’]</p>
+</dd>
+<dt>encoder_heads: int, default: 8</dt><dd><p>number of multi-head of <cite>transformer</cite> Encoder.</p>
+</dd>
+<dt>encoder_blocks: int, default: 3</dt><dd><p>blocks number of Encoder</p>
+</dd>
+<dt>encoder_dropout_rate: float, default: 0.1</dt><dd><p>dropout rate for encoder</p>
+</dd>
+<dt>decoder_name: str, default: ‘lstm’</dt><dd><p>Decoder name, must be one of [‘lstm’, ‘mlp’]</p>
+</dd>
+<dt>reward_mode: str, default: ‘episodic’</dt><dd><p>reward mode, ‘episodic’ or ‘dense’,
+‘episodic’ denotes <code class="docutils literal notranslate"><span class="pre">episodic-reward</span></code>, ‘dense’ denotes <code class="docutils literal notranslate"><span class="pre">dense-reward</span></code>.</p>
+</dd>
+<dt>reward_score_type: str, default: ‘BIC’</dt><dd><p>type of score function</p>
+</dd>
+<dt>reward_regression_type: str, default: ‘LR’</dt><dd><p>type of regression function, must be one of [‘LR’, ‘QR’]</p>
+</dd>
+<dt>reward_gpr_alpha: float, default: 1.0</dt><dd><p>alpha of GPR</p>
+</dd>
+<dt>iteration: int, default: 5000</dt><dd><p>training times</p>
+</dd>
+<dt>actor_lr: float, default: 1e-4</dt><dd><p>learning rate of Actor network, includes <code class="docutils literal notranslate"><span class="pre">encoder</span></code> and <code class="docutils literal notranslate"><span class="pre">decoder</span></code>.</p>
+</dd>
+<dt>critic_lr: float, default: 1e-3</dt><dd><p>learning rate of Critic network</p>
+</dd>
+<dt>alpha: float, default: 0.99</dt><dd><p>alpha for score function, includes <code class="docutils literal notranslate"><span class="pre">dense_actor_loss</span></code> and
+<code class="docutils literal notranslate"><span class="pre">dense_critic_loss</span></code>.</p>
+</dd>
+<dt>init_baseline: float, default: -1.0</dt><dd><p>initilization baseline for score function, includes <code class="docutils literal notranslate"><span class="pre">dense_actor_loss</span></code>
+and <code class="docutils literal notranslate"><span class="pre">dense_critic_loss</span></code>.</p>
+</dd>
+<dt>random_seed: int, default: 0</dt><dd><p>random seed for all random process</p>
+</dd>
+<dt>device_type: str, default: cpu</dt><dd><p><code class="docutils literal notranslate"><span class="pre">cpu</span></code> or <code class="docutils literal notranslate"><span class="pre">gpu</span></code></p>
+</dd>
+<dt>device_ids: int or str, default None</dt><dd><p>CUDA devices, it’s effective when <code class="docutils literal notranslate"><span class="pre">use_gpu</span></code> is True.
+For single-device modules, <code class="docutils literal notranslate"><span class="pre">device_ids</span></code> can be int or str, e.g. 0 or ‘0’,
+For multi-device modules, <code class="docutils literal notranslate"><span class="pre">device_ids</span></code> must be str, format like ‘0, 1’.</p>
+</dd>
+</dl>
+</section>
+<section id="id39">
+<h3>Examples<a class="headerlink" href="#id39" title="Link to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.algorithms.gradient.corl.torch</span><span class="w"> </span><span class="kn">import</span> <span class="n">CORL</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_dataset</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">GraphDAG</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">MetricsDAG</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span><span class="p">,</span> <span class="n">true_dag</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;IID_Test&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="n">CORL</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n</span><span class="o">.</span><span class="n">learn</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">GraphDAG</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">causal_matrix</span><span class="p">,</span> <span class="n">true_dag</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">met</span> <span class="o">=</span> <span class="n">MetricsDAG</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">causal_matrix</span><span class="p">,</span> <span class="n">true_dag</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">met</span><span class="o">.</span><span class="n">metrics</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="castle.algorithms.CORL.learn">
+<span class="sig-name descname"><span class="pre">learn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/castle/algorithms/gradient/corl/torch/corl.html#CORL.learn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.algorithms.CORL.learn" title="Link to this definition"></a></dt>
+<dd><p>Set up and run the Causal discovery with Ordering-based Reinforcement
+Learning algorithm.</p>
+<section id="id40">
+<h4>Parameters<a class="headerlink" href="#id40" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>data: castle.Tensor or numpy.ndarray</dt><dd><p>The castle.Tensor or numpy.ndarray format data you want to learn.</p>
+</dd>
+<dt>columns<span class="classifier">Index or array-like</span></dt><dd><p>Column labels to use for resulting tensor. Will default to
+RangeIndex (0, 1, 2, …, n) if no column labels are provided.</p>
+</dd>
+<dt>Other Parameters:</dt><dd><dl class="simple">
+<dt>dag_mask<span class="classifier">ndarray</span></dt><dd><p>two-dimensional array with [0, 1], shape = [n_nodes, n_nodes].
+(i, j) indicated element <cite>0</cite> denotes there must be no edge
+between nodes <cite>i</cite> and <cite>j</cite> , the element <cite>1</cite> indicates that
+there may or may not be an edge.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+</section>
+<section id="module-6">
+<span id="dag-gnn"></span><h2>DAG_GNN<a class="headerlink" href="#module-6" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="castle.algorithms.DAG_GNN">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">castle.algorithms.</span></span><span class="sig-name descname"><span class="pre">DAG_GNN</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">encoder_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mlp'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decoder_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mlp'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encoder_hidden</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">64</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latent_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decoder_hidden</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">64</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encoder_dropout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decoder_dropout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epochs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k_max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau_a</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.003</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr_decay</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_lambda_a</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_c_a</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_a_thresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e+20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multiply_h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h_tolerance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-08</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_a_connect_loss</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_a_positiver_loss</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'adam'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">42</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cpu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device_ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'0'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/castle/algorithms/gradient/dag_gnn/torch/dag_gnn.html#DAG_GNN"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.algorithms.DAG_GNN" title="Link to this definition"></a></dt>
+<dd><p>DAG Structure Learning with Graph Neural Networks</p>
+<section id="id41">
+<h3>References<a class="headerlink" href="#id41" title="Link to this heading"></a></h3>
+<p><a class="reference external" href="https://arxiv.org/pdf/1904.10098.pdf">https://arxiv.org/pdf/1904.10098.pdf</a></p>
+</section>
+<section id="id42">
+<h3>Parameters<a class="headerlink" href="#id42" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>encoder_type: str, default: ‘mlp’</dt><dd><p>choose an encoder, ‘mlp’ or ‘sem’.</p>
+</dd>
+<dt>decoder_type: str, detault: ‘mlp’</dt><dd><p>choose a decoder, ‘mlp’ or ‘sem’.</p>
+</dd>
+<dt>encoder_hidden: int, default: 64</dt><dd><p>MLP encoder hidden layer dimension, just one hidden layer.</p>
+</dd>
+<dt>latent_dim: int, default equal to input dimension</dt><dd><p>encoder output dimension</p>
+</dd>
+<dt>decoder_hidden: int, default: 64</dt><dd><p>MLP decoder hidden layer dimension, just one hidden layer.</p>
+</dd>
+<dt>encoder_dropout: float, default: 0.0</dt><dd><p>Dropout rate (1 - keep probability).</p>
+</dd>
+<dt>decoder_dropout: float, default: 0.0</dt><dd><p>Dropout rate (1 - keep probability).</p>
+</dd>
+<dt>epochs: int, default: 300</dt><dd><p>train epochs</p>
+</dd>
+<dt>k_max_iter: int, default: 1e2</dt><dd><p>the max iteration number for searching lambda and c.</p>
+</dd>
+<dt>batch_size: int, default: 100</dt><dd><p>Sample size of each training batch</p>
+</dd>
+<dt>lr: float, default: 3e-3</dt><dd><p>learning rate</p>
+</dd>
+<dt>lr_decay: int, default: 200</dt><dd><p>Period of learning rate decay.</p>
+</dd>
+<dt>gamma: float, default: 1.0</dt><dd><p>Multiplicative factor of learning rate decay.</p>
+</dd>
+<dt>lambda_a: float, default: 0.0</dt><dd><p>coefficient for DAG constraint h(A).</p>
+</dd>
+<dt>c_a: float, default: 1.0</dt><dd><p>coefficient for absolute value h(A).</p>
+</dd>
+<dt>c_a_thresh: float, default: 1e20</dt><dd><p>control loop by c_a</p>
+</dd>
+<dt>eta: int, default: 10</dt><dd><p>use for update c_a, greater equal than 1.</p>
+</dd>
+<dt>multiply_h: float, default: 0.25</dt><dd><p>use for judge whether update c_a.</p>
+</dd>
+<dt>tau_a: float, default: 0.0</dt><dd><p>coefficient for L-1 norm of A.</p>
+</dd>
+<dt>h_tolerance: float, default: 1e-8</dt><dd><p>the tolerance of error of h(A) to zero.</p>
+</dd>
+<dt>use_a_connect_loss: bool, default: False</dt><dd><p>flag to use A connect loss</p>
+</dd>
+<dt>use_a_positiver_loss: bool, default: False</dt><dd><p>flag to enforce A must have positive values</p>
+</dd>
+<dt>graph_threshold: float, default: 0.3</dt><dd><p>threshold for learned adjacency matrix binarization.
+greater equal to graph_threshold denotes has causal relationship.</p>
+</dd>
+<dt>optimizer: str, default: ‘Adam’</dt><dd><p>choose optimizer, ‘Adam’ or ‘SGD’</p>
+</dd>
+<dt>seed: int, default: 42</dt><dd><p>random seed</p>
+</dd>
+<dt>device_type: str, default: cpu</dt><dd><p><code class="docutils literal notranslate"><span class="pre">cpu</span></code> or <code class="docutils literal notranslate"><span class="pre">gpu</span></code></p>
+</dd>
+<dt>device_ids: int or str, default None</dt><dd><p>CUDA devices, it’s effective when <code class="docutils literal notranslate"><span class="pre">use_gpu</span></code> is True.
+For single-device modules, <code class="docutils literal notranslate"><span class="pre">device_ids</span></code> can be int or str, e.g. 0 or ‘0’,
+For multi-device modules, <code class="docutils literal notranslate"><span class="pre">device_ids</span></code> must be str, format like ‘0, 1’.</p>
+</dd>
+</dl>
+</section>
+<section id="id43">
+<h3>Examples<a class="headerlink" href="#id43" title="Link to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.algorithms.gradient.dag_gnn.torch</span><span class="w"> </span><span class="kn">import</span> <span class="n">DAG_GNN</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_dataset</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">GraphDAG</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">MetricsDAG</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span><span class="p">,</span> <span class="n">true_dag</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;IID_Test&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">DAG_GNN</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">learn</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">GraphDAG</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">causal_matrix</span><span class="p">,</span> <span class="n">true_dag</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">met</span> <span class="o">=</span> <span class="n">MetricsDAG</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">causal_matrix</span><span class="p">,</span> <span class="n">true_dag</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">met</span><span class="o">.</span><span class="n">metrics</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+</section>
+<section id="module-7">
+<span id="gae"></span><h2>GAE<a class="headerlink" href="#module-7" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="castle.algorithms.GAE">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">castle.algorithms.</span></span><span class="sig-name descname"><span class="pre">GAE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_layers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">activation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">LeakyReLU(negative_slope=0.05)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epochs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_rho</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho_thresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e+30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">penalty_lambda</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h_thresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-08</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph_thresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">early_stopping</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">early_stopping_thresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1230</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cpu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device_ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'0'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/castle/algorithms/gradient/gae/torch/gae.html#GAE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.algorithms.GAE" title="Link to this definition"></a></dt>
+<dd><p>GAE Algorithm.
+A gradient-based algorithm using graph autoencoder to model non-linear
+causal relationships.</p>
+<section id="id44">
+<h3>Parameters<a class="headerlink" href="#id44" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>input_dim: int, default: 1</dt><dd><p>dimension of vector for x</p>
+</dd>
+<dt>hidden_layers: int, default: 1</dt><dd><p>number of hidden layers for encoder and decoder</p>
+</dd>
+<dt>hidden_dim: int, default: 4</dt><dd><p>hidden size for mlp layer</p>
+</dd>
+<dt>activation: callable, default: nn.LeakyReLU(0.05)</dt><dd><p>nonlinear functional</p>
+</dd>
+<dt>epochs: int, default: 10</dt><dd><p>Number of iterations for optimization problem</p>
+</dd>
+<dt>update_freq: int, default: 3000</dt><dd><p>Number of steps for each iteration</p>
+</dd>
+<dt>init_iter: int, default: 3</dt><dd><p>Initial iteration to disallow early stopping</p>
+</dd>
+<dt>lr: float, default: 1e-3</dt><dd><p>learning rate</p>
+</dd>
+<dt>alpha: float, default: 0.0</dt><dd><p>Lagrange multiplier</p>
+</dd>
+<dt>beta: float, default: 2.0</dt><dd><p>Multiplication to amplify rho each time</p>
+</dd>
+<dt>init_rho: float, default: 1.0</dt><dd><p>Initial value for rho</p>
+</dd>
+<dt>rho_thresh: float, default: 1e30</dt><dd><p>Threshold for rho</p>
+</dd>
+<dt>gamma: float, default: 0.25</dt><dd><p>Threshold for h</p>
+</dd>
+<dt>penalty_lambda: float, default: 0.0</dt><dd><p>L1 penalty for sparse graph. Set to 0.0 to disable</p>
+</dd>
+<dt>h_thresh: float, default: 1e-8</dt><dd><p>Tolerance of optimization problem</p>
+</dd>
+<dt>graph_thresh: float, default: 0.3</dt><dd><p>Threshold to filter out small values in the graph</p>
+</dd>
+<dt>early_stopping: bool, default: False</dt><dd><p>Whether to use early stopping</p>
+</dd>
+<dt>early_stopping_thresh: float, default: 1.0</dt><dd><p>Threshold ratio for early stopping</p>
+</dd>
+<dt>seed: int, default: 1230</dt><dd><p>Reproducibility, must be int</p>
+</dd>
+<dt>device_type: str, default: ‘cpu’</dt><dd><p>‘cpu’ or ‘gpu’</p>
+</dd>
+<dt>device_ids: int or str, default ‘0’</dt><dd><p>CUDA devices, it’s effective when <code class="docutils literal notranslate"><span class="pre">use_gpu</span></code> is True.
+For single-device modules, <code class="docutils literal notranslate"><span class="pre">device_ids</span></code> can be int or str,
+e.g. 0 or ‘0’, For multi-device modules, <code class="docutils literal notranslate"><span class="pre">device_ids</span></code> must be str,
+format like ‘0, 1’.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+<section id="module-8">
+<span id="grandag"></span><h2>GraNDAG<a class="headerlink" href="#module-8" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="castle.algorithms.GraNDAG">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">castle.algorithms.</span></span><span class="sig-name descname"><span class="pre">GraNDAG</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_num</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">64</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iterations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'NonLinGaussANM'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nonlinear</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'leaky-relu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rmsprop'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-08</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cpu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device_ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'0'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_pns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pns_thresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.75</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_neighbors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random_seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">42</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jac_thresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lambda_init</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu_init</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">omega_lambda</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">omega_mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop_crit_win</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_clamp_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm_prod</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'paths'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">square_prod</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/castle/algorithms/gradient/gran_dag/torch/gran_dag.html#GraNDAG"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.algorithms.GraNDAG" title="Link to this definition"></a></dt>
+<dd><p>Gradient Based Neural DAG Learner</p>
+<p>A gradient-based algorithm using neural network modeling for
+non-linear additive noise data</p>
+<p>References: <a class="reference external" href="https://arxiv.org/pdf/1906.02226.pdf">https://arxiv.org/pdf/1906.02226.pdf</a></p>
+<section id="id45">
+<h3>Parameters<a class="headerlink" href="#id45" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>input_dim<span class="classifier">int</span></dt><dd><p>number of input layer, must be int</p>
+</dd>
+<dt>hidden_num<span class="classifier">int, default 2</span></dt><dd><p>number of hidden layers</p>
+</dd>
+<dt>hidden_dim<span class="classifier">int, default 10</span></dt><dd><p>number of dimension per hidden layer</p>
+</dd>
+<dt>batch_size<span class="classifier">int, default 64</span></dt><dd><p>batch size of per training of NN</p>
+</dd>
+<dt>lr<span class="classifier">float, default 0.001</span></dt><dd><p>learning rate</p>
+</dd>
+<dt>iterations<span class="classifier">int, default 10000</span></dt><dd><p>times of iteration</p>
+</dd>
+<dt>model_name<span class="classifier">str, default ‘NonLinGaussANM’</span></dt><dd><p>name of model, ‘NonLinGauss’ or ‘NonLinGaussANM’</p>
+</dd>
+<dt>nonlinear<span class="classifier">str, default ‘leaky-relu’</span></dt><dd><p>name of Nonlinear activation function, ‘sigmoid’ or ‘leaky-relu’</p>
+</dd>
+<dt>optimizer<span class="classifier">str, default ‘rmsprop’</span></dt><dd><p>Method of optimize, <cite>rmsprop</cite> or <cite>sgd</cite></p>
+</dd>
+<dt>h_threshold<span class="classifier">float, default 1e-8</span></dt><dd><p>constrained threshold</p>
+</dd>
+<dt>device_type<span class="classifier">str, default ‘cpu’</span></dt><dd><p>use gpu or cpu</p>
+</dd>
+<dt>use_pns<span class="classifier">bool, default False</span></dt><dd><p>whether use pns before training, if nodes &gt; 50, use it.</p>
+</dd>
+<dt>pns_thresh<span class="classifier">float, default 0.75</span></dt><dd><p>threshold for feature importance score in pns</p>
+</dd>
+<dt>num_neighbors<span class="classifier">int, default None</span></dt><dd><p>number of potential parents for each variables</p>
+</dd>
+<dt>normalize<span class="classifier">bool, default False</span></dt><dd><p>whether normalize data</p>
+</dd>
+<dt>precision<span class="classifier">bool, default False</span></dt><dd><p>whether use Double precision
+if True, use torch.FloatTensor; if False, use torch.DoubleTensor</p>
+</dd>
+<dt>random_seed<span class="classifier">int, default 42</span></dt><dd><p>random seed</p>
+</dd>
+<dt>norm_prod<span class="classifier">str, default ‘paths’</span></dt><dd><p>use norm of product of paths, ‘none’ or ‘paths’
+‘paths’: use norm, ‘none’: with no norm</p>
+</dd>
+<dt>square_prod<span class="classifier">bool, default False</span></dt><dd><p>use squared product of paths</p>
+</dd>
+<dt>jac_thresh<span class="classifier">bool, default True</span></dt><dd><p>get the average Jacobian with the trained model</p>
+</dd>
+<dt>lambda_init<span class="classifier">float, default 0.0</span></dt><dd><p>initialization of Lagrangian coefficient in the optimization of
+augmented Lagrangian</p>
+</dd>
+<dt>mu_init<span class="classifier">float, default 0.001</span></dt><dd><p>initialization of penalty coefficient in the optimization of
+augmented Lagrangian</p>
+</dd>
+<dt>omega_lambda<span class="classifier">float, default 0.0001</span></dt><dd><p>tolerance on the delta lambda, to find saddle points</p>
+</dd>
+<dt>omega_mu<span class="classifier">float, default 0.9</span></dt><dd><p>check whether the constraint decreases sufficiently if it decreases
+at least (1-omega_mu) * h_prev</p>
+</dd>
+<dt>stop_crit_win<span class="classifier">int, default 100</span></dt><dd><p>number of iterations for updating values</p>
+</dd>
+<dt>edge_clamp_range<span class="classifier">float, default 0.0001</span></dt><dd><p>threshold for keeping the edge (if during training)</p>
+</dd>
+</dl>
+</section>
+<section id="id46">
+<h3>Examples<a class="headerlink" href="#id46" title="Link to this heading"></a></h3>
+<blockquote>
+<div><p>Load data</p>
+</div></blockquote>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_dataset</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">,</span> <span class="n">true_dag</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;IID_Test&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gnd</span> <span class="o">=</span> <span class="n">GraNDAG</span><span class="p">(</span><span class="n">input_dim</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gnd</span><span class="o">.</span><span class="n">learn</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>Also print GraN_DAG.model.adjacency with torch.Tensor type
+or print GranN_DAG.causal_matrix with numpy.ndarray.</p>
+</div></blockquote>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">gnd</span><span class="o">.</span><span class="n">causal_matrix</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">gnd</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">adjacency</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="castle.algorithms.GraNDAG.learn">
+<span class="sig-name descname"><span class="pre">learn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/castle/algorithms/gradient/gran_dag/torch/gran_dag.html#GraNDAG.learn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.algorithms.GraNDAG.learn" title="Link to this definition"></a></dt>
+<dd><p>Set up and run the Gran-DAG algorithm</p>
+<section id="id47">
+<h4>Parameters<a class="headerlink" href="#id47" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>data: numpy.ndarray or Tensor</dt><dd><p>include Tensor.data</p>
+</dd>
+<dt>columns<span class="classifier">Index or array-like</span></dt><dd><p>Column labels to use for resulting tensor. Will default to
+RangeIndex (0, 1, 2, …, n) if no column labels are provided.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+</section>
+<section id="module-9">
+<span id="mcsl"></span><h2>MCSL<a class="headerlink" href="#module-9" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="castle.algorithms.MCSL">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">castle.algorithms.</span></span><span class="sig-name descname"><span class="pre">MCSL</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'nn'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_hidden_layers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">16</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph_thresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l1_graph_penalty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.002</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">learning_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.03</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iter_step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h_tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_rho</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho_thresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000000000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h_thresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho_multiply</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cpu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device_ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'0'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random_seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1230</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/castle/algorithms/gradient/mcsl/torch/mcsl.html#MCSL"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.algorithms.MCSL" title="Link to this definition"></a></dt>
+<dd><p>Masked Gradient-Based Causal Structure Learning</p>
+<p>A gradient-based algorithm for non-linear additive noise data by learning
+the binary adjacency matrix.</p>
+<section id="id48">
+<h3>Parameters<a class="headerlink" href="#id48" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>model_type: str, default: ‘nn’</dt><dd><p><cite>nn</cite> denotes neural network, <cite>qr</cite> denotes quatratic regression.</p>
+</dd>
+<dt>num_hidden_layers: int, default: 4</dt><dd><p>Number of hidden layer in neural network when <cite>model_type</cite> is ‘nn’.</p>
+</dd>
+<dt>hidden_dim: int, default: 16</dt><dd><p>Number of hidden dimension in hidden layer, when <cite>model_type</cite> is ‘nn’.</p>
+</dd>
+<dt>graph_thresh: float, default: 0.5</dt><dd><p>Threshold used to determine whether has edge in graph, element greater
+than the <cite>graph_thresh</cite> means has a directed edge, otherwise has not.</p>
+</dd>
+<dt>l1_graph_penalty: float, default: 2e-3</dt><dd><p>Penalty weight for L1 normalization</p>
+</dd>
+<dt>learning_rate: float, default: 3e-2</dt><dd><p>learning rate for opitimizer</p>
+</dd>
+<dt>max_iter: int, default: 25</dt><dd><p>Number of iterations for optimization problem</p>
+</dd>
+<dt>iter_step: int, default: 1000</dt><dd><p>Number of steps for each iteration</p>
+</dd>
+<dt>init_iter: int, default: 2</dt><dd><p>Initial iteration to disallow early stopping</p>
+</dd>
+<dt>h_tol: float, default: 1e-10</dt><dd><p>Tolerance of optimization problem</p>
+</dd>
+<dt>init_rho: float, default: 1e-5</dt><dd><p>Initial value for penalty parameter.</p>
+</dd>
+<dt>rho_thresh: float, default: 1e14</dt><dd><p>Threshold for penalty parameter.</p>
+</dd>
+<dt>h_thresh: float, default: 0.25</dt><dd><p>Threshold for h</p>
+</dd>
+<dt>rho_multiply: float, default: 10.0</dt><dd><p>Multiplication to amplify rho each time</p>
+</dd>
+<dt>temperature: float, default: 0.2</dt><dd><p>Temperature for gumbel sigmoid</p>
+</dd>
+<dt>device_type: str, default: ‘cpu’</dt><dd><p>‘cpu’ or ‘gpu’</p>
+</dd>
+<dt>device_ids: int or str, default ‘0’</dt><dd><p>CUDA devices, it’s effective when <code class="docutils literal notranslate"><span class="pre">use_gpu</span></code> is True.
+For single-device modules, <code class="docutils literal notranslate"><span class="pre">device_ids</span></code> can be int or str, e.g. 0 or ‘0’,
+For multi-device modules, <code class="docutils literal notranslate"><span class="pre">device_ids</span></code> must be str, format like ‘0, 1’.</p>
+</dd>
+<dt>random_seed: int, default: 1230</dt><dd><p>random seed for every random value</p>
+</dd>
+</dl>
+</section>
+<section id="id49">
+<h3>References<a class="headerlink" href="#id49" title="Link to this heading"></a></h3>
+<p><a class="reference external" href="https://arxiv.org/abs/1910.08527">https://arxiv.org/abs/1910.08527</a></p>
+</section>
+<section id="id50">
+<h3>Examples<a class="headerlink" href="#id50" title="Link to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.algorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">MCSL</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_dataset</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">GraphDAG</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">MetricsDAG</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">true_dag</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;iid_test&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="n">MCSL</span><span class="p">(</span><span class="n">iter_step</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">rho_thres</span><span class="o">=</span><span class="mf">1e14</span><span class="p">,</span> <span class="n">init_rho</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span>
+<span class="gp">... </span>         <span class="n">rho_multiply</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">graph_thres</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">l1_graph_penalty</span><span class="o">=</span><span class="mf">2e-3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n</span><span class="o">.</span><span class="n">learn</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">GraphDAG</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">causal_matrix</span><span class="p">,</span> <span class="n">true_dag</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">met</span> <span class="o">=</span> <span class="n">MetricsDAG</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">causal_matrix</span><span class="p">,</span> <span class="n">true_dag</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">met</span><span class="o">.</span><span class="n">metrics</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="castle.algorithms.MCSL.learn">
+<span class="sig-name descname"><span class="pre">learn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pns_mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/castle/algorithms/gradient/mcsl/torch/mcsl.html#MCSL.learn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.algorithms.MCSL.learn" title="Link to this definition"></a></dt>
+<dd><p>Set up and run the MCSL algorithm.</p>
+<section id="id51">
+<h4>Parameters<a class="headerlink" href="#id51" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>data: castle.Tensor or numpy.ndarray</dt><dd><p>The castle.Tensor or numpy.ndarray format data you want to learn.</p>
+</dd>
+<dt>columns: Index or array-like</dt><dd><p>Column labels to use for resulting tensor. Will default to
+RangeIndex (0, 1, 2, …, n) if no column labels are provided.</p>
+</dd>
+<dt>pns_mask: array_like or None</dt><dd><p>The mask matrix.
+array with element in {0, 1}, <code class="docutils literal notranslate"><span class="pre">0</span></code> denotes has no edge in i -&gt; j,
+<code class="docutils literal notranslate"><span class="pre">1</span></code> denotes maybe has edge in i -&gt; j or not.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+</section>
+<section id="module-10">
+<span id="notears"></span><h2>Notears<a class="headerlink" href="#module-10" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="castle.algorithms.Notears">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">castle.algorithms.</span></span><span class="sig-name descname"><span class="pre">Notears</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lambda1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'l2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h_tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-08</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e+16</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/castle/algorithms/gradient/notears/linear.html#Notears"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.algorithms.Notears" title="Link to this definition"></a></dt>
+<dd><p>Notears Algorithm.
+A gradient-based algorithm for linear data models (typically with least-squares loss).</p>
+<section id="id52">
+<h3>Parameters<a class="headerlink" href="#id52" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>lambda1: float </dt><dd><p>l1 penalty parameter</p>
+</dd>
+<dt>loss_type: str </dt><dd><p>l2, logistic, poisson</p>
+</dd>
+<dt>max_iter: int </dt><dd><p>max num of dual ascent steps</p>
+</dd>
+<dt>h_tol: float </dt><dd><p>exit if <a href="#id94"><span class="problematic" id="id95">|h(w_est)|</span></a> &lt;= htol</p>
+</dd>
+<dt>rho_max: float </dt><dd><p>exit if rho &gt;= rho_max</p>
+</dd>
+<dt>w_threshold: float </dt><dd><p>drop edge if <a href="#id96"><span class="problematic" id="id97">|weight|</span></a> &lt; threshold</p>
+</dd>
+</dl>
+</section>
+<section id="id53">
+<h3>Attributes<a class="headerlink" href="#id53" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>causal_matrix<span class="classifier">numpy.ndarray</span></dt><dd><p>Learned causal structure matrix</p>
+</dd>
+</dl>
+</section>
+<section id="id54">
+<h3>References<a class="headerlink" href="#id54" title="Link to this heading"></a></h3>
+<p><a class="reference external" href="https://arxiv.org/abs/1803.01422">https://arxiv.org/abs/1803.01422</a></p>
+</section>
+<section id="id55">
+<h3>Examples<a class="headerlink" href="#id55" title="Link to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.algorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">Notears</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_dataset</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">GraphDAG</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">MetricsDAG</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span><span class="p">,</span> <span class="n">true_dag</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;IID_Test&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="n">Notears</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n</span><span class="o">.</span><span class="n">learn</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">GraphDAG</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">causal_matrix</span><span class="p">,</span> <span class="n">true_dag</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">met</span> <span class="o">=</span> <span class="n">MetricsDAG</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">causal_matrix</span><span class="p">,</span> <span class="n">true_dag</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">met</span><span class="o">.</span><span class="n">metrics</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="castle.algorithms.Notears.learn">
+<span class="sig-name descname"><span class="pre">learn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/castle/algorithms/gradient/notears/linear.html#Notears.learn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.algorithms.Notears.learn" title="Link to this definition"></a></dt>
+<dd><p>Set up and run the Notears algorithm.</p>
+<section id="id56">
+<h4>Parameters<a class="headerlink" href="#id56" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>data: castle.Tensor or numpy.ndarray</dt><dd><p>The castle.Tensor or numpy.ndarray format data you want to learn.</p>
+</dd>
+<dt>columns<span class="classifier">Index or array-like</span></dt><dd><p>Column labels to use for resulting tensor. Will default to
+RangeIndex (0, 1, 2, …, n) if no column labels are provided.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="castle.algorithms.Notears.notears_linear">
+<span class="sig-name descname"><span class="pre">notears_linear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lambda1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h_tol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho_max</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/castle/algorithms/gradient/notears/linear.html#Notears.notears_linear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.algorithms.Notears.notears_linear" title="Link to this definition"></a></dt>
+<dd><p>Solve min_W L(W; X) + lambda1 ‖W‖_1 s.t. h(W) = 0 using 
+augmented Lagrangian.</p>
+<section id="id57">
+<h4>Parameters<a class="headerlink" href="#id57" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>X: np.ndarray </dt><dd><p>n*d sample matrix</p>
+</dd>
+</dl>
+</section>
+<section id="return">
+<h4>Return<a class="headerlink" href="#return" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>W_est: np.ndarray</dt><dd><p>d*d estimated DAG</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+</section>
+<section id="module-11">
+<span id="notearslowrank"></span><h2>NotearsLowRank<a class="headerlink" href="#module-11" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="castle.algorithms.NotearsLowRank">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">castle.algorithms.</span></span><span class="sig-name descname"><span class="pre">NotearsLowRank</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">w_init</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">15</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h_tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e+20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/castle/algorithms/gradient/notears/low_rank.html#NotearsLowRank"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.algorithms.NotearsLowRank" title="Link to this definition"></a></dt>
+<dd><p>NotearsLowRank Algorithm.
+Adapting NOTEARS for large problems with low-rank causal graphs.</p>
+<section id="id58">
+<h3>Parameters<a class="headerlink" href="#id58" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>w_init: None or numpy.ndarray</dt><dd><p>Initialized weight matrix</p>
+</dd>
+<dt>max_iter: int</dt><dd><p>Maximum number of iterations</p>
+</dd>
+<dt>h_tol: float</dt><dd><p>exit if <a href="#id98"><span class="problematic" id="id99">|h(w)|</span></a> &lt;= h_tol</p>
+</dd>
+<dt>rho_max: float</dt><dd><p>maximum for rho</p>
+</dd>
+<dt>w_threshold<span class="classifier">float,  default=’0.3’</span></dt><dd><p>Drop edge if <a href="#id100"><span class="problematic" id="id101">|weight|</span></a> &lt; threshold</p>
+</dd>
+</dl>
+</section>
+<section id="id59">
+<h3>Attributes<a class="headerlink" href="#id59" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>causal_matrix<span class="classifier">numpy.ndarray</span></dt><dd><p>Learned causal structure matrix</p>
+</dd>
+</dl>
+</section>
+<section id="id60">
+<h3>References<a class="headerlink" href="#id60" title="Link to this heading"></a></h3>
+<p><a class="reference external" href="https://arxiv.org/abs/2006.05691">https://arxiv.org/abs/2006.05691</a></p>
+</section>
+<section id="id61">
+<h3>Examples<a class="headerlink" href="#id61" title="Link to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.algorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">NotearsLowRank</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_dataset</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">GraphDAG</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">MetricsDAG</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span><span class="p">,</span> <span class="n">true_dag</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;IID_Test&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rank</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">matrix_rank</span><span class="p">(</span><span class="n">true_dag</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="n">NotearsLowRank</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n</span><span class="o">.</span><span class="n">learn</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">rank</span><span class="o">=</span><span class="n">rank</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">GraphDAG</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">causal_matrix</span><span class="p">,</span> <span class="n">true_dag</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">met</span> <span class="o">=</span> <span class="n">MetricsDAG</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">causal_matrix</span><span class="p">,</span> <span class="n">true_dag</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">met</span><span class="o">.</span><span class="n">metrics</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="castle.algorithms.NotearsLowRank.learn">
+<span class="sig-name descname"><span class="pre">learn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rank</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/castle/algorithms/gradient/notears/low_rank.html#NotearsLowRank.learn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.algorithms.NotearsLowRank.learn" title="Link to this definition"></a></dt>
+<dd><p>Set up and run the NotearsLowRank algorithm.</p>
+<section id="id62">
+<h4>Parameters<a class="headerlink" href="#id62" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>data: castle.Tensor or numpy.ndarray</dt><dd><p>The castle.Tensor or numpy.ndarray format data you want to learn.</p>
+</dd>
+<dt>columns<span class="classifier">Index or array-like</span></dt><dd><p>Column labels to use for resulting tensor. Will default to
+RangeIndex (0, 1, 2, …, n) if no column labels are provided.</p>
+</dd>
+<dt>rank: int</dt><dd><p>The algebraic rank of the weighted adjacency matrix of a graph.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="castle.algorithms.NotearsLowRank.notears_low_rank">
+<span class="sig-name descname"><span class="pre">notears_low_rank</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rank</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w_init</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/castle/algorithms/gradient/notears/low_rank.html#NotearsLowRank.notears_low_rank"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.algorithms.NotearsLowRank.notears_low_rank" title="Link to this definition"></a></dt>
+<dd><p>Solve min_W ell(W; X) s.t. h(W) = 0 using augmented Lagrangian.</p>
+<section id="id63">
+<h4>Parameters<a class="headerlink" href="#id63" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>X: [n,d] sample matrix</dt><dd><p>max_iter: max number of dual ascent steps.</p>
+</dd>
+<dt>rank: int</dt><dd><p>The rank of data.</p>
+</dd>
+<dt>w_init: None or numpy.ndarray</dt><dd><p>Initialized weight matrix</p>
+</dd>
+</dl>
+</section>
+<section id="id64">
+<h4>Return<a class="headerlink" href="#id64" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>W_est: np.ndarray</dt><dd><p>estimate [d,d] dag matrix</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+</section>
+<section id="module-12">
+<span id="golem"></span><h2>GOLEM<a class="headerlink" href="#module-12" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="castle.algorithms.GOLEM">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">castle.algorithms.</span></span><span class="sig-name descname"><span class="pre">GOLEM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">B_init</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lambda_1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.02</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lambda_2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">equal_variances</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">non_equal_variances</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">learning_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">checkpoint_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph_thres</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cpu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device_ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/castle/algorithms/gradient/notears/torch/golem.html#GOLEM"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.algorithms.GOLEM" title="Link to this definition"></a></dt>
+<dd><p>GOLEM Algorithm.
+A more efficient version of NOTEARS that can reduce number of optimization iterations.</p>
+<section id="paramaters">
+<h3>Paramaters<a class="headerlink" href="#paramaters" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>B_init: None</dt><dd><p>File of weighted matrix for initialization. Set to None to disable.</p>
+</dd>
+<dt>lambda_1: float</dt><dd><p>Coefficient of L1 penalty.</p>
+</dd>
+<dt>lambda_2: float</dt><dd><p>Coefficient of DAG penalty.</p>
+</dd>
+<dt>equal_variances: bool</dt><dd><p>Assume equal noise variances for likelibood objective.</p>
+</dd>
+<dt>non_equal_variances: bool</dt><dd><p>Assume non-equal noise variances for likelibood objective.</p>
+</dd>
+<dt>learning_rate: float</dt><dd><p>Learning rate of Adam optimizer.</p>
+</dd>
+<dt>num_iter: float</dt><dd><p>Number of iterations for training.</p>
+</dd>
+<dt>checkpoint_iter: int</dt><dd><p>Number of iterations between each checkpoint. Set to None to disable.</p>
+</dd>
+<dt>seed: int</dt><dd><p>Random seed.</p>
+</dd>
+<dt>graph_thres: float</dt><dd><p>Threshold for weighted matrix.</p>
+</dd>
+<dt>device_type: bool</dt><dd><p>whether to use GPU or not</p>
+</dd>
+<dt>device_ids: int</dt><dd><p>choose which gpu to use</p>
+</dd>
+</dl>
+</section>
+<section id="id65">
+<h3>Attributes<a class="headerlink" href="#id65" title="Link to this heading"></a></h3>
+<dl>
+<dt>causal_matrix<span class="classifier">numpy.ndarray</span></dt><dd><p>Learned causal structure matrix (binary)</p>
+<dl class="simple">
+<dt>weight_causal_matrix: numpy.ndarray</dt><dd><p>Learned causal structure matrix (weighted)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+<section id="id66">
+<h3>References<a class="headerlink" href="#id66" title="Link to this heading"></a></h3>
+<p><a class="reference external" href="https://arxiv.org/abs/2006.10201">https://arxiv.org/abs/2006.10201</a></p>
+</section>
+<section id="id67">
+<h3>Examples<a class="headerlink" href="#id67" title="Link to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.algorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">GOLEM</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_dataset</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">GraphDAG</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">MetricsDAG</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span><span class="p">,</span> <span class="n">true_dag</span><span class="p">,</span> <span class="n">topology_matrix</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;IID_Test&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="n">GOLEM</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n</span><span class="o">.</span><span class="n">learn</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">GraphDAG</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">causal_matrix</span><span class="p">,</span> <span class="n">true_dag</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">met</span> <span class="o">=</span> <span class="n">MetricsDAG</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">causal_matrix</span><span class="p">,</span> <span class="n">true_dag</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">met</span><span class="o">.</span><span class="n">metrics</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="castle.algorithms.GOLEM.learn">
+<span class="sig-name descname"><span class="pre">learn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/castle/algorithms/gradient/notears/torch/golem.html#GOLEM.learn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.algorithms.GOLEM.learn" title="Link to this definition"></a></dt>
+<dd><p>Set up and run the GOLEM algorithm.</p>
+<section id="id68">
+<h4>Parameters<a class="headerlink" href="#id68" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>data: castle.Tensor or numpy.ndarray</dt><dd><p>The castle.Tensor or numpy.ndarray format data you want to learn.</p>
+</dd>
+<dt>X: numpy.ndarray</dt><dd><p>[n, d] data matrix.</p>
+</dd>
+<dt>columns<span class="classifier">Index or array-like</span></dt><dd><p>Column labels to use for resulting tensor. Will default to
+RangeIndex (0, 1, 2, …, n) if no column labels are provided.</p>
+</dd>
+<dt>lambda_1: float</dt><dd><p>Coefficient of L1 penalty.</p>
+</dd>
+<dt>lambda_2: float</dt><dd><p>Coefficient of DAG penalty.</p>
+</dd>
+<dt>equal_variances: bool</dt><dd><p>Whether to assume equal noise variances
+for likelibood objective. Default: True.</p>
+</dd>
+<dt>num_iter:int</dt><dd><p>Number of iterations for training.</p>
+</dd>
+<dt>learning_rate: float</dt><dd><p>Learning rate of Adam optimizer. Default: 1e-3.</p>
+</dd>
+<dt>seed: int</dt><dd><p>Random seed. Default: 1.</p>
+</dd>
+<dt>checkpoint_iter: int</dt><dd><p>Number of iterations between each checkpoint.
+Set to None to disable. Default: None.</p>
+</dd>
+<dt>B_init: numpy.ndarray or None</dt><dd><p>[d, d] weighted matrix for initialization.
+Set to None to disable. Default: None.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+</section>
+<section id="module-13">
+<span id="notearsnonlinear"></span><h2>NotearsNonlinear<a class="headerlink" href="#module-13" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="castle.algorithms.NotearsNonlinear">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">castle.algorithms.</span></span><span class="sig-name descname"><span class="pre">NotearsNonlinear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lambda1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lambda2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h_tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-08</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho_max</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e+16</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_layers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(10,</span> <span class="pre">1)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expansions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'mlp'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'cpu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device_ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/castle/algorithms/gradient/notears/torch/nonlinear.html#NotearsNonlinear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.algorithms.NotearsNonlinear" title="Link to this definition"></a></dt>
+<dd><p>Notears Nonlinear.
+include notears-mlp and notears-sob.
+A gradient-based algorithm using neural network or Sobolev space modeling for non-linear causal relationships.</p>
+<section id="id69">
+<h3>Parameters<a class="headerlink" href="#id69" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>lambda1: float </dt><dd><p>l1 penalty parameter</p>
+</dd>
+<dt>lambda2: float </dt><dd><p>l2 penalty parameter</p>
+</dd>
+<dt>max_iter: int </dt><dd><p>max num of dual ascent steps</p>
+</dd>
+<dt>h_tol: float </dt><dd><p>exit if <a href="#id102"><span class="problematic" id="id103">|h(w_est)|</span></a> &lt;= htol</p>
+</dd>
+<dt>rho_max: float </dt><dd><p>exit if rho &gt;= rho_max</p>
+</dd>
+<dt>w_threshold: float </dt><dd><p>drop edge if <a href="#id104"><span class="problematic" id="id105">|weight|</span></a> &lt; threshold</p>
+</dd>
+<dt>hidden_layers: Iterrable</dt><dd><p>Dimension of per hidden layer, and the last element must be 1 as output dimension.
+At least contains 2 elements. For example: hidden_layers=(5, 10, 1), denotes two hidden
+layer has 5 and 10 dimension and output layer has 1 dimension.
+It is effective when model_type=’mlp’.</p>
+</dd>
+<dt>expansions: int</dt><dd><p>expansions of each variable, it is effective when model_type=’sob’.</p>
+</dd>
+<dt>bias: bool</dt><dd><p>Indicates whether to use weight deviation.</p>
+</dd>
+<dt>model_type: str</dt><dd><p>The Choice of Two Nonlinear Network Models in a Notears Framework:
+Multilayer perceptrons value is ‘mlp’, Basis expansions value is ‘sob’.</p>
+</dd>
+<dt>device_type: str, default: cpu</dt><dd><p><code class="docutils literal notranslate"><span class="pre">cpu</span></code> or <code class="docutils literal notranslate"><span class="pre">gpu</span></code></p>
+</dd>
+<dt>device_ids: int or str, default None</dt><dd><p>CUDA devices, it’s effective when <code class="docutils literal notranslate"><span class="pre">use_gpu</span></code> is True.
+For single-device modules, <code class="docutils literal notranslate"><span class="pre">device_ids</span></code> can be int or str, e.g. 0 or ‘0’,
+For multi-device modules, <code class="docutils literal notranslate"><span class="pre">device_ids</span></code> must be str, format like ‘0, 1’.</p>
+</dd>
+</dl>
+</section>
+<section id="id70">
+<h3>Attributes<a class="headerlink" href="#id70" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>causal_matrix<span class="classifier">numpy.ndarray</span></dt><dd><p>Learned causal structure matrix</p>
+</dd>
+</dl>
+</section>
+<section id="id71">
+<h3>References<a class="headerlink" href="#id71" title="Link to this heading"></a></h3>
+<p><a class="reference external" href="https://arxiv.org/abs/1909.13189">https://arxiv.org/abs/1909.13189</a></p>
+</section>
+<section id="id72">
+<h3>Examples<a class="headerlink" href="#id72" title="Link to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.algorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">NotearsNonlinear</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_dataset</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">GraphDAG</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">MetricsDAG</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span><span class="p">,</span> <span class="n">true_dag</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;IID_Test&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="n">NotearsNonlinear</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n</span><span class="o">.</span><span class="n">learn</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">GraphDAG</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">causal_matrix</span><span class="p">,</span> <span class="n">true_dag</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">met</span> <span class="o">=</span> <span class="n">MetricsDAG</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">causal_matrix</span><span class="p">,</span> <span class="n">true_dag</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">met</span><span class="o">.</span><span class="n">metrics</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="castle.algorithms.NotearsNonlinear.dual_ascent_step">
+<span class="sig-name descname"><span class="pre">dual_ascent_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/castle/algorithms/gradient/notears/torch/nonlinear.html#NotearsNonlinear.dual_ascent_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.algorithms.NotearsNonlinear.dual_ascent_step" title="Link to this definition"></a></dt>
+<dd><p>Perform one step of dual ascent in augmented Lagrangian.</p>
+<section id="id73">
+<h4>Parameters<a class="headerlink" href="#id73" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>model: nn.Module</dt><dd><p>network model</p>
+</dd>
+<dt>X: torch.tenser</dt><dd><p>sample data</p>
+</dd>
+</dl>
+</section>
+<section id="id74">
+<h4>Returns<a class="headerlink" href="#id74" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>:tuple</dt><dd><p>cycle control parameter</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="castle.algorithms.NotearsNonlinear.get_model">
+<span class="sig-name descname"><span class="pre">get_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dim</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/castle/algorithms/gradient/notears/torch/nonlinear.html#NotearsNonlinear.get_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.algorithms.NotearsNonlinear.get_model" title="Link to this definition"></a></dt>
+<dd><blockquote>
+<div><p>Choose a different model.</p>
+</div></blockquote>
+<section id="id75">
+<h4>Parameters<a class="headerlink" href="#id75" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>input_dim: int</dt><dd><p>Enter the number of data dimensions.</p>
+</dd>
+</dl>
+</section>
+<section id="id76">
+<h4>Returns<a class="headerlink" href="#id76" title="Link to this heading"></a></h4>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="castle.algorithms.NotearsNonlinear.learn">
+<span class="sig-name descname"><span class="pre">learn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/castle/algorithms/gradient/notears/torch/nonlinear.html#NotearsNonlinear.learn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.algorithms.NotearsNonlinear.learn" title="Link to this definition"></a></dt>
+<dd><p>Set up and run the NotearsNonlinear algorithm.</p>
+<section id="id77">
+<h4>Parameters<a class="headerlink" href="#id77" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>data: castle.Tensor or numpy.ndarray</dt><dd><p>The castle.Tensor or numpy.ndarray format data you want to learn.</p>
+</dd>
+<dt>columns<span class="classifier">Index or array-like</span></dt><dd><p>Column labels to use for resulting tensor. Will default to
+RangeIndex (0, 1, 2, …, n) if no column labels are provided.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="castle.algorithms.NotearsNonlinear.notears_nonlinear">
+<span class="sig-name descname"><span class="pre">notears_nonlinear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/castle/algorithms/gradient/notears/torch/nonlinear.html#NotearsNonlinear.notears_nonlinear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.algorithms.NotearsNonlinear.notears_nonlinear" title="Link to this definition"></a></dt>
+<dd><p>notaears frame entrance.</p>
+<section id="id78">
+<h4>Parameters<a class="headerlink" href="#id78" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>model: nn.Module</dt><dd><p>network model</p>
+</dd>
+<dt>X: castle.Tensor or numpy.ndarray</dt><dd><p>sample data</p>
+</dd>
+</dl>
+</section>
+<section id="id79">
+<h4>Returns<a class="headerlink" href="#id79" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>:tuple</dt><dd><p>Prediction Graph Matrix Coefficients.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+</section>
+<section id="module-14">
+<span id="pnl"></span><h2>PNL<a class="headerlink" href="#module-14" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="castle.algorithms.PNL">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">castle.algorithms.</span></span><span class="sig-name descname"><span class="pre">PNL</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hidden_layers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">64</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epochs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">activation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">LeakyReLU(negative_slope=0.01)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cpu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device_ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/castle/algorithms/gradient/pnl/torch/pnl.html#PNL"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.algorithms.PNL" title="Link to this definition"></a></dt>
+<dd><p>On the Identifiability of the Post-Nonlinear Causal Model</p>
+<section id="id80">
+<h3>References<a class="headerlink" href="#id80" title="Link to this heading"></a></h3>
+<p><a class="reference external" href="https://arxiv.org/ftp/arxiv/papers/1205/1205.2599.pdf">https://arxiv.org/ftp/arxiv/papers/1205/1205.2599.pdf</a></p>
+</section>
+<section id="id81">
+<h3>Parameters<a class="headerlink" href="#id81" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>hidden_layers: int</dt><dd><p>number of hidden layer of mlp</p>
+</dd>
+<dt>hidden_units: int</dt><dd><p>number of unit of per hidden layer</p>
+</dd>
+<dt>batch_size: int</dt><dd><p>size of training batch</p>
+</dd>
+<dt>epochs: int</dt><dd><p>training times on all samples</p>
+</dd>
+<dt>lr: float</dt><dd><p>learning rate</p>
+</dd>
+<dt>alpha: float</dt><dd><p>significance level</p>
+</dd>
+<dt>bias: bool</dt><dd><p>whether use bias</p>
+</dd>
+<dt>activation: callable</dt><dd><p>nonlinear activation function</p>
+</dd>
+<dt>device_type: str</dt><dd><p>‘cpu’ or ‘gpu’, default: ‘cpu’</p>
+</dd>
+<dt>device_ids: int or str</dt><dd><p>e.g. 0 or ‘0,1’, denotes which gpu that you want to use.</p>
+</dd>
+</dl>
+</section>
+<section id="id82">
+<h3>Examples<a class="headerlink" href="#id82" title="Link to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.algorithms.gradient.pnl.torch</span><span class="w"> </span><span class="kn">import</span> <span class="n">PNL</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_dataset</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">GraphDAG</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">MetricsDAG</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span><span class="p">,</span> <span class="n">true_dag</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;IID_Test&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="n">PNL</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n</span><span class="o">.</span><span class="n">learn</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">GraphDAG</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">causal_matrix</span><span class="p">,</span> <span class="n">true_dag</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">met</span> <span class="o">=</span> <span class="n">MetricsDAG</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">causal_matrix</span><span class="p">,</span> <span class="n">true_dag</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">met</span><span class="o">.</span><span class="n">metrics</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+</section>
+<section id="module-15">
+<span id="rl"></span><h2>RL<a class="headerlink" href="#module-15" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="castle.algorithms.RL">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">castle.algorithms.</span></span><span class="sig-name descname"><span class="pre">RL</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">encoder_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'TransformerEncoder'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">64</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_heads</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">16</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_stacks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">residual</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decoder_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'SingleLayerDecoder'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decoder_activation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tanh'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decoder_hidden_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">16</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_bias</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_bias_constant</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias_initial_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">64</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_dimension</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">64</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transpose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">score_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'BIC'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reg_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'LR'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lambda_iter_num</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lambda_flag_default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">score_bd_tight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lambda2_update</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">score_lower</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">score_upper</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nb_epoch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr1_start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr1_decay_step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr1_decay_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.96</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.99</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_baseline</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l1_graph_reg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cpu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device_ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/castle/algorithms/gradient/rl/torch/rl.html#RL"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.algorithms.RL" title="Link to this definition"></a></dt>
+<dd><p>RL Algorithm.
+A RL-based algorithm that can work with flexible score functions (including non-smooth ones).</p>
+<section id="id83">
+<h3>Parameters<a class="headerlink" href="#id83" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>encoder_type: str</dt><dd><p>type of encoder used</p>
+</dd>
+<dt>hidden_dim: int</dt><dd><p>actor LSTM num_neurons</p>
+</dd>
+<dt>num_heads: int</dt><dd><p>actor input embedding</p>
+</dd>
+<dt>num_stacks: int</dt><dd><p>actor LSTM num_neurons</p>
+</dd>
+<dt>residual: bool</dt><dd><p>whether to use residual for gat encoder</p>
+</dd>
+<dt>decoder_type: str</dt><dd><p>type of decoder used</p>
+</dd>
+<dt>decoder_activation: str</dt><dd><p>activation for decoder</p>
+</dd>
+<dt>decoder_hidden_dim: int</dt><dd><p>hidden dimension for decoder</p>
+</dd>
+<dt>use_bias: bool</dt><dd><p>Whether to add bias term when calculating decoder logits</p>
+</dd>
+<dt>use_bias_constant: bool</dt><dd><p>Whether to add bias term as CONSTANT when calculating decoder logits</p>
+</dd>
+<dt>bias_initial_value: float</dt><dd><p>Initial value for bias term when calculating decoder logits</p>
+</dd>
+<dt>batch_size: int</dt><dd><p>batch size for training</p>
+</dd>
+<dt>input_dimension: int</dt><dd><p>dimension of reshaped vector</p>
+</dd>
+<dt>normalize: bool</dt><dd><p>whether the inputdata shall be normalized</p>
+</dd>
+<dt>transpose: bool</dt><dd><p>whether the true graph needs transposed</p>
+</dd>
+<dt>score_type: str</dt><dd><p>score functions</p>
+</dd>
+<dt>reg_type: str</dt><dd><p>regressor type (in combination wth score_type)</p>
+</dd>
+<dt>lambda_iter_num: int</dt><dd><p>how often to update lambdas</p>
+</dd>
+<dt>lambda_flag_default: bool</dt><dd><p>with set lambda parameters; true with default strategy and ignore input bounds</p>
+</dd>
+<dt>score_bd_tight: bool</dt><dd><p>if bound is tight, then simply use a fixed value, rather than the adaptive one</p>
+</dd>
+<dt>lambda1_update: float</dt><dd><p>increasing additive lambda1</p>
+</dd>
+<dt>lambda2_update: float</dt><dd><p>increasing  multiplying lambda2</p>
+</dd>
+<dt>score_lower: float</dt><dd><p>lower bound on lambda1</p>
+</dd>
+<dt>score_upper: float</dt><dd><p>upper bound on lambda1</p>
+</dd>
+<dt>lambda2_lower: float</dt><dd><p>lower bound on lambda2</p>
+</dd>
+<dt>lambda2_upper: float</dt><dd><p>upper bound on lambda2</p>
+</dd>
+<dt>seed: int</dt><dd><p>seed</p>
+</dd>
+<dt>nb_epoch: int</dt><dd><p>nb epoch</p>
+</dd>
+<dt>lr1_start: float</dt><dd><p>actor learning rate</p>
+</dd>
+<dt>lr1_decay_step: int</dt><dd><p>lr1 decay step</p>
+</dd>
+<dt>lr1_decay_rate: float</dt><dd><p>lr1 decay rate</p>
+</dd>
+<dt>alpha: float</dt><dd><p>update factor moving average baseline</p>
+</dd>
+<dt>init_baseline: float</dt><dd><p>initial baseline - REINFORCE</p>
+</dd>
+<dt>temperature: float</dt><dd><p>pointer_net initial temperature</p>
+</dd>
+<dt>C: float</dt><dd><p>pointer_net tan clipping</p>
+</dd>
+<dt>l1_graph_reg: float</dt><dd><p>L1 graph regularization to encourage sparsity</p>
+</dd>
+<dt>inference_mode: bool</dt><dd><p>switch to inference mode when model is trained</p>
+</dd>
+<dt>verbose: bool</dt><dd><p>print detailed logging or not</p>
+</dd>
+<dt>device_type: str</dt><dd><p>whether to use GPU or not</p>
+</dd>
+<dt>device_ids: int</dt><dd><p>choose which gpu to use</p>
+</dd>
+</dl>
+</section>
+<section id="id84">
+<h3>Attributes<a class="headerlink" href="#id84" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>causal_matrix<span class="classifier">numpy.ndarray</span></dt><dd><p>Learned causal structure matrix</p>
+</dd>
+</dl>
+</section>
+<section id="id85">
+<h3>References<a class="headerlink" href="#id85" title="Link to this heading"></a></h3>
+<p><a class="reference external" href="https://arxiv.org/abs/1906.04477">https://arxiv.org/abs/1906.04477</a></p>
+</section>
+<section id="id86">
+<h3>Examples<a class="headerlink" href="#id86" title="Link to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.algorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">RL</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_dataset</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">GraphDAG</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">castle.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">MetricsDAG</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span><span class="p">,</span> <span class="n">true_dag</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;IID_Test&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="n">RL</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n</span><span class="o">.</span><span class="n">learn</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">dag</span><span class="o">=</span><span class="n">true_dag</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">GraphDAG</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">causal_matrix</span><span class="p">,</span> <span class="n">true_dag</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">met</span> <span class="o">=</span> <span class="n">MetricsDAG</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">causal_matrix</span><span class="p">,</span> <span class="n">true_dag</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">met</span><span class="o">.</span><span class="n">metrics</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="castle.algorithms.RL.learn">
+<span class="sig-name descname"><span class="pre">learn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/castle/algorithms/gradient/rl/torch/rl.html#RL.learn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#castle.algorithms.RL.learn" title="Link to this definition"></a></dt>
+<dd><p>Set up and run the RL algorithm.</p>
+<section id="id87">
+<h4>Parameters<a class="headerlink" href="#id87" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>data: castle.Tensor or numpy.ndarray</dt><dd><p>The castle.Tensor or numpy.ndarray format data you want to learn.</p>
+</dd>
+<dt>columns<span class="classifier">Index or array-like</span></dt><dd><p>Column labels to use for resulting tensor. Will default to
+RangeIndex (0, 1, 2, …, n) if no column labels are provided.</p>
+</dd>
+<dt>dag<span class="classifier">ndarray</span></dt><dd><p>two-dimensional, prior matrix</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="castle.html" class="btn btn-neutral float-left" title="castle" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="castle.common.html" class="btn btn-neutral float-right" title="common" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Huawei Noah&#39;s Ark Lab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

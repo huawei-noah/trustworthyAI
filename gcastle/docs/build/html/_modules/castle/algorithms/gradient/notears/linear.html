@@ -1,0 +1,335 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>castle.algorithms.gradient.notears.linear &mdash; gCastle 1.0.4rc1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
+
+  
+    <link rel="shortcut icon" href="../../../../../_static/favicon.png"/>
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=3cd93504"></script>
+      <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            gCastle
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../castle/castle.html">castle</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">gCastle</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">castle.algorithms.gradient.notears.linear</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for castle.algorithms.gradient.notears.linear</h1><div class="highlight"><pre>
+<span></span><span class="c1"># coding=utf-8</span>
+<span class="c1"># 2021.03 modified (1) notears_linear(def) to Notears(class)</span>
+<span class="c1"># 2021.03 added    (1) logging; </span>
+<span class="c1">#                  (2) BaseLearner</span>
+<span class="c1"># 2021.03 deleted  (1) __main__</span>
+<span class="c1"># Huawei Technologies Co., Ltd. </span>
+<span class="c1"># </span>
+<span class="c1"># Copyright (C) 2021. Huawei Technologies Co., Ltd. All rights reserved.</span>
+<span class="c1"># </span>
+<span class="c1"># Copyright (c) Xun Zheng (https://github.com/xunzheng/notears)</span>
+<span class="c1">#</span>
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#     http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">scipy.optimize</span> <span class="k">as</span> <span class="nn">sopt</span>
+<span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">expit</span> <span class="k">as</span> <span class="n">sigmoid</span>
+
+<span class="kn">from</span> <span class="nn">castle.common</span> <span class="kn">import</span> <span class="n">BaseLearner</span><span class="p">,</span> <span class="n">Tensor</span>
+<span class="kn">from</span> <span class="nn">castle.common.consts</span> <span class="kn">import</span> <span class="n">NOTEARS_VALID_PARAMS</span>
+<span class="kn">from</span> <span class="nn">castle.common.validator</span> <span class="kn">import</span> <span class="n">check_args_value</span>
+
+
+<div class="viewcode-block" id="Notears">
+<a class="viewcode-back" href="../../../../../castle/castle.algorithms.html#castle.algorithms.Notears">[docs]</a>
+<span class="k">class</span> <span class="nc">Notears</span><span class="p">(</span><span class="n">BaseLearner</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Notears Algorithm.</span>
+<span class="sd">    A gradient-based algorithm for linear data models (typically with least-squares loss).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    lambda1: float </span>
+<span class="sd">        l1 penalty parameter</span>
+<span class="sd">    loss_type: str </span>
+<span class="sd">        l2, logistic, poisson</span>
+<span class="sd">    max_iter: int </span>
+<span class="sd">        max num of dual ascent steps</span>
+<span class="sd">    h_tol: float </span>
+<span class="sd">        exit if |h(w_est)| &lt;= htol</span>
+<span class="sd">    rho_max: float </span>
+<span class="sd">        exit if rho &gt;= rho_max</span>
+<span class="sd">    w_threshold: float </span>
+<span class="sd">        drop edge if |weight| &lt; threshold</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    causal_matrix : numpy.ndarray</span>
+<span class="sd">        Learned causal structure matrix</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    https://arxiv.org/abs/1803.01422</span>
+<span class="sd">    </span>
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from castle.algorithms import Notears</span>
+<span class="sd">    &gt;&gt;&gt; from castle.datasets import load_dataset</span>
+<span class="sd">    &gt;&gt;&gt; from castle.common import GraphDAG</span>
+<span class="sd">    &gt;&gt;&gt; from castle.metrics import MetricsDAG</span>
+<span class="sd">    &gt;&gt;&gt; X, true_dag, _ = load_dataset(&#39;IID_Test&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; n = Notears()</span>
+<span class="sd">    &gt;&gt;&gt; n.learn(X)</span>
+<span class="sd">    &gt;&gt;&gt; GraphDAG(n.causal_matrix, true_dag)</span>
+<span class="sd">    &gt;&gt;&gt; met = MetricsDAG(n.causal_matrix, true_dag)</span>
+<span class="sd">    &gt;&gt;&gt; print(met.metrics)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@check_args_value</span><span class="p">(</span><span class="n">NOTEARS_VALID_PARAMS</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lambda1</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> 
+                 <span class="n">loss_type</span><span class="o">=</span><span class="s1">&#39;l2&#39;</span><span class="p">,</span> 
+                 <span class="n">max_iter</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> 
+                 <span class="n">h_tol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span> 
+                 <span class="n">rho_max</span><span class="o">=</span><span class="mf">1e+16</span><span class="p">,</span> 
+                 <span class="n">w_threshold</span><span class="o">=</span><span class="mf">0.3</span><span class="p">):</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">lambda1</span> <span class="o">=</span> <span class="n">lambda1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loss_type</span> <span class="o">=</span> <span class="n">loss_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_iter</span> <span class="o">=</span> <span class="n">max_iter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">h_tol</span> <span class="o">=</span> <span class="n">h_tol</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rho_max</span> <span class="o">=</span> <span class="n">rho_max</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">w_threshold</span> <span class="o">=</span> <span class="n">w_threshold</span>
+
+<div class="viewcode-block" id="Notears.learn">
+<a class="viewcode-back" href="../../../../../castle/castle.algorithms.html#castle.algorithms.Notears.learn">[docs]</a>
+    <span class="k">def</span> <span class="nf">learn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set up and run the Notears algorithm.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data: castle.Tensor or numpy.ndarray</span>
+<span class="sd">            The castle.Tensor or numpy.ndarray format data you want to learn.</span>
+<span class="sd">        columns : Index or array-like</span>
+<span class="sd">            Column labels to use for resulting tensor. Will default to</span>
+<span class="sd">            RangeIndex (0, 1, 2, ..., n) if no column labels are provided.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">Tensor</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
+
+        <span class="n">W_est</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">notears_linear</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">lambda1</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lambda1</span><span class="p">,</span> 
+                                    <span class="n">loss_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">loss_type</span><span class="p">,</span> 
+                                    <span class="n">max_iter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_iter</span><span class="p">,</span> 
+                                    <span class="n">h_tol</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">h_tol</span><span class="p">,</span> 
+                                    <span class="n">rho_max</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rho_max</span><span class="p">)</span>
+        <span class="n">causal_matrix</span> <span class="o">=</span> <span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">W_est</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">w_threshold</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">weight_causal_matrix</span> <span class="o">=</span> <span class="n">Tensor</span><span class="p">(</span><span class="n">W_est</span><span class="p">,</span>
+                                           <span class="n">index</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span>
+                                           <span class="n">columns</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">causal_matrix</span> <span class="o">=</span> <span class="n">Tensor</span><span class="p">(</span><span class="n">causal_matrix</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span>
+                                    <span class="n">columns</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Notears.notears_linear">
+<a class="viewcode-back" href="../../../../../castle/castle.algorithms.html#castle.algorithms.Notears.notears_linear">[docs]</a>
+    <span class="k">def</span> <span class="nf">notears_linear</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">lambda1</span><span class="p">,</span> <span class="n">loss_type</span><span class="p">,</span> <span class="n">max_iter</span><span class="p">,</span> <span class="n">h_tol</span><span class="p">,</span> 
+                       <span class="n">rho_max</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Solve min_W L(W; X) + lambda1 ‖W‖_1 s.t. h(W) = 0 using </span>
+<span class="sd">        augmented Lagrangian.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X: np.ndarray </span>
+<span class="sd">            n*d sample matrix</span>
+
+<span class="sd">        Return</span>
+<span class="sd">        ------</span>
+<span class="sd">        W_est: np.ndarray</span>
+<span class="sd">            d*d estimated DAG</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">def</span> <span class="nf">_loss</span><span class="p">(</span><span class="n">W</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Evaluate value and gradient of loss.&quot;&quot;&quot;</span>
+            <span class="n">M</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">W</span>
+            <span class="k">if</span> <span class="n">loss_type</span> <span class="o">==</span> <span class="s1">&#39;l2&#39;</span><span class="p">:</span>
+                <span class="n">R</span> <span class="o">=</span> <span class="n">X</span> <span class="o">-</span> <span class="n">M</span>
+                <span class="n">loss</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">/</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">R</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+                <span class="n">G_loss</span> <span class="o">=</span> <span class="o">-</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">X</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">R</span>
+            <span class="k">elif</span> <span class="n">loss_type</span> <span class="o">==</span> <span class="s1">&#39;logistic&#39;</span><span class="p">:</span>
+                <span class="n">loss</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">logaddexp</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">M</span><span class="p">)</span> <span class="o">-</span> <span class="n">X</span> <span class="o">*</span> <span class="n">M</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+                <span class="n">G_loss</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">X</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="p">(</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">M</span><span class="p">)</span> <span class="o">-</span> <span class="n">X</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">loss_type</span> <span class="o">==</span> <span class="s1">&#39;poisson&#39;</span><span class="p">:</span>
+                <span class="n">S</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">M</span><span class="p">)</span>
+                <span class="n">loss</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">S</span> <span class="o">-</span> <span class="n">X</span> <span class="o">*</span> <span class="n">M</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+                <span class="n">G_loss</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">X</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="p">(</span><span class="n">S</span> <span class="o">-</span> <span class="n">X</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;unknown loss type&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">loss</span><span class="p">,</span> <span class="n">G_loss</span>
+
+        <span class="k">def</span> <span class="nf">_h</span><span class="p">(</span><span class="n">W</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Evaluate value and gradient of acyclicity constraint.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="c1">#     E = slin.expm(W * W)  # (Zheng et al. 2018)</span>
+            <span class="c1">#     h = np.trace(E) - d</span>
+            <span class="n">M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="o">+</span> <span class="n">W</span> <span class="o">*</span> <span class="n">W</span> <span class="o">/</span> <span class="n">d</span>  <span class="c1"># (Yu et al. 2019)</span>
+            <span class="n">E</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">matrix_power</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">d</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">h</span> <span class="o">=</span> <span class="p">(</span><span class="n">E</span><span class="o">.</span><span class="n">T</span> <span class="o">*</span> <span class="n">M</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">-</span> <span class="n">d</span>
+            <span class="n">G_h</span> <span class="o">=</span> <span class="n">E</span><span class="o">.</span><span class="n">T</span> <span class="o">*</span> <span class="n">W</span> <span class="o">*</span> <span class="mi">2</span>
+            <span class="k">return</span> <span class="n">h</span><span class="p">,</span> <span class="n">G_h</span>
+
+        <span class="k">def</span> <span class="nf">_adj</span><span class="p">(</span><span class="n">w</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Convert doubled variables ([2 d^2] array) back to original </span>
+<span class="sd">            variables ([d, d] matrix).</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">w</span><span class="p">[:</span><span class="n">d</span> <span class="o">*</span> <span class="n">d</span><span class="p">]</span> <span class="o">-</span> <span class="n">w</span><span class="p">[</span><span class="n">d</span> <span class="o">*</span> <span class="n">d</span><span class="p">:])</span><span class="o">.</span><span class="n">reshape</span><span class="p">([</span><span class="n">d</span><span class="p">,</span> <span class="n">d</span><span class="p">])</span>
+
+        <span class="k">def</span> <span class="nf">_func</span><span class="p">(</span><span class="n">w</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Evaluate value and gradient of augmented Lagrangian for </span>
+<span class="sd">            doubled variables ([2 d^2] array).</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="n">W</span> <span class="o">=</span> <span class="n">_adj</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+            <span class="n">loss</span><span class="p">,</span> <span class="n">G_loss</span> <span class="o">=</span> <span class="n">_loss</span><span class="p">(</span><span class="n">W</span><span class="p">)</span>
+            <span class="n">h</span><span class="p">,</span> <span class="n">G_h</span> <span class="o">=</span> <span class="n">_h</span><span class="p">(</span><span class="n">W</span><span class="p">)</span>
+            <span class="n">obj</span> <span class="o">=</span> <span class="n">loss</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">h</span> <span class="o">*</span> <span class="n">h</span> <span class="o">+</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">h</span> <span class="o">+</span> <span class="n">lambda1</span> <span class="o">*</span> <span class="n">w</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+            <span class="n">G_smooth</span> <span class="o">=</span> <span class="n">G_loss</span> <span class="o">+</span> <span class="p">(</span><span class="n">rho</span> <span class="o">*</span> <span class="n">h</span> <span class="o">+</span> <span class="n">alpha</span><span class="p">)</span> <span class="o">*</span> <span class="n">G_h</span>
+            <span class="n">g_obj</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">G_smooth</span> <span class="o">+</span> <span class="n">lambda1</span><span class="p">,</span> <span class="o">-</span> <span class="n">G_smooth</span> <span class="o">+</span> <span class="n">lambda1</span><span class="p">),</span> 
+                                   <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">obj</span><span class="p">,</span> <span class="n">g_obj</span>
+
+        <span class="n">n</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span>
+        <span class="c1"># double w_est into (w_pos, w_neg)</span>
+        <span class="n">w_est</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">d</span> <span class="o">*</span> <span class="n">d</span><span class="p">),</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+        <span class="n">bnds</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">j</span> <span class="k">else</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> 
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">d</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="n">loss_type</span> <span class="o">==</span> <span class="s1">&#39;l2&#39;</span><span class="p">:</span>
+            <span class="n">X</span> <span class="o">=</span> <span class="n">X</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;[start]: n=</span><span class="si">{}</span><span class="s1">, d=</span><span class="si">{}</span><span class="s1">, iter_=</span><span class="si">{}</span><span class="s1">, h_=</span><span class="si">{}</span><span class="s1">, rho_=</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span> \
+                    <span class="n">n</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">max_iter</span><span class="p">,</span> <span class="n">h_tol</span><span class="p">,</span> <span class="n">rho_max</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_iter</span><span class="p">):</span>
+            <span class="n">w_new</span><span class="p">,</span> <span class="n">h_new</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+            <span class="k">while</span> <span class="n">rho</span> <span class="o">&lt;</span> <span class="n">rho_max</span><span class="p">:</span>
+                <span class="n">sol</span> <span class="o">=</span> <span class="n">sopt</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">_func</span><span class="p">,</span> <span class="n">w_est</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;L-BFGS-B&#39;</span><span class="p">,</span> 
+                                    <span class="n">jac</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="n">bnds</span><span class="p">)</span>
+                <span class="n">w_new</span> <span class="o">=</span> <span class="n">sol</span><span class="o">.</span><span class="n">x</span>
+                <span class="n">h_new</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_h</span><span class="p">(</span><span class="n">_adj</span><span class="p">(</span><span class="n">w_new</span><span class="p">))</span>
+                
+                <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="s1">&#39;[iter </span><span class="si">{}</span><span class="s1">] h=</span><span class="si">{:.3e}</span><span class="s1">, loss=</span><span class="si">{:.3f}</span><span class="s1">, rho=</span><span class="si">{:.1e}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span> \
+                    <span class="n">i</span><span class="p">,</span> <span class="n">h_new</span><span class="p">,</span> <span class="n">_func</span><span class="p">(</span><span class="n">w_est</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="n">rho</span><span class="p">))</span>
+                
+                <span class="k">if</span> <span class="n">h_new</span> <span class="o">&gt;</span> <span class="mf">0.25</span> <span class="o">*</span> <span class="n">h</span><span class="p">:</span>
+                    <span class="n">rho</span> <span class="o">*=</span> <span class="mi">10</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">break</span>
+            <span class="n">w_est</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">w_new</span><span class="p">,</span> <span class="n">h_new</span>
+            <span class="n">alpha</span> <span class="o">+=</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">h</span>
+
+            <span class="k">if</span> <span class="n">h</span> <span class="o">&lt;=</span> <span class="n">h_tol</span> <span class="ow">or</span> <span class="n">rho</span> <span class="o">&gt;=</span> <span class="n">rho_max</span><span class="p">:</span>
+                <span class="k">break</span>
+
+        <span class="n">W_est</span> <span class="o">=</span> <span class="n">_adj</span><span class="p">(</span><span class="n">w_est</span><span class="p">)</span>
+
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;FINISHED&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">W_est</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Huawei Noah&#39;s Lab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

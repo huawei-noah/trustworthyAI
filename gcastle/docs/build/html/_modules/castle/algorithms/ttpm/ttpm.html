@@ -1,0 +1,538 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>castle.algorithms.ttpm.ttpm &mdash; gCastle 1.0.4rc1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+
+  
+    <link rel="shortcut icon" href="../../../../_static/favicon.png"/>
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=3cd93504"></script>
+      <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            gCastle
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../castle/castle.html">castle</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">gCastle</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">castle.algorithms.ttpm.ttpm</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for castle.algorithms.ttpm.ttpm</h1><div class="highlight"><pre>
+<span></span><span class="c1"># coding=utf-8</span>
+<span class="c1"># Copyright (C) 2021. Huawei Technologies Co., Ltd. All rights reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#     http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">networkx</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nx</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">product</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">castle.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseLearner</span><span class="p">,</span> <span class="n">Tensor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">castle.common.priori_knowledge</span><span class="w"> </span><span class="kn">import</span> <span class="n">PrioriKnowledge</span>
+
+<div class="viewcode-block" id="TTPM">
+<a class="viewcode-back" href="../../../../castle/castle.algorithms.html#castle.algorithms.TTPM">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TTPM</span><span class="p">(</span><span class="n">BaseLearner</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    TTPM Algorithm.</span>
+
+<span class="sd">    A causal structure learning algorithm based on Topological Hawkes process</span>
+<span class="sd">     for spatio-temporal event sequences.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    topology_matrix: np.matrix</span>
+<span class="sd">        Interpreted as an adjacency matrix to generate the graph.</span>
+<span class="sd">        It should have two dimensions, and should be square.</span>
+
+<span class="sd">    delta: float, default=0.1</span>
+<span class="sd">            Time decaying coefficient for the exponential kernel.</span>
+
+<span class="sd">    epsilon: int, default=1</span>
+<span class="sd">        BIC penalty coefficient.</span>
+
+<span class="sd">    max_hop: positive int, default=6</span>
+<span class="sd">        The maximum considered hops in the topology,</span>
+<span class="sd">        when ``max_hop=0``, it is divided by nodes, regardless of topology.</span>
+
+<span class="sd">    penalty: str, default=BIC</span>
+<span class="sd">        Two optional values: &#39;BIC&#39; or &#39;AIC&#39;.</span>
+<span class="sd">        </span>
+<span class="sd">    max_iter: int</span>
+<span class="sd">        Maximum number of iterations.</span>
+
+<span class="sd">    priori_knowledge: PrioriKnowledge, default=None</span>
+<span class="sd">        a class object PrioriKnowledge</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from castle.common import GraphDAG</span>
+<span class="sd">    &gt;&gt;&gt; from castle.metrics import MetricsDAG</span>
+<span class="sd">    &gt;&gt;&gt; from castle.datasets import load_dataset</span>
+<span class="sd">    &gt;&gt;&gt; from castle.algorithms import TTPM</span>
+<span class="sd">    # Data Simulation for TTPM</span>
+<span class="sd">    &gt;&gt;&gt; X, true_causal_matrix, topology_matrix = load_dataset(&#39;THP_Test&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; ttpm = TTPM(topology_matrix, max_hop=2)</span>
+<span class="sd">    &gt;&gt;&gt; ttpm.learn(X)</span>
+<span class="sd">    &gt;&gt;&gt; causal_matrix = ttpm.causal_matrix</span>
+<span class="sd">    # plot est_dag and true_dag</span>
+<span class="sd">    &gt;&gt;&gt; GraphDAG(ttpm.causal_matrix, true_causal_matrix)</span>
+<span class="sd">    # calculate accuracy</span>
+<span class="sd">    &gt;&gt;&gt; ret_metrix = MetricsDAG(ttpm.causal_matrix, true_causal_matrix)</span>
+<span class="sd">    &gt;&gt;&gt; ret_metrix.metrics</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">topology_matrix</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                 <span class="n">max_hop</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">penalty</span><span class="o">=</span><span class="s1">&#39;BIC&#39;</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">priori_knowledge</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">BaseLearner</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">topology_matrix</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">),</span>\
+            <span class="s1">&#39;topology_matrix should be np.matrix object&#39;</span>
+        <span class="k">assert</span> <span class="n">topology_matrix</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span>\
+            <span class="s1">&#39;topology_matrix should be two dimension&#39;</span>
+        <span class="k">assert</span> <span class="n">topology_matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">topology_matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>\
+            <span class="s1">&#39;The topology_matrix should be square.&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_topo</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">(</span><span class="n">topology_matrix</span><span class="p">)</span>
+        <span class="c1"># initialize instance variables</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_penalty</span> <span class="o">=</span> <span class="n">penalty</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_delta</span> <span class="o">=</span> <span class="n">delta</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max_hop</span> <span class="o">=</span> <span class="n">max_hop</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_epsilon</span> <span class="o">=</span> <span class="n">epsilon</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max_iter</span> <span class="o">=</span> <span class="n">max_iter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">priori_knowledge</span> <span class="o">=</span> <span class="n">priori_knowledge</span>
+
+<div class="viewcode-block" id="TTPM.learn">
+<a class="viewcode-back" href="../../../../castle/castle.algorithms.html#castle.algorithms.TTPM.learn">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">learn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tensor</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set up and run the TTPM algorithm.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        tensor:  pandas.DataFrame</span>
+<span class="sd">            (V 1.0.0, we&#39;ll eliminate this constraint in the next version)</span>
+<span class="sd">            The tensor is supposed to contain three cols:</span>
+<span class="sd">                [&#39;event&#39;, &#39;timestamp&#39;, &#39;node&#39;]</span>
+
+<span class="sd">            Description of the three columns:</span>
+<span class="sd">                event: event name (type).</span>
+<span class="sd">                timestamp: occurrence timestamp of event, i.e., &#39;1615962101.0&#39;.</span>
+<span class="sd">                node: topological node where the event happened.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># data type judgment</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;The tensor type is not correct,&#39;</span>
+                            <span class="s1">&#39;only receive pd.DataFrame type currently.&#39;</span><span class="p">)</span>
+
+        <span class="n">cols_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="s1">&#39;timestamp&#39;</span><span class="p">,</span> <span class="s1">&#39;node&#39;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">cols_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">tensor</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;The data tensor should contain column with name </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">col</span><span class="p">))</span>
+
+        <span class="c1"># initialize needed values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_start_init</span><span class="p">(</span><span class="n">tensor</span><span class="p">)</span>
+
+        <span class="c1"># Generate causal matrix (DAG)</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">raw_causal_matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hill_climb</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_causal_matrix</span> <span class="o">=</span> <span class="n">Tensor</span><span class="p">(</span><span class="n">raw_causal_matrix</span><span class="p">,</span>
+                                     <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_matrix_names</span><span class="p">,</span>
+                                     <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_matrix_names</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_start_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tensor</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates some required initial values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tensor</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;any&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">tensor</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tensor</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+
+        <span class="n">tensor</span> <span class="o">=</span> <span class="n">tensor</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span>
+            <span class="p">[</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="s1">&#39;timestamp&#39;</span><span class="p">,</span> <span class="s1">&#39;node&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="nb">len</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+        <span class="n">tensor</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="s1">&#39;timestamp&#39;</span><span class="p">,</span> <span class="s1">&#39;node&#39;</span><span class="p">,</span> <span class="s1">&#39;times&#39;</span><span class="p">]</span>
+        <span class="n">tensor</span> <span class="o">=</span> <span class="n">tensor</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;node&#39;</span><span class="p">,</span> <span class="s1">&#39;timestamp&#39;</span><span class="p">,</span> <span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="s1">&#39;times&#39;</span><span class="p">])</span>
+
+        <span class="n">tensor</span> <span class="o">=</span> <span class="n">tensor</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s1">&#39;node&#39;</span><span class="p">,</span> <span class="s1">&#39;timestamp&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tensor</span> <span class="o">=</span> <span class="n">tensor</span><span class="p">[</span><span class="n">tensor</span><span class="p">[</span><span class="s1">&#39;node&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_topo</span><span class="o">.</span><span class="n">nodes</span><span class="p">)]</span>
+
+        <span class="c1"># calculate considered events</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_event_names</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tensor</span><span class="p">[</span><span class="s1">&#39;event&#39;</span><span class="p">])))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_event_names</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_event_names</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_matrix_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_event_names</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">))</span>
+
+        <span class="c1"># map event name to corresponding index value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_event_indexes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_map_event_to_index</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tensor</span><span class="p">[</span><span class="s1">&#39;event&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_event_names</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tensor</span><span class="p">[</span><span class="s1">&#39;event&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_event_indexes</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_g</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_topo</span><span class="o">.</span><span class="n">subgraph</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tensor</span><span class="p">[</span><span class="s1">&#39;node&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ne_grouped</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tensor</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;node&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_decay_effects</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
+            <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_event_names</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_hop</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>  <span class="c1"># will be used in EM.</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max_s_t</span> <span class="o">=</span> <span class="n">tensor</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_min_s_t</span> <span class="o">=</span> <span class="n">tensor</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_hop</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_decay_effects</span><span class="p">[:,</span> <span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">tensor</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;event&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+                <span class="k">lambda</span> <span class="n">i</span><span class="p">:</span> <span class="p">((((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span>
+                    <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">_delta</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_s_t</span> <span class="o">-</span> <span class="n">i</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">])))</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_delta</span><span class="p">)</span>
+                            <span class="o">*</span> <span class="n">i</span><span class="p">[</span><span class="s1">&#39;times&#39;</span><span class="p">])</span> <span class="o">*</span> <span class="n">i</span><span class="p">[</span><span class="s1">&#39;node&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+                    <span class="k">lambda</span> <span class="n">j</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_k_hop_neibors</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">))))</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+        <span class="c1"># |V|x|T|</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_T</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_s_t</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_min_s_t</span><span class="p">)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">tensor</span><span class="p">[</span><span class="s1">&#39;node&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
+        <span class="c1"># Initialize PrioriKnowledge with number of nodes if None was passed</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">priori_knowledge</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">priori_knowledge</span> <span class="o">=</span> <span class="n">PrioriKnowledge</span><span class="p">(</span><span class="n">n_nodes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_N</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_k_hop_neibors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="n">node</span><span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">single_source_dijkstra_path_length</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_g</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span>
+                <span class="n">nx</span><span class="o">.</span><span class="n">single_source_dijkstra_path_length</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_g</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_map_event_to_index</span><span class="p">(</span><span class="n">event_names</span><span class="p">,</span> <span class="n">base_event_names</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Maps the event name to the corresponding index value.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        event_names: np.ndarray, shape like (52622,)</span>
+<span class="sd">            All occurred event names sorted by node and timestamp.</span>
+<span class="sd">        base_event_names: np.ndarray, shape like (10,)</span>
+<span class="sd">            All deduplicated and sorted event names</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        np.ndarray: All occurred event names mapped to their corresponding index </span>
+<span class="sd">         in base_event_names.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">event_name</span><span class="p">:</span>
+                                 <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">base_event_names</span> <span class="o">==</span> <span class="n">event_name</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+                                 <span class="n">event_names</span><span class="p">)))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_hill_climb</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Search the best causal graph, then generate the causal matrix (DAG).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result: tuple, (likelihood, alpha matrix, events vector)</span>
+<span class="sd">            likelihood: used as the score criteria for searching the</span>
+<span class="sd">                causal structure.</span>
+<span class="sd">            alpha matrix: the intensity of causal effect from event v’ to v.</span>
+<span class="sd">            events vector: the exogenous base intensity of each event.</span>
+<span class="sd">        edge_mat: np.ndarray</span>
+<span class="sd">            Causal matrix.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_get_effect_tensor_decays</span><span class="p">()</span>
+        <span class="c1"># Initialize the adjacency matrix</span>
+        <span class="n">edge_mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_N</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_N</span><span class="p">)</span>
+        <span class="n">edge_mat</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">priori_knowledge</span><span class="o">.</span><span class="n">matrix</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="c1"># only add the required edges to edge_mat</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_em</span><span class="p">(</span><span class="n">edge_mat</span><span class="p">)</span>
+        <span class="n">l_ret</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        
+        <span class="k">for</span> <span class="n">num_iter</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_iter</span><span class="p">):</span>
+
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;[iter </span><span class="si">{}</span><span class="s1">]: likelihood_score = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">num_iter</span><span class="p">,</span> <span class="n">l_ret</span><span class="p">))</span>
+
+            <span class="n">stop_tag</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">for</span> <span class="n">new_edge_mat</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_one_step_change_iterator</span><span class="p">(</span><span class="n">edge_mat</span><span class="p">)):</span>
+                <span class="n">new_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_em</span><span class="p">(</span><span class="n">new_edge_mat</span><span class="p">)</span>
+                <span class="n">new_l</span> <span class="o">=</span> <span class="n">new_result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="c1"># Termination condition:</span>
+                <span class="c1">#   no adjacency matrix with higher likelihood appears</span>
+                <span class="k">if</span> <span class="n">new_l</span> <span class="o">&gt;</span> <span class="n">l_ret</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="n">new_result</span>
+                    <span class="n">l_ret</span> <span class="o">=</span> <span class="n">new_l</span>
+                    <span class="n">stop_tag</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="n">edge_mat</span> <span class="o">=</span> <span class="n">new_edge_mat</span>
+
+            <span class="k">if</span> <span class="n">stop_tag</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">result</span><span class="p">,</span> <span class="n">edge_mat</span>
+        
+        <span class="k">return</span> <span class="n">result</span><span class="p">,</span> <span class="n">edge_mat</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_effect_tensor_decays</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_effect_tensor_decays</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_hop</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span>
+                                               <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tensor</span><span class="p">),</span>
+                                               <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_event_names</span><span class="p">)])</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_hop</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_get_effect_tensor_decays_each_hop</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_effect_tensor_decays_each_hop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+
+        <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">pre_effect</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_N</span><span class="p">)</span>
+        <span class="n">tensor_array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tensor</span><span class="o">.</span><span class="n">values</span>
+        <span class="k">for</span> <span class="n">item_ind</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tensor</span><span class="p">)):</span>
+            <span class="n">sub_n</span><span class="p">,</span> <span class="n">start_t</span><span class="p">,</span> <span class="n">ala_i</span><span class="p">,</span> <span class="n">times</span> <span class="o">=</span> <span class="n">tensor_array</span><span class="p">[</span>
+                <span class="n">item_ind</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]</span>
+            <span class="n">last_sub_n</span><span class="p">,</span> <span class="n">last_start_t</span><span class="p">,</span> <span class="n">last_ala_i</span><span class="p">,</span> <span class="n">last_times</span> <span class="o">=</span> \
+                <span class="n">tensor_array</span><span class="p">[</span><span class="n">item_ind</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">last_sub_n</span> <span class="o">!=</span> <span class="n">sub_n</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">last_start_t</span> <span class="o">&gt;</span> <span class="n">start_t</span><span class="p">):</span>
+                <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">pre_effect</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_N</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">k_hop_neighbors_ne</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_k_hop_neibors</span><span class="p">(</span><span class="n">sub_n</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+                    <span class="n">neighbors_table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+                        <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_ne_grouped</span><span class="o">.</span><span class="n">get_group</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">k_hop_neighbors_ne</span><span class="p">])</span>
+                    <span class="n">neighbors_table</span> <span class="o">=</span> <span class="n">neighbors_table</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span>
+                        <span class="s1">&#39;timestamp&#39;</span><span class="p">)</span>
+                    <span class="n">neighbors_table_value</span> <span class="o">=</span> <span class="n">neighbors_table</span><span class="o">.</span><span class="n">values</span>
+                <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="n">k_hop_neighbors_ne</span> <span class="o">=</span> <span class="p">[]</span>
+
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">k_hop_neighbors_ne</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+            <span class="n">cur_effect</span> <span class="o">=</span> <span class="n">pre_effect</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">((</span><span class="n">last_start_t</span> <span class="o">-</span> <span class="n">start_t</span><span class="p">,</span> <span class="mi">0</span><span class="p">)))</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_delta</span><span class="p">)</span>
+            <span class="k">while</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">nei_sub_n</span><span class="p">,</span> <span class="n">nei_start_t</span><span class="p">,</span> <span class="n">nei_ala_i</span><span class="p">,</span> <span class="n">nei_times</span> \
+                        <span class="o">=</span> <span class="n">neighbors_table_value</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="p">:]</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="k">break</span>
+                <span class="k">if</span> <span class="n">nei_start_t</span> <span class="o">&lt;</span> <span class="n">start_t</span><span class="p">:</span>
+                    <span class="n">cur_effect</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">nei_ala_i</span><span class="p">)]</span> <span class="o">+=</span> <span class="n">nei_times</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span>
+                        <span class="p">(</span><span class="n">nei_start_t</span> <span class="o">-</span> <span class="n">start_t</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_delta</span><span class="p">)</span>
+                    <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">break</span>
+            <span class="n">pre_effect</span> <span class="o">=</span> <span class="n">cur_effect</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_effect_tensor_decays</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="n">item_ind</span><span class="p">]</span> <span class="o">=</span> <span class="n">pre_effect</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_em</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edge_mat</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        E-M module, used to find the optimal parameters.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        edge_mat： np.ndarray</span>
+<span class="sd">            Adjacency matrix.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        likelihood: used as the score criteria for searching the</span>
+<span class="sd">            causal structure.</span>
+<span class="sd">        alpha matrix: the intensity of causal effect from event v’ to v.</span>
+<span class="sd">        events vector: the exogenous base intensity of each event.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">causal_g</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">((</span><span class="n">edge_mat</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_N</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_N</span><span class="p">)))</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">nx</span><span class="o">.</span><span class="n">is_directed_acyclic_graph</span><span class="p">(</span><span class="n">causal_g</span><span class="p">):</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">100000000000000</span><span class="p">,</span> \
+                   <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_event_names</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_event_names</span><span class="p">)]),</span> \
+                   <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_event_names</span><span class="p">))</span>
+
+        <span class="c1"># Initialize alpha:(nxn)，mu:(nx1) and L</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_hop</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_event_names</span><span class="p">),</span>
+                         <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_event_names</span><span class="p">)])</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">edge_mat</span>
+        <span class="n">mu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_event_names</span><span class="p">))</span>
+        <span class="n">l_init</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_event_names</span><span class="p">)):</span>
+            <span class="n">pa_i</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">edge_mat</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">li</span> <span class="o">=</span> <span class="o">-</span><span class="mi">100000000000</span>
+            <span class="n">ind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_event_indexes</span> <span class="o">==</span> <span class="n">i</span><span class="p">)</span>
+            <span class="n">x_i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tensor</span><span class="p">[</span><span class="s1">&#39;times&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span>
+            <span class="n">x_i_all</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tensor</span><span class="p">[</span><span class="s1">&#39;times&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+            <span class="n">x_i_all</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span> <span class="o">=</span> <span class="n">x_i</span>
+            <span class="k">while</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="c1"># Calculate the first part of the likelihood</span>
+                <span class="n">lambda_i_sum</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_decay_effects</span>
+                                <span class="o">*</span> <span class="n">alpha</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">+</span> <span class="n">mu</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_T</span>
+
+                <span class="c1"># Calculate the second part of the likelihood</span>
+                <span class="n">lambda_for_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tensor</span><span class="p">))</span> <span class="o">+</span> <span class="n">mu</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_hop</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+                    <span class="n">lambda_for_i</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_effect_tensor_decays</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="p">:],</span>
+                        <span class="n">alpha</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+                <span class="n">lambda_for_i</span> <span class="o">=</span> <span class="n">lambda_for_i</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span>
+                <span class="n">x_log_lambda</span> <span class="o">=</span> <span class="p">(</span><span class="n">x_i</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">lambda_for_i</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+                <span class="n">new_li</span> <span class="o">=</span> <span class="o">-</span><span class="n">lambda_i_sum</span> <span class="o">+</span> <span class="n">x_log_lambda</span>
+
+                <span class="c1"># Iteration termination condition</span>
+                <span class="n">delta</span> <span class="o">=</span> <span class="n">new_li</span> <span class="o">-</span> <span class="n">li</span>
+                <span class="k">if</span> <span class="n">delta</span> <span class="o">&lt;</span> <span class="mf">0.1</span><span class="p">:</span>
+                    <span class="n">li</span> <span class="o">=</span> <span class="n">new_li</span>
+                    <span class="n">l_init</span> <span class="o">+=</span> <span class="n">li</span>
+                    <span class="n">pa_i_alpha</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+                    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">pa_i</span><span class="p">:</span>
+                        <span class="n">pa_i_alpha</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">alpha</span><span class="p">[:,</span> <span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span>
+                    <span class="k">break</span>
+                <span class="n">li</span> <span class="o">=</span> <span class="n">new_li</span>
+                <span class="c1"># update mu</span>
+                <span class="n">mu</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">((</span><span class="n">mu</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="n">lambda_for_i</span><span class="p">)</span> <span class="o">*</span> <span class="n">x_i</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_T</span>
+                <span class="c1"># update alpha</span>
+                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">pa_i</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_hop</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+                        <span class="n">upper</span> <span class="o">=</span> <span class="p">((</span><span class="n">alpha</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_effect_tensor_decays</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="p">:,</span> <span class="n">j</span><span class="p">])[</span><span class="n">ind</span><span class="p">]</span>
+                                  <span class="o">/</span> <span class="n">lambda_for_i</span><span class="p">)</span> <span class="o">*</span> <span class="n">x_i</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+                        <span class="n">lower</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decay_effects</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span>
+                        <span class="k">if</span> <span class="n">lower</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="n">alpha</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+                            <span class="k">continue</span>
+                        <span class="n">alpha</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">upper</span> <span class="o">/</span> <span class="n">lower</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_penalty</span> <span class="o">==</span> <span class="s1">&#39;AIC&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">l_init</span> <span class="o">-</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_event_names</span><span class="p">)</span>
+                             <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_epsilon</span> <span class="o">*</span> <span class="n">edge_mat</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+                             <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_hop</span><span class="o">+</span><span class="mi">1</span><span class="p">)),</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">mu</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_penalty</span> <span class="o">==</span> <span class="s1">&#39;BIC&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">l_init</span> <span class="o">-</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_event_names</span><span class="p">)</span>
+                             <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_epsilon</span> <span class="o">*</span> <span class="n">edge_mat</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+                             <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_hop</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">tensor</span><span class="p">[</span><span class="s1">&#39;times&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">mu</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The penalty&#39;s value should be BIC or AIC.&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_one_step_change_iterator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edge_mat</span><span class="p">):</span>
+
+        <span class="k">return</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_one_step_change</span><span class="p">(</span><span class="n">edge_mat</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">priori_knowledge</span><span class="p">),</span>
+                   <span class="n">product</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_event_names</span><span class="p">)),</span>
+                           <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_event_names</span><span class="p">))))</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_one_step_change</span><span class="p">(</span><span class="n">edge_mat</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">priori_knowledge</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Changes the edge value in the edge_mat.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        edge_mat: np.ndarray</span>
+<span class="sd">            Adjacency matrix.</span>
+<span class="sd">        e: tuple_like (j,i)</span>
+<span class="sd">        priori_knowledge: PrioriKnowledge</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        new_edge_mat: np.ndarray</span>
+<span class="sd">            new value of edge</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">j</span><span class="p">,</span> <span class="n">i</span> <span class="o">=</span> <span class="n">e</span>
+        <span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="n">i</span> <span class="ow">or</span> <span class="n">priori_knowledge</span><span class="o">.</span><span class="n">is_required</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="ow">or</span> <span class="n">priori_knowledge</span><span class="o">.</span><span class="n">is_forbidden</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">edge_mat</span>
+        <span class="n">new_edge_mat</span> <span class="o">=</span> <span class="n">edge_mat</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">new_edge_mat</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">new_edge_mat</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">return</span> <span class="n">new_edge_mat</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">priori_knowledge</span><span class="o">.</span><span class="n">is_required</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">new_edge_mat</span>
+            <span class="n">new_edge_mat</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">new_edge_mat</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">return</span> <span class="n">new_edge_mat</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Huawei Noah&#39;s Ark Lab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

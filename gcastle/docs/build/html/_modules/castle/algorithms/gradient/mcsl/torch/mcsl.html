@@ -1,0 +1,341 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>castle.algorithms.gradient.mcsl.torch.mcsl &mdash; gCastle 1.0.4rc1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../../../_static/css/theme.css?v=e59714d7" />
+
+  
+    <link rel="shortcut icon" href="../../../../../../_static/favicon.png"/>
+      <script src="../../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../../_static/documentation_options.js?v=3cd93504"></script>
+      <script src="../../../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../../index.html" class="icon icon-home">
+            gCastle
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../castle/castle.html">castle</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../../index.html">gCastle</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">castle.algorithms.gradient.mcsl.torch.mcsl</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for castle.algorithms.gradient.mcsl.torch.mcsl</h1><div class="highlight"><pre>
+<span></span><span class="c1"># coding=utf-8</span>
+<span class="c1"># Copyright (C) 2021. Huawei Technologies Co., Ltd. All rights reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#     http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+
+<span class="kn">from</span> <span class="nn">castle.common.base</span> <span class="kn">import</span> <span class="n">BaseLearner</span><span class="p">,</span> <span class="n">Tensor</span>
+<span class="kn">from</span> <span class="nn">.trainers.al_trainer</span> <span class="kn">import</span> <span class="n">Trainer</span>
+<span class="kn">from</span> <span class="nn">.models.masked_model</span> <span class="kn">import</span> <span class="n">MaskedModel</span>
+<span class="kn">from</span> <span class="nn">.helpers.utils</span> <span class="kn">import</span> <span class="n">callback_after_training</span>
+<span class="kn">from</span> <span class="nn">castle.common.consts</span> <span class="kn">import</span> <span class="n">MCSL_VALID_PARAMS</span>
+<span class="kn">from</span> <span class="nn">castle.common.validator</span> <span class="kn">import</span> <span class="n">check_args_value</span>
+
+
+<span class="k">def</span> <span class="nf">set_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Referred from:</span>
+<span class="sd">    - https://stackoverflow.com/questions/38469632/tensorflow-non-repeatable-results</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;PYTHONHASHSEED&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+
+<div class="viewcode-block" id="MCSL">
+<a class="viewcode-back" href="../../../../../../castle/castle.algorithms.html#castle.algorithms.MCSL">[docs]</a>
+<span class="k">class</span> <span class="nc">MCSL</span><span class="p">(</span><span class="n">BaseLearner</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Masked Gradient-Based Causal Structure Learning</span>
+
+<span class="sd">    A gradient-based algorithm for non-linear additive noise data by learning</span>
+<span class="sd">    the binary adjacency matrix.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model_type: str, default: &#39;nn&#39;</span>
+<span class="sd">        `nn` denotes neural network, `qr` denotes quatratic regression.</span>
+<span class="sd">    num_hidden_layers: int, default: 4</span>
+<span class="sd">        Number of hidden layer in neural network when `model_type` is &#39;nn&#39;.</span>
+<span class="sd">    hidden_dim: int, default: 16</span>
+<span class="sd">        Number of hidden dimension in hidden layer, when `model_type` is &#39;nn&#39;.</span>
+<span class="sd">    graph_thresh: float, default: 0.5</span>
+<span class="sd">        Threshold used to determine whether has edge in graph, element greater</span>
+<span class="sd">        than the `graph_thresh` means has a directed edge, otherwise has not.</span>
+<span class="sd">    l1_graph_penalty: float, default: 2e-3</span>
+<span class="sd">        Penalty weight for L1 normalization</span>
+<span class="sd">    learning_rate: float, default: 3e-2</span>
+<span class="sd">        learning rate for opitimizer</span>
+<span class="sd">    max_iter: int, default: 25</span>
+<span class="sd">        Number of iterations for optimization problem</span>
+<span class="sd">    iter_step: int, default: 1000</span>
+<span class="sd">        Number of steps for each iteration</span>
+<span class="sd">    init_iter: int, default: 2</span>
+<span class="sd">        Initial iteration to disallow early stopping</span>
+<span class="sd">    h_tol: float, default: 1e-10</span>
+<span class="sd">        Tolerance of optimization problem</span>
+<span class="sd">    init_rho: float, default: 1e-5</span>
+<span class="sd">        Initial value for penalty parameter.</span>
+<span class="sd">    rho_thresh: float, default: 1e14</span>
+<span class="sd">        Threshold for penalty parameter.</span>
+<span class="sd">    h_thresh: float, default: 0.25</span>
+<span class="sd">        Threshold for h</span>
+<span class="sd">    rho_multiply: float, default: 10.0</span>
+<span class="sd">        Multiplication to amplify rho each time</span>
+<span class="sd">    temperature: float, default: 0.2</span>
+<span class="sd">        Temperature for gumbel sigmoid</span>
+<span class="sd">    device_type: str, default: &#39;cpu&#39;</span>
+<span class="sd">        &#39;cpu&#39; or &#39;gpu&#39;</span>
+<span class="sd">    device_ids: int or str, default &#39;0&#39;</span>
+<span class="sd">        CUDA devices, it&#39;s effective when ``use_gpu`` is True.</span>
+<span class="sd">        For single-device modules, ``device_ids`` can be int or str, e.g. 0 or &#39;0&#39;,</span>
+<span class="sd">        For multi-device modules, ``device_ids`` must be str, format like &#39;0, 1&#39;.</span>
+<span class="sd">    random_seed: int, default: 1230</span>
+<span class="sd">        random seed for every random value</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    https://arxiv.org/abs/1910.08527</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from castle.algorithms import MCSL</span>
+<span class="sd">    &gt;&gt;&gt; from castle.datasets import load_dataset</span>
+<span class="sd">    &gt;&gt;&gt; from castle.common import GraphDAG</span>
+<span class="sd">    &gt;&gt;&gt; from castle.metrics import MetricsDAG</span>
+<span class="sd">    &gt;&gt;&gt; true_dag, X = load_dataset(name=&#39;iid_test&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; n = MCSL(iter_step=1000, rho_thres=1e14, init_rho=1e-5,</span>
+<span class="sd">    ...          rho_multiply=10, graph_thres=0.5, l1_graph_penalty=2e-3)</span>
+<span class="sd">    &gt;&gt;&gt; n.learn(X)</span>
+<span class="sd">    &gt;&gt;&gt; GraphDAG(n.causal_matrix, true_dag)</span>
+<span class="sd">    &gt;&gt;&gt; met = MetricsDAG(n.causal_matrix, true_dag)</span>
+<span class="sd">    &gt;&gt;&gt; print(met.metrics)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@check_args_value</span><span class="p">(</span><span class="n">MCSL_VALID_PARAMS</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_type</span><span class="o">=</span><span class="s1">&#39;nn&#39;</span><span class="p">,</span> <span class="n">num_hidden_layers</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
+                 <span class="n">graph_thresh</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">l1_graph_penalty</span><span class="o">=</span><span class="mf">2e-3</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">3e-2</span><span class="p">,</span>
+                 <span class="n">max_iter</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">iter_step</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">init_iter</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">h_tol</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">,</span>
+                 <span class="n">init_rho</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">rho_thresh</span><span class="o">=</span><span class="mf">1e14</span><span class="p">,</span> <span class="n">h_thresh</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span>
+                 <span class="n">rho_multiply</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">device_type</span><span class="o">=</span><span class="s1">&#39;cpu&#39;</span><span class="p">,</span>
+                 <span class="n">device_ids</span><span class="o">=</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="n">random_seed</span><span class="o">=</span><span class="mi">1230</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">MCSL</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_type</span> <span class="o">=</span> <span class="n">model_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_hidden_layers</span> <span class="o">=</span> <span class="n">num_hidden_layers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hidden_dim</span> <span class="o">=</span> <span class="n">hidden_dim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">graph_thresh</span> <span class="o">=</span> <span class="n">graph_thresh</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">l1_graph_penalty</span> <span class="o">=</span> <span class="n">l1_graph_penalty</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">learning_rate</span> <span class="o">=</span> <span class="n">learning_rate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_iter</span> <span class="o">=</span> <span class="n">max_iter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">iter_step</span> <span class="o">=</span> <span class="n">iter_step</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_iter</span> <span class="o">=</span> <span class="n">init_iter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">h_tol</span> <span class="o">=</span> <span class="n">h_tol</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_rho</span> <span class="o">=</span> <span class="n">init_rho</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rho_thresh</span> <span class="o">=</span> <span class="n">rho_thresh</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">h_thresh</span> <span class="o">=</span> <span class="n">h_thresh</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rho_multiply</span> <span class="o">=</span> <span class="n">rho_multiply</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="n">temperature</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device_type</span> <span class="o">=</span> <span class="n">device_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device_ids</span> <span class="o">=</span> <span class="n">device_ids</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">random_seed</span> <span class="o">=</span> <span class="n">random_seed</span>
+
+        <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;GPU is available.&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;GPU is unavailable.&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">device_type</span> <span class="o">==</span> <span class="s1">&#39;gpu&#39;</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;GPU is unavailable, &quot;</span>
+                                 <span class="s2">&quot;please set device_type = &#39;cpu&#39;.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">device_type</span> <span class="o">==</span> <span class="s1">&#39;gpu&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">device_ids</span><span class="p">:</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;CUDA_VISIBLE_DEVICES&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device_ids</span><span class="p">)</span>
+            <span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s1">&#39;cuda&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s1">&#39;cpu&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">device</span>
+
+<div class="viewcode-block" id="MCSL.learn">
+<a class="viewcode-back" href="../../../../../../castle/castle.algorithms.html#castle.algorithms.MCSL.learn">[docs]</a>
+    <span class="k">def</span> <span class="nf">learn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pns_mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set up and run the MCSL algorithm.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data: castle.Tensor or numpy.ndarray</span>
+<span class="sd">            The castle.Tensor or numpy.ndarray format data you want to learn.</span>
+<span class="sd">        columns: Index or array-like</span>
+<span class="sd">            Column labels to use for resulting tensor. Will default to</span>
+<span class="sd">            RangeIndex (0, 1, 2, ..., n) if no column labels are provided.</span>
+<span class="sd">        pns_mask: array_like or None</span>
+<span class="sd">            The mask matrix.</span>
+<span class="sd">            array with element in {0, 1}, ``0`` denotes has no edge in i -&gt; j,</span>
+<span class="sd">            ``1`` denotes maybe has edge in i -&gt; j or not.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">Tensor</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_nodes</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span>
+        <span class="k">if</span> <span class="n">pns_mask</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">pns_mask</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pns_mask</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">pns_mask</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+
+        <span class="n">causal_matrix</span><span class="p">,</span> <span class="n">causal_matrix_weight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mcsl</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">pns_mask</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">causal_matrix_weight</span> <span class="o">=</span> <span class="n">Tensor</span><span class="p">(</span><span class="n">causal_matrix_weight</span><span class="p">,</span>
+                                           <span class="n">index</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span>
+                                           <span class="n">columns</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">columns</span>
+                                           <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">causal_matrix</span> <span class="o">=</span> <span class="n">Tensor</span><span class="p">(</span><span class="n">causal_matrix</span><span class="p">,</span>
+                                    <span class="n">index</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span>
+                                    <span class="n">columns</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">columns</span>
+                                    <span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_mcsl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">pns_mask</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Starting model of MCSL.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x: torch.Tensor</span>
+<span class="sd">            The torch.Tensor data you want to learn.</span>
+<span class="sd">        pns_mask: torch.Tensor</span>
+<span class="sd">            The mask matrix.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">set_seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">random_seed</span><span class="p">)</span>
+
+        <span class="n">model</span> <span class="o">=</span> <span class="n">MaskedModel</span><span class="p">(</span><span class="n">model_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_type</span><span class="p">,</span>
+                            <span class="n">n_samples</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span><span class="p">,</span>
+                            <span class="n">n_nodes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_nodes</span><span class="p">,</span>
+                            <span class="n">pns_mask</span><span class="o">=</span><span class="n">pns_mask</span><span class="p">,</span>
+                            <span class="n">num_hidden_layers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_hidden_layers</span><span class="p">,</span>
+                            <span class="n">hidden_dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hidden_dim</span><span class="p">,</span>
+                            <span class="n">l1_graph_penalty</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">l1_graph_penalty</span><span class="p">,</span>
+                            <span class="n">seed</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">random_seed</span><span class="p">,</span>
+                            <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">trainer</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+                          <span class="n">learning_rate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">learning_rate</span><span class="p">,</span>
+                          <span class="n">init_rho</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">init_rho</span><span class="p">,</span>
+                          <span class="n">rho_thresh</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rho_thresh</span><span class="p">,</span>
+                          <span class="n">h_thresh</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">h_thresh</span><span class="p">,</span>
+                          <span class="n">rho_multiply</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rho_multiply</span><span class="p">,</span>
+                          <span class="n">init_iter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">init_iter</span><span class="p">,</span>
+                          <span class="n">h_tol</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">h_tol</span><span class="p">,</span>
+                          <span class="n">temperature</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">temperature</span><span class="p">,</span>
+                          <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">w_logits</span> <span class="o">=</span> <span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_iter</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">iter_step</span><span class="p">)</span>
+
+        <span class="n">w_est</span><span class="p">,</span> <span class="n">w_est_weight</span> <span class="o">=</span> <span class="n">callback_after_training</span><span class="p">(</span><span class="n">w_logits</span><span class="p">,</span>
+                                                      <span class="bp">self</span><span class="o">.</span><span class="n">temperature</span><span class="p">,</span>
+                                                      <span class="bp">self</span><span class="o">.</span><span class="n">graph_thresh</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">w_est</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">w_est_weight</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Huawei Noah&#39;s Lab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

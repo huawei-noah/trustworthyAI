@@ -1,0 +1,843 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>castle.datasets.simulator &mdash; gCastle 1.0.4rc1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=3cd93504"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            gCastle
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../castle/castle.html">castle</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">gCastle</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">castle.datasets.simulator</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for castle.datasets.simulator</h1><div class="highlight"><pre>
+<span></span><span class="c1"># coding=utf-8</span>
+<span class="c1"># 2020.12 added (1) low rank DAG generations;</span>
+<span class="c1">#               (2) quad functons for causal functions;</span>
+<span class="c1">#               (3) event-type data</span>
+<span class="c1"># 2021.08 deleted (1) condition: sem_type == &#39;poisson&#39;</span>
+<span class="c1"># Huawei Technologies Co., Ltd. </span>
+<span class="c1"># </span>
+<span class="c1"># Copyright (C) 2021. Huawei Technologies Co., Ltd. All rights reserved.</span>
+<span class="c1"># </span>
+<span class="c1"># Copyright (c) Xun Zheng (https://github.com/xunzheng/notears)</span>
+<span class="c1">#</span>
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#     http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">random</span><span class="w"> </span><span class="kn">import</span> <span class="n">sample</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">networkx</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nx</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">networkx.algorithms</span><span class="w"> </span><span class="kn">import</span> <span class="n">bipartite</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">combinations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.special</span><span class="w"> </span><span class="kn">import</span> <span class="n">expit</span> <span class="k">as</span> <span class="n">sigmoid</span>
+
+
+<div class="viewcode-block" id="set_random_seed">
+<a class="viewcode-back" href="../../../castle/castle.datasets.html#castle.datasets.simulator.set_random_seed">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">set_random_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">):</span>
+    <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="DAG">
+<a class="viewcode-back" href="../../../castle/castle.datasets.html#castle.datasets.simulator.DAG">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DAG</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    A class for simulating random (causal) DAG, where any DAG generator</span>
+<span class="sd">    method would return the weighed/binary adjacency matrix of a DAG.</span>
+<span class="sd">    Besides, we recommend using the python package &quot;NetworkX&quot;</span>
+<span class="sd">    to create more structures types.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_random_permutation</span><span class="p">(</span><span class="n">M</span><span class="p">):</span>
+        <span class="c1"># np.random.permutation permutes first axis only</span>
+        <span class="n">P</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">M</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="k">return</span> <span class="n">P</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">M</span> <span class="o">@</span> <span class="n">P</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_random_acyclic_orientation</span><span class="p">(</span><span class="n">B_und</span><span class="p">):</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tril</span><span class="p">(</span><span class="n">DAG</span><span class="o">.</span><span class="n">_random_permutation</span><span class="p">(</span><span class="n">B_und</span><span class="p">),</span> <span class="n">k</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">B_perm</span> <span class="o">=</span> <span class="n">DAG</span><span class="o">.</span><span class="n">_random_permutation</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">B_perm</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_graph_to_adjmat</span><span class="p">(</span><span class="n">G</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asmatrix</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">to_numpy_array</span><span class="p">(</span><span class="n">G</span><span class="p">))</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_BtoW</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">w_range</span><span class="p">):</span>
+        <span class="n">U</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="n">w_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">high</span><span class="o">=</span><span class="n">w_range</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">size</span><span class="o">=</span><span class="p">[</span><span class="n">d</span><span class="p">,</span> <span class="n">d</span><span class="p">])</span>
+        <span class="n">U</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.5</span><span class="p">]</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">W</span> <span class="o">=</span> <span class="p">(</span><span class="n">B</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span> <span class="o">*</span> <span class="n">U</span>
+        <span class="k">return</span> <span class="n">W</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_low_rank_dag</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">degree</span><span class="p">,</span> <span class="n">rank</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Simulate random low rank DAG with some expected degree.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        d: int</span>
+<span class="sd">            Number of nodes.</span>
+<span class="sd">        degree: int</span>
+<span class="sd">            Expected node degree, in + out.</span>
+<span class="sd">        rank: int</span>
+<span class="sd">            Maximum rank (rank &lt; d-1).</span>
+
+<span class="sd">        Return</span>
+<span class="sd">        ------</span>
+<span class="sd">        B: np.nparray</span>
+<span class="sd">            Initialize DAG.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">prob</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">degree</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">d</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">triu</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">prob</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">),</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">total_edge_num</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">B</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">sampled_pa</span> <span class="o">=</span> <span class="n">sample</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">d</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="n">rank</span><span class="p">)</span>
+        <span class="n">sampled_pa</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">sampled_ch</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">sampled_pa</span><span class="p">:</span>
+            <span class="n">candidate</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">d</span><span class="p">))</span>
+            <span class="n">candidate</span> <span class="o">=</span> <span class="n">candidate</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">sampled_ch</span><span class="p">)</span>
+            <span class="n">sampled_ch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sample</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">candidate</span><span class="p">),</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">B</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">sampled_ch</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">remaining_pa</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">d</span><span class="p">))</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">sampled_pa</span><span class="p">))</span>
+        <span class="n">remaining_ch</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">d</span><span class="p">))</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">sampled_ch</span><span class="p">))</span>
+        <span class="n">B</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ix_</span><span class="p">(</span><span class="n">remaining_pa</span><span class="p">,</span> <span class="n">remaining_ch</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">after_matching_edge_num</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">B</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># delta = total_edge_num - after_matching_edge_num</span>
+        <span class="c1"># mask B</span>
+        <span class="n">maskedB</span> <span class="o">=</span> <span class="n">B</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">tril</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">d</span><span class="p">,</span> <span class="n">d</span><span class="p">)))</span>
+        <span class="n">maskedB</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ix_</span><span class="p">(</span><span class="n">remaining_pa</span><span class="p">,</span> <span class="n">remaining_ch</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">B</span><span class="p">[</span><span class="n">maskedB</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="n">remaining_ch_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="n">i</span> <span class="o">+</span> <span class="n">d</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">remaining_ch</span><span class="p">])</span>
+        <span class="n">sampled_ch_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="n">i</span> <span class="o">+</span> <span class="n">d</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">sampled_ch</span><span class="p">])</span>
+        <span class="n">remaining_pa_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">remaining_pa</span><span class="p">)</span>
+        <span class="n">sampled_pa_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">sampled_pa</span><span class="p">)</span>
+
+        <span class="n">edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">B</span><span class="p">))</span>
+        <span class="n">edges</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="n">d</span>
+        <span class="n">bigraph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">()</span>
+        <span class="n">bigraph</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">d</span><span class="p">))</span>
+        <span class="n">bigraph</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">(</span><span class="n">edges</span><span class="p">)</span>
+        <span class="n">M</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">bipartite</span><span class="o">.</span><span class="n">maximum_matching</span><span class="p">(</span><span class="n">bigraph</span><span class="p">,</span> <span class="n">top_nodes</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="n">d</span><span class="p">))</span>
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">M</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">rank</span><span class="p">:</span>
+            <span class="n">keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">M</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+            <span class="n">rmv_cand</span> <span class="o">=</span> <span class="n">keys</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">remaining_pa_set</span> <span class="o">|</span> <span class="n">remaining_ch_set</span><span class="p">)</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">sample</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">rmv_cand</span><span class="p">),</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">M</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>
+            <span class="c1"># destroy p-c</span>
+            <span class="n">bigraph</span><span class="o">.</span><span class="n">remove_edge</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
+            <span class="n">M</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">bipartite</span><span class="o">.</span><span class="n">maximum_matching</span><span class="p">(</span><span class="n">bigraph</span><span class="p">,</span> <span class="n">top_nodes</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="n">d</span><span class="p">))</span>
+
+        <span class="n">new_edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">bigraph</span><span class="o">.</span><span class="n">edges</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">new_edges</span><span class="p">)):</span>
+            <span class="n">new_edges</span><span class="p">[</span><span class="n">i</span><span class="p">,]</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+        <span class="n">new_edges</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-=</span> <span class="n">d</span>
+
+        <span class="n">BB</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">d</span><span class="p">,</span> <span class="n">d</span><span class="p">))</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">d</span><span class="p">,</span> <span class="n">d</span><span class="p">))</span>
+        <span class="n">BB</span><span class="p">[</span><span class="n">new_edges</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">new_edges</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">BB</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">total_edge_num</span><span class="p">:</span>
+            <span class="n">delta</span> <span class="o">=</span> <span class="n">total_edge_num</span> <span class="o">-</span> <span class="n">rank</span>
+            <span class="n">BB</span><span class="p">[</span><span class="n">sampled_pa</span><span class="p">,</span> <span class="n">sampled_ch</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">rmv_cand_edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">BB</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">delta</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Number of edges is below the rank, please </span><span class="se">\</span>
+<span class="s1">                                   set a larger edge or degree </span><span class="se">\</span>
+<span class="s1">                                   (you can change seed or increase degree).&#39;</span><span class="p">)</span>
+            <span class="n">selected</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sample</span><span class="p">(</span><span class="n">rmv_cand_edges</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">delta</span><span class="p">))</span>
+            <span class="n">B</span><span class="p">[</span><span class="n">selected</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">selected</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">B</span><span class="p">[</span><span class="n">sampled_pa</span><span class="p">,</span> <span class="n">sampled_ch</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">B</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">BB</span><span class="p">)</span>
+
+        <span class="n">B</span> <span class="o">=</span> <span class="n">B</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">B</span>
+
+<div class="viewcode-block" id="DAG.erdos_renyi">
+<a class="viewcode-back" href="../../../castle/castle.datasets.html#castle.datasets.simulator.DAG.erdos_renyi">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">erdos_renyi</span><span class="p">(</span><span class="n">n_nodes</span><span class="p">,</span> <span class="n">n_edges</span><span class="p">,</span> <span class="n">weight_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="k">assert</span> <span class="n">n_nodes</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="n">set_random_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="c1"># Erdos-Renyi</span>
+        <span class="n">creation_prob</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">n_edges</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">n_nodes</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">G_und</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">erdos_renyi_graph</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">n_nodes</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">creation_prob</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+        <span class="n">B_und</span> <span class="o">=</span> <span class="n">DAG</span><span class="o">.</span><span class="n">_graph_to_adjmat</span><span class="p">(</span><span class="n">G_und</span><span class="p">)</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="n">DAG</span><span class="o">.</span><span class="n">_random_acyclic_orientation</span><span class="p">(</span><span class="n">B_und</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">weight_range</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">B</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">W</span> <span class="o">=</span> <span class="n">DAG</span><span class="o">.</span><span class="n">_BtoW</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">n_nodes</span><span class="p">,</span> <span class="n">weight_range</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">W</span></div>
+
+
+<div class="viewcode-block" id="DAG.scale_free">
+<a class="viewcode-back" href="../../../castle/castle.datasets.html#castle.datasets.simulator.DAG.scale_free">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">scale_free</span><span class="p">(</span><span class="n">n_nodes</span><span class="p">,</span> <span class="n">n_edges</span><span class="p">,</span> <span class="n">weight_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="k">assert</span> <span class="p">(</span><span class="n">n_nodes</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">n_edges</span> <span class="o">&gt;=</span> <span class="n">n_nodes</span> <span class="ow">and</span> <span class="n">n_edges</span> <span class="o">&lt;</span> <span class="n">n_nodes</span> <span class="o">*</span> <span class="n">n_nodes</span><span class="p">)</span>
+        <span class="n">set_random_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="c1"># Scale-free, Barabasi-Albert</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">n_edges</span> <span class="o">/</span> <span class="n">n_nodes</span><span class="p">))</span>
+        <span class="n">G_und</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">barabasi_albert_graph</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">n_nodes</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">m</span><span class="p">)</span>
+        <span class="n">B_und</span> <span class="o">=</span> <span class="n">DAG</span><span class="o">.</span><span class="n">_graph_to_adjmat</span><span class="p">(</span><span class="n">G_und</span><span class="p">)</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="n">DAG</span><span class="o">.</span><span class="n">_random_acyclic_orientation</span><span class="p">(</span><span class="n">B_und</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">weight_range</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">B</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">W</span> <span class="o">=</span> <span class="n">DAG</span><span class="o">.</span><span class="n">_BtoW</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">n_nodes</span><span class="p">,</span> <span class="n">weight_range</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">W</span></div>
+
+
+<div class="viewcode-block" id="DAG.bipartite">
+<a class="viewcode-back" href="../../../castle/castle.datasets.html#castle.datasets.simulator.DAG.bipartite">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">bipartite</span><span class="p">(</span><span class="n">n_nodes</span><span class="p">,</span> <span class="n">n_edges</span><span class="p">,</span> <span class="n">split_ratio</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span> <span class="n">weight_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="k">assert</span> <span class="n">n_nodes</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="n">set_random_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="c1"># Bipartite, Sec 4.1 of (Gu, Fu, Zhou, 2018)</span>
+        <span class="n">n_top</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">split_ratio</span> <span class="o">*</span> <span class="n">n_nodes</span><span class="p">)</span>
+        <span class="n">n_bottom</span> <span class="o">=</span> <span class="n">n_nodes</span> <span class="o">-</span>  <span class="n">n_top</span>
+        <span class="n">creation_prob</span> <span class="o">=</span> <span class="n">n_edges</span><span class="o">/</span><span class="p">(</span><span class="n">n_top</span><span class="o">*</span><span class="n">n_bottom</span><span class="p">)</span>
+        <span class="n">G_und</span> <span class="o">=</span> <span class="n">bipartite</span><span class="o">.</span><span class="n">random_graph</span><span class="p">(</span><span class="n">n_top</span><span class="p">,</span> <span class="n">n_bottom</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">creation_prob</span><span class="p">,</span> <span class="n">directed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">B_und</span> <span class="o">=</span> <span class="n">DAG</span><span class="o">.</span><span class="n">_graph_to_adjmat</span><span class="p">(</span><span class="n">G_und</span><span class="p">)</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="n">DAG</span><span class="o">.</span><span class="n">_random_acyclic_orientation</span><span class="p">(</span><span class="n">B_und</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">weight_range</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">B</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">W</span> <span class="o">=</span> <span class="n">DAG</span><span class="o">.</span><span class="n">_BtoW</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">n_nodes</span><span class="p">,</span> <span class="n">weight_range</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">W</span></div>
+
+
+<div class="viewcode-block" id="DAG.hierarchical">
+<a class="viewcode-back" href="../../../castle/castle.datasets.html#castle.datasets.simulator.DAG.hierarchical">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">hierarchical</span><span class="p">(</span><span class="n">n_nodes</span><span class="p">,</span> <span class="n">degree</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">graph_level</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">weight_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="k">assert</span> <span class="n">n_nodes</span> <span class="o">&gt;</span> <span class="mi">1</span>
+        <span class="n">set_random_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="n">prob</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">degree</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">n_nodes</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tril</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">n_nodes</span><span class="p">,</span> <span class="n">n_nodes</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">prob</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">),</span> <span class="n">k</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">point</span> <span class="o">=</span> <span class="n">sample</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n_nodes</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="n">graph_level</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">point</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+        <span class="n">point</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">x</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">point</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">n_nodes</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">graph_level</span><span class="p">):</span>
+            <span class="n">B</span><span class="p">[</span><span class="n">point</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span><span class="n">point</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="n">point</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span><span class="n">point</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">weight_range</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">B</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">W</span> <span class="o">=</span> <span class="n">DAG</span><span class="o">.</span><span class="n">_BtoW</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">n_nodes</span><span class="p">,</span> <span class="n">weight_range</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">W</span></div>
+
+
+<div class="viewcode-block" id="DAG.low_rank">
+<a class="viewcode-back" href="../../../castle/castle.datasets.html#castle.datasets.simulator.DAG.low_rank">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">low_rank</span><span class="p">(</span><span class="n">n_nodes</span><span class="p">,</span> <span class="n">degree</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">rank</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">weight_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="k">assert</span> <span class="n">n_nodes</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="n">set_random_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="n">DAG</span><span class="o">.</span><span class="n">_low_rank_dag</span><span class="p">(</span><span class="n">n_nodes</span><span class="p">,</span> <span class="n">degree</span><span class="p">,</span> <span class="n">rank</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">weight_range</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">B</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">W</span> <span class="o">=</span> <span class="n">DAG</span><span class="o">.</span><span class="n">_BtoW</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">n_nodes</span><span class="p">,</span> <span class="n">weight_range</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">W</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="IIDSimulation">
+<a class="viewcode-back" href="../../../castle/castle.datasets.html#castle.datasets.simulator.IIDSimulation">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">IIDSimulation</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Simulate IID datasets for causal structure learning.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    W: np.ndarray</span>
+<span class="sd">        Weighted adjacency matrix for the target causal graph.</span>
+<span class="sd">    n: int</span>
+<span class="sd">        Number of samples for standard trainning dataset.</span>
+<span class="sd">    method: str, (linear or nonlinear), default=&#39;linear&#39;</span>
+<span class="sd">        Distribution for standard trainning dataset.</span>
+<span class="sd">    sem_type: str</span>
+<span class="sd">        gauss, exp, gumbel, uniform, logistic (linear); </span>
+<span class="sd">        mlp, mim, gp, gp-add, quadratic (nonlinear).</span>
+<span class="sd">    noise_scale: float</span>
+<span class="sd">        Scale parameter of noise distribution in linear SEM.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">W</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> 
+                 <span class="n">sem_type</span><span class="o">=</span><span class="s1">&#39;gauss&#39;</span><span class="p">,</span> <span class="n">noise_scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">B</span> <span class="o">=</span> <span class="p">(</span><span class="n">W</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;linear&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">IIDSimulation</span><span class="o">.</span><span class="n">_simulate_linear_sem</span><span class="p">(</span>
+                    <span class="n">W</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">sem_type</span><span class="p">,</span> <span class="n">noise_scale</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;nonlinear&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">IIDSimulation</span><span class="o">.</span><span class="n">_simulate_nonlinear_sem</span><span class="p">(</span>
+                    <span class="n">W</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">sem_type</span><span class="p">,</span> <span class="n">noise_scale</span><span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Finished synthetic dataset&#39;</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_simulate_linear_sem</span><span class="p">(</span><span class="n">W</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">sem_type</span><span class="p">,</span> <span class="n">noise_scale</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Simulate samples from linear SEM with specified type(s) of noise.</span>
+<span class="sd">        For uniform, noise z ~ uniform(-a, a), where a = noise_scale.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        W: np.ndarray</span>
+<span class="sd">            [d, d] weighted adj matrix of DAG.</span>
+<span class="sd">        n: int</span>
+<span class="sd">            Number of samples, n=inf mimics population risk.</span>
+<span class="sd">        sem_type: str or list of str</span>
+<span class="sd">            If str, all variables follow this noise type, e.g., &#39;gauss&#39;, &#39;exp&#39;, &#39;gumbel&#39;, &#39;uniform&#39;, &#39;logistic&#39;.</span>
+<span class="sd">            If list of str, the ith noise variable follows the ith type in the list. </span>
+<span class="sd">            The length of the list should be equal to the number of variables (i.e., d).</span>
+<span class="sd">        noise_scale: float </span>
+<span class="sd">            Scale parameter of noise distribution in linear SEM.</span>
+<span class="sd">        </span>
+<span class="sd">        Return</span>
+<span class="sd">        ------</span>
+<span class="sd">        X: np.ndarray</span>
+<span class="sd">            [n, d] sample matrix, [d, d] if n=inf</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_simulate_single_equation</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">sem_type_single</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Simulate a single equation in the SEM.</span>
+<span class="sd">            The noise type of this equation is determined by the &#39;sem_type_single&#39; parameter.</span>
+<span class="sd">            </span>
+<span class="sd">            Parameters</span>
+<span class="sd">            ----------</span>
+<span class="sd">            X: np.ndarray</span>
+<span class="sd">                [n, num of parents] matrix representing the values of parent variables.</span>
+<span class="sd">            w: np.ndarray</span>
+<span class="sd">                [num of parents] array representing the weights of parent variables.</span>
+<span class="sd">            scale: float</span>
+<span class="sd">                Scale parameter for the noise distribution in the SEM.</span>
+<span class="sd">            sem_type_single: str</span>
+<span class="sd">                The type of noise to use for this variable. Can be &#39;gauss&#39;, &#39;exp&#39;, &#39;gumbel&#39;, &#39;uniform&#39;, &#39;logistic&#39;.</span>
+<span class="sd">        </span>
+<span class="sd">            Returns</span>
+<span class="sd">            -------</span>
+<span class="sd">            x: np.ndarray</span>
+<span class="sd">                [n] array representing the values of the simulated variable.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">if</span> <span class="n">sem_type_single</span> <span class="o">==</span> <span class="s1">&#39;gauss&#39;</span><span class="p">:</span>
+                <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">n</span><span class="p">)</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">w</span> <span class="o">+</span> <span class="n">z</span>
+            <span class="k">elif</span> <span class="n">sem_type_single</span> <span class="o">==</span> <span class="s1">&#39;exp&#39;</span><span class="p">:</span>
+                <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">exponential</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">n</span><span class="p">)</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">w</span> <span class="o">+</span> <span class="n">z</span>
+            <span class="k">elif</span> <span class="n">sem_type_single</span> <span class="o">==</span> <span class="s1">&#39;gumbel&#39;</span><span class="p">:</span>
+                <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">gumbel</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">n</span><span class="p">)</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">w</span> <span class="o">+</span> <span class="n">z</span>
+            <span class="k">elif</span> <span class="n">sem_type_single</span> <span class="o">==</span> <span class="s1">&#39;uniform&#39;</span><span class="p">:</span>
+                <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=-</span><span class="n">scale</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">n</span><span class="p">)</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">w</span> <span class="o">+</span> <span class="n">z</span>
+            <span class="k">elif</span> <span class="n">sem_type_single</span> <span class="o">==</span> <span class="s1">&#39;logistic&#39;</span><span class="p">:</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">binomial</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">sigmoid</span><span class="p">(</span><span class="n">X</span> <span class="o">@</span> <span class="n">w</span><span class="p">))</span> <span class="o">*</span> <span class="mf">1.0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unknown sem type. In a linear model, </span><span class="se">\</span>
+<span class="s1">                                 the options are as follows: gauss, exp, </span><span class="se">\</span>
+<span class="s1">                                 gumbel, uniform, logistic.&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">x</span>
+
+        <span class="n">d</span> <span class="o">=</span> <span class="n">W</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">noise_scale</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">scale_vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">noise_scale</span><span class="p">):</span>
+            <span class="n">scale_vec</span> <span class="o">=</span> <span class="n">noise_scale</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">noise_scale</span><span class="p">)</span> <span class="o">!=</span> <span class="n">d</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;noise scale must be a scalar or has length d&#39;</span><span class="p">)</span>
+            <span class="n">scale_vec</span> <span class="o">=</span> <span class="n">noise_scale</span>
+        <span class="n">G_nx</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">(</span><span class="n">W</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">nx</span><span class="o">.</span><span class="n">is_directed_acyclic_graph</span><span class="p">(</span><span class="n">G_nx</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;W must be a DAG&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>  <span class="c1"># population risk for linear gauss SEM</span>
+            <span class="k">if</span> <span class="n">sem_type</span> <span class="o">==</span> <span class="s1">&#39;gauss&#39;</span><span class="p">:</span>
+                <span class="c1"># make 1/d X&#39;X = true cov</span>
+                <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">scale_vec</span><span class="p">)</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="o">-</span> <span class="n">W</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">X</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;population risk not available&#39;</span><span class="p">)</span>
+        <span class="c1"># empirical risk</span>
+
+        <span class="c1"># check if sem_type is a single string</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sem_type</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="c1"># If it is, make it a list of size d with the same value</span>
+            <span class="n">sem_type</span> <span class="o">=</span> <span class="p">[</span><span class="n">sem_type</span><span class="p">]</span> <span class="o">*</span> <span class="n">d</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sem_type</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="c1"># If it&#39;s a list, check if the length is equal to d</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sem_type</span><span class="p">)</span> <span class="o">!=</span> <span class="n">d</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The length of sem_type needs to be equal to </span><span class="si">{</span><span class="n">d</span><span class="si">}</span><span class="s2"> (the number of variables).&quot;</span><span class="p">)</span>
+            <span class="c1"># ensure all elements in the list are strings</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">sem_type</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;All elements in the sem_type list must be strings.&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;sem_type should be either a string or a list of strings&quot;</span><span class="p">)</span>
+
+        <span class="n">ordered_vertices</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">topological_sort</span><span class="p">(</span><span class="n">G_nx</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">ordered_vertices</span><span class="p">)</span> <span class="o">==</span> <span class="n">d</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">n</span><span class="p">,</span> <span class="n">d</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">ordered_vertices</span><span class="p">:</span>
+            <span class="n">parents</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">G_nx</span><span class="o">.</span><span class="n">predecessors</span><span class="p">(</span><span class="n">j</span><span class="p">))</span>
+            <span class="n">X</span><span class="p">[:,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">_simulate_single_equation</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span> <span class="n">parents</span><span class="p">],</span> <span class="n">W</span><span class="p">[</span><span class="n">parents</span><span class="p">,</span> <span class="n">j</span><span class="p">],</span> <span class="n">scale_vec</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">sem_type</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">X</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_simulate_nonlinear_sem</span><span class="p">(</span><span class="n">W</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">sem_type</span><span class="p">,</span> <span class="n">noise_scale</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Simulate samples from nonlinear SEM.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        B: np.ndarray</span>
+<span class="sd">            [d, d] binary adj matrix of DAG.</span>
+<span class="sd">        n: int</span>
+<span class="sd">            Number of samples.</span>
+<span class="sd">        sem_type: str</span>
+<span class="sd">            mlp, mim, gp, gp-add, or quadratic.</span>
+<span class="sd">        noise_scale: float</span>
+<span class="sd">            Scale parameter of noise distribution in linear SEM.</span>
+
+<span class="sd">        Return</span>
+<span class="sd">        ------</span>
+<span class="sd">        X: np.ndarray</span>
+<span class="sd">            [n, d] sample matrix</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">sem_type</span> <span class="o">==</span> <span class="s1">&#39;quadratic&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">IIDSimulation</span><span class="o">.</span><span class="n">_simulate_quad_sem</span><span class="p">(</span><span class="n">W</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">noise_scale</span><span class="p">)</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">_simulate_single_equation</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;X: [n, num of parents], x: [n]&quot;&quot;&quot;</span>
+            <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">n</span><span class="p">)</span>
+            <span class="n">pa_size</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">pa_size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">z</span>
+            <span class="k">if</span> <span class="n">sem_type</span> <span class="o">==</span> <span class="s1">&#39;mlp&#39;</span><span class="p">:</span>
+                <span class="n">hidden</span> <span class="o">=</span> <span class="mi">100</span>
+                <span class="n">W1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">[</span><span class="n">pa_size</span><span class="p">,</span> <span class="n">hidden</span><span class="p">])</span>
+                <span class="n">W1</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="o">*</span><span class="n">W1</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.5</span><span class="p">]</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
+                <span class="n">W2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">hidden</span><span class="p">)</span>
+                <span class="n">W2</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">hidden</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.5</span><span class="p">]</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">sigmoid</span><span class="p">(</span><span class="n">X</span> <span class="o">@</span> <span class="n">W1</span><span class="p">)</span> <span class="o">@</span> <span class="n">W2</span> <span class="o">+</span> <span class="n">z</span>
+            <span class="k">elif</span> <span class="n">sem_type</span> <span class="o">==</span> <span class="s1">&#39;mim&#39;</span><span class="p">:</span>
+                <span class="n">w1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">pa_size</span><span class="p">)</span>
+                <span class="n">w1</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">pa_size</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.5</span><span class="p">]</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
+                <span class="n">w2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">pa_size</span><span class="p">)</span>
+                <span class="n">w2</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">pa_size</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.5</span><span class="p">]</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
+                <span class="n">w3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">pa_size</span><span class="p">)</span>
+                <span class="n">w3</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">pa_size</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.5</span><span class="p">]</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="n">X</span> <span class="o">@</span> <span class="n">w1</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">X</span> <span class="o">@</span> <span class="n">w2</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">X</span> <span class="o">@</span> <span class="n">w3</span><span class="p">)</span> <span class="o">+</span> <span class="n">z</span>
+            <span class="k">elif</span> <span class="n">sem_type</span> <span class="o">==</span> <span class="s1">&#39;gp&#39;</span><span class="p">:</span>
+                <span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.gaussian_process</span><span class="w"> </span><span class="kn">import</span> <span class="n">GaussianProcessRegressor</span>
+                <span class="n">gp</span> <span class="o">=</span> <span class="n">GaussianProcessRegressor</span><span class="p">()</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">gp</span><span class="o">.</span><span class="n">sample_y</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="o">+</span> <span class="n">z</span>
+            <span class="k">elif</span> <span class="n">sem_type</span> <span class="o">==</span> <span class="s1">&#39;gp-add&#39;</span><span class="p">:</span>
+                <span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.gaussian_process</span><span class="w"> </span><span class="kn">import</span> <span class="n">GaussianProcessRegressor</span>
+                <span class="n">gp</span> <span class="o">=</span> <span class="n">GaussianProcessRegressor</span><span class="p">()</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">gp</span><span class="o">.</span><span class="n">sample_y</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+                        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])])</span> <span class="o">+</span> <span class="n">z</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unknown sem type. In a nonlinear model, </span><span class="se">\</span>
+<span class="s1">                                 the options are as follows: mlp, mim, </span><span class="se">\</span>
+<span class="s1">                                 gp, gp-add, or quadratic.&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">x</span>
+
+        <span class="n">B</span> <span class="o">=</span> <span class="p">(</span><span class="n">W</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">B</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">noise_scale</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">scale_vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">noise_scale</span><span class="p">):</span>
+            <span class="n">scale_vec</span> <span class="o">=</span> <span class="n">noise_scale</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">noise_scale</span><span class="p">)</span> <span class="o">!=</span> <span class="n">d</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;noise scale must be a scalar or has length d&#39;</span><span class="p">)</span>
+            <span class="n">scale_vec</span> <span class="o">=</span> <span class="n">noise_scale</span>
+
+        <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">n</span><span class="p">,</span> <span class="n">d</span><span class="p">])</span>
+        <span class="n">G_nx</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
+        <span class="n">ordered_vertices</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">topological_sort</span><span class="p">(</span><span class="n">G_nx</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">ordered_vertices</span><span class="p">)</span> <span class="o">==</span> <span class="n">d</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">ordered_vertices</span><span class="p">:</span>
+            <span class="n">parents</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">G_nx</span><span class="o">.</span><span class="n">predecessors</span><span class="p">(</span><span class="n">j</span><span class="p">))</span>
+            <span class="n">X</span><span class="p">[:,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">_simulate_single_equation</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span> <span class="n">parents</span><span class="p">],</span> <span class="n">scale_vec</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">X</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_simulate_quad_sem</span><span class="p">(</span><span class="n">W</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">noise_scale</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Simulate samples from SEM with specified type of noise.</span>
+<span class="sd">        Coefficient is randomly drawn but specifically designed </span>
+<span class="sd">        to avoid overflow issues.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        W: np.ndarray</span>
+<span class="sd">            weigthed DAG.</span>
+<span class="sd">        n: int</span>
+<span class="sd">            Number of samples.</span>
+<span class="sd">        noise_scale: float</span>
+<span class="sd">            Scale parameter of noise distribution in linear SEM.</span>
+
+<span class="sd">        Return</span>
+<span class="sd">        ------</span>
+<span class="sd">        X: np.ndarray</span>
+<span class="sd">            [n,d] sample matrix</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">generate_quadratic_coef</span><span class="p">(</span><span class="n">random_zero</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">random_zero</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+                <span class="k">return</span> <span class="mi">0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">coef</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+                    <span class="n">coef</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
+                <span class="k">return</span> <span class="n">coef</span>
+
+        <span class="n">G</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">(</span><span class="n">W</span><span class="p">)</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">W</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">n</span><span class="p">,</span> <span class="n">d</span><span class="p">])</span>
+        <span class="n">ordered_vertices</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">topological_sort</span><span class="p">(</span><span class="n">G</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">ordered_vertices</span><span class="p">)</span> <span class="o">==</span> <span class="n">d</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">ordered_vertices</span><span class="p">:</span>
+            <span class="n">parents</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">predecessors</span><span class="p">(</span><span class="n">j</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parents</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">eta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">n</span><span class="p">])</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">parents</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="c1"># We don&#39;t generate random zero coefficient if there is only one parent</span>
+                <span class="n">eta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">n</span><span class="p">])</span>
+                <span class="n">used_parents</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="n">parents</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">num_terms</span> <span class="o">=</span> <span class="mi">0</span>
+
+                <span class="c1"># Linear term</span>
+                <span class="n">coef</span> <span class="o">=</span> <span class="n">generate_quadratic_coef</span><span class="p">(</span><span class="n">random_zero</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">coef</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">eta</span> <span class="o">+=</span> <span class="n">coef</span> <span class="o">*</span> <span class="n">X</span><span class="p">[:,</span> <span class="n">p</span><span class="p">]</span>
+                    <span class="n">used_parents</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+                    <span class="n">num_terms</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                <span class="c1"># Squared term</span>
+                <span class="n">coef</span> <span class="o">=</span> <span class="n">generate_quadratic_coef</span><span class="p">(</span><span class="n">random_zero</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">coef</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">eta</span> <span class="o">+=</span> <span class="n">coef</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span> <span class="n">p</span><span class="p">])</span>
+                    <span class="n">used_parents</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+                    <span class="n">num_terms</span> <span class="o">+=</span> <span class="mi">1</span>
+                    
+                <span class="k">if</span> <span class="n">num_terms</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">eta</span> <span class="o">/=</span> <span class="n">num_terms</span>    <span class="c1"># Compute average</span>
+
+                <span class="c1"># Remove parent if both coef is zero</span>
+                <span class="k">if</span> <span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">used_parents</span><span class="p">:</span>
+                    <span class="n">W</span><span class="p">[</span><span class="n">p</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">else</span><span class="p">:</span>    <span class="c1"># More than 1 parent</span>
+                <span class="n">eta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">n</span><span class="p">])</span>
+                <span class="n">used_parents</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+                <span class="n">num_terms</span> <span class="o">=</span> <span class="mi">0</span>
+
+                <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parents</span><span class="p">:</span>
+                    <span class="c1"># Linear terms</span>
+                    <span class="n">coef</span> <span class="o">=</span> <span class="n">generate_quadratic_coef</span><span class="p">(</span><span class="n">random_zero</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">coef</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">eta</span> <span class="o">+=</span> <span class="n">coef</span> <span class="o">*</span> <span class="n">X</span><span class="p">[:,</span> <span class="n">p</span><span class="p">]</span>
+                        <span class="n">used_parents</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+                        <span class="n">num_terms</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                    <span class="c1"># Squared terms</span>
+                    <span class="n">coef</span> <span class="o">=</span> <span class="n">generate_quadratic_coef</span><span class="p">(</span><span class="n">random_zero</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">coef</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">eta</span> <span class="o">+=</span> <span class="n">coef</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span> <span class="n">p</span><span class="p">])</span>
+                        <span class="n">used_parents</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+                        <span class="n">num_terms</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                <span class="c1"># Cross terms</span>
+                <span class="k">for</span> <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span> <span class="ow">in</span> <span class="n">combinations</span><span class="p">(</span><span class="n">parents</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+                    <span class="n">coef</span> <span class="o">=</span> <span class="n">generate_quadratic_coef</span><span class="p">(</span><span class="n">random_zero</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">coef</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">eta</span> <span class="o">+=</span> <span class="n">coef</span> <span class="o">*</span> <span class="n">X</span><span class="p">[:,</span> <span class="n">p1</span><span class="p">]</span> <span class="o">*</span> <span class="n">X</span><span class="p">[:,</span> <span class="n">p2</span><span class="p">]</span>
+                        <span class="n">used_parents</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">p1</span><span class="p">)</span>
+                        <span class="n">used_parents</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">p2</span><span class="p">)</span>
+                        <span class="n">num_terms</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                <span class="k">if</span> <span class="n">num_terms</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">eta</span> <span class="o">/=</span> <span class="n">num_terms</span>    <span class="c1"># Compute average</span>
+
+                <span class="c1"># Remove parent if both coef is zero</span>
+                <span class="n">unused_parents</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">parents</span><span class="p">)</span> <span class="o">-</span> <span class="n">used_parents</span>
+                <span class="k">if</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">unused_parents</span><span class="p">:</span>
+                    <span class="n">W</span><span class="p">[</span><span class="n">p</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="n">X</span><span class="p">[:,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">eta</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="n">noise_scale</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">n</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">X</span></div>
+
+
+
+<div class="viewcode-block" id="Topology">
+<a class="viewcode-back" href="../../../castle/castle.datasets.html#castle.datasets.simulator.Topology">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Topology</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class for generating some classical (undirected) network structures,</span>
+<span class="sd">    in which any graph generator method would return the adjacency matrix of</span>
+<span class="sd">    a network structure.</span>
+<span class="sd">    In fact, we recommend to directly use the python package &quot;NetworkX&quot;</span>
+<span class="sd">    to create various structures you need.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Topology.erdos_renyi">
+<a class="viewcode-back" href="../../../castle/castle.datasets.html#castle.datasets.simulator.Topology.erdos_renyi">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">erdos_renyi</span><span class="p">(</span><span class="n">n_nodes</span><span class="p">,</span> <span class="n">n_edges</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate topology matrix</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        n_nodes : int, greater than 0</span>
+<span class="sd">            The number of nodes.</span>
+<span class="sd">        n_edges : int, greater than 0</span>
+<span class="sd">            Use to calculate probability for edge creation.</span>
+<span class="sd">        seed : integer, random_state, or None (default)</span>
+<span class="sd">            Indicator of random number generation state.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        B: np.matrix</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">n_nodes</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;The number of nodes must be greater than 0.&#39;</span>
+        <span class="n">creation_prob</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">n_edges</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">n_nodes</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">G</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">erdos_renyi_graph</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">n_nodes</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">creation_prob</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asmatrix</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">to_numpy_array</span><span class="p">(</span><span class="n">G</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">B</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="THPSimulation">
+<a class="viewcode-back" href="../../../castle/castle.datasets.html#castle.datasets.simulator.THPSimulation">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">THPSimulation</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class for simulating event sequences with</span>
+<span class="sd">    THP (Topological Hawkes Process) setting.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    causal_matrix: np.matrix</span>
+<span class="sd">        The casual matrix.</span>
+<span class="sd">    topology_matrix: np.matrix</span>
+<span class="sd">        Interpreted as an adjacency matrix to generate graph.</span>
+<span class="sd">        Has two dimension, should be square.</span>
+<span class="sd">    mu_range: tuple, default=(0.00005, 0.0001)</span>
+<span class="sd">    alpha_range: tuple, default=(0.005, 0.007)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">causal_matrix</span><span class="p">,</span> <span class="n">topology_matrix</span><span class="p">,</span>
+                 <span class="n">mu_range</span><span class="o">=</span><span class="p">(</span><span class="mf">0.00005</span><span class="p">,</span> <span class="mf">0.0001</span><span class="p">),</span> <span class="n">alpha_range</span><span class="o">=</span><span class="p">(</span><span class="mf">0.005</span><span class="p">,</span> <span class="mf">0.007</span><span class="p">)):</span>
+
+        <span class="k">assert</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">causal_matrix</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span>
+                <span class="n">causal_matrix</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span>
+                <span class="n">causal_matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">causal_matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>\
+            <span class="s1">&#39;casual_matrix should be np.matrix object, two dimension, square.&#39;</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">topology_matrix</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span>
+                <span class="n">topology_matrix</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span>
+                <span class="n">topology_matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">topology_matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>\
+            <span class="s1">&#39;topology_matrix should be np.matrix object, two dimension, square.&#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_causal_matrix</span> <span class="o">=</span> <span class="p">(</span><span class="n">causal_matrix</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_topo</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">(</span><span class="n">topology_matrix</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mu_range</span> <span class="o">=</span> <span class="n">mu_range</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_alpha_range</span> <span class="o">=</span> <span class="n">alpha_range</span>
+
+<div class="viewcode-block" id="THPSimulation.simulate">
+<a class="viewcode-back" href="../../../castle/castle.datasets.html#castle.datasets.simulator.THPSimulation.simulate">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">simulate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">max_hop</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate simulation data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">N</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_causal_matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">mu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_mu_range</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
+
+        <span class="n">alpha</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_alpha_range</span><span class="p">,</span> <span class="p">[</span><span class="n">N</span><span class="p">,</span> <span class="n">N</span><span class="p">])</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_causal_matrix</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="n">max_hop</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">N</span><span class="p">])</span> <span class="o">*</span> <span class="n">alpha</span>
+
+        <span class="n">immigrant_events</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_topo</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
+            <span class="n">immigrant_events</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trigger_events</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span>
+
+        <span class="n">base_events</span> <span class="o">=</span> <span class="n">immigrant_events</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">events</span> <span class="o">=</span> <span class="n">immigrant_events</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">while</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">len</span><span class="p">,</span> <span class="n">base_events</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">offspring_events</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_topo</span><span class="o">.</span><span class="n">nodes</span><span class="p">):</span>
+                <span class="n">offspring_events</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_hop</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+                    <span class="n">k_base_events</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="k">for</span> <span class="n">neighbor</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_k_hop_neighbors</span><span class="p">(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_topo</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+                        <span class="n">k_base_events</span> <span class="o">+=</span> <span class="n">base_events</span><span class="p">[</span><span class="n">neighbor</span><span class="p">]</span>
+                    <span class="n">k_new_events</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_trigger_events</span><span class="p">(</span>
+                        <span class="n">alpha</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="n">i</span><span class="p">],</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">duration</span><span class="p">)</span> <span class="ow">in</span> <span class="n">k_base_events</span><span class="p">]</span>
+                    <span class="k">for</span> <span class="n">event_group</span> <span class="ow">in</span> <span class="n">k_new_events</span><span class="p">:</span>
+                        <span class="n">offspring_events</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">+=</span> <span class="n">event_group</span>
+                <span class="n">events</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">+=</span> <span class="n">offspring_events</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
+            <span class="n">base_events</span> <span class="o">=</span> <span class="n">offspring_events</span>
+
+        <span class="n">Xn_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">node</span><span class="p">,</span> <span class="n">event_group</span> <span class="ow">in</span> <span class="n">events</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">Xn</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">event_group</span><span class="p">,</span>
+                              <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="s1">&#39;timestamp&#39;</span><span class="p">,</span> <span class="s1">&#39;duration&#39;</span><span class="p">])</span>
+            <span class="n">Xn</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;node&#39;</span><span class="p">,</span> <span class="n">node</span><span class="p">)</span>
+            <span class="n">Xn_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Xn</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="s1">&#39;timestamp&#39;</span><span class="p">,</span> <span class="s1">&#39;node&#39;</span><span class="p">]))</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">Xn_list</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">X</span></div>
+
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_trigger_events</span><span class="p">(</span><span class="n">intensity_vec</span><span class="p">,</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">beta</span><span class="p">):</span>
+
+        <span class="n">events</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">intensity</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">intensity_vec</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">intensity</span><span class="p">:</span>
+                <span class="n">trigger_time</span> <span class="o">=</span> <span class="n">start_time</span>
+                <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                    <span class="n">trigger_time</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">trigger_time</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">exponential</span><span class="p">(</span>
+                        <span class="mi">1</span> <span class="o">/</span> <span class="n">intensity</span><span class="p">))</span>
+                    <span class="k">if</span> <span class="n">trigger_time</span> <span class="o">&gt;</span> <span class="n">start_time</span> <span class="o">+</span> <span class="n">duration</span><span class="p">:</span>
+                        <span class="k">break</span>
+                    <span class="n">sub_duration</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">exponential</span><span class="p">(</span><span class="n">beta</span><span class="p">))))</span><span class="o">.</span><span class="n">round</span><span class="p">()</span>
+                    <span class="n">events</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">i</span><span class="p">,</span> <span class="n">trigger_time</span><span class="p">,</span> <span class="n">sub_duration</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">events</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_k_hop_neighbors</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="n">node</span><span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">single_source_dijkstra_path_length</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+                    <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">single_source_dijkstra_path_length</span><span class="p">(</span>
+                        <span class="n">G</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Huawei Noah&#39;s Ark Lab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
