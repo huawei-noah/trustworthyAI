@@ -35,8 +35,8 @@ We will calculate your final ranking score based on the following steps:
 
 3. **Final Score Calculation**: 
    - If your solution passes both the material completeness check and functional testing, we will calculate the final score as follows:
-   
-     **Final_Score = 0.6 * Leaderboard_Score + 0.3 * Internal_Dataset_Score + 0.1 * Paper_Quality_Score** 
+ 
+     **Final_Score = 0.6 x Leaderboard_Score + 0.3 x Internal_Dataset_Score + 0.1 x Paper_Quality_Score** 
 
    - **Leaderboard_Score**: 
      The value ranges from 0 to 1 and is obtained by executing your submitted code on the datasets (ID: 4, 5, 6) released in phase 2. We will use your Phase 2 leaderboard score if your code can replicate your result within a 2% error deviation. If not, the smaller value between your Phase 2 leaderboard score and our reproduced score will be your new 'leaderboard_score.'
