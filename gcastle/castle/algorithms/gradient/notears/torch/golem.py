@@ -48,8 +48,6 @@ class GOLEM(BaseLearner):
         Coefficient of DAG penalty.
     equal_variances: bool
         Assume equal noise variances for likelibood objective.
-    non_equal_variances: bool
-        Assume non-equal noise variances for likelibood objective.
     learning_rate: float
         Learning rate of Adam optimizer.
     num_iter: float
@@ -95,7 +93,6 @@ class GOLEM(BaseLearner):
                  lambda_1=2e-2,
                  lambda_2=5.0,
                  equal_variances=True,
-                 non_equal_variances=True,
                  learning_rate=1e-3,
                  num_iter=1e+5,
                  checkpoint_iter=5000,
@@ -110,7 +107,6 @@ class GOLEM(BaseLearner):
         self.lambda_1 = lambda_1
         self.lambda_2 = lambda_2
         self.equal_variances = equal_variances
-        self.non_equal_variances = non_equal_variances
         self.learning_rate = learning_rate
         self.num_iter = num_iter
         self.checkpoint_iter = checkpoint_iter
@@ -147,25 +143,6 @@ class GOLEM(BaseLearner):
         columns : Index or array-like
             Column labels to use for resulting tensor. Will default to
             RangeIndex (0, 1, 2, ..., n) if no column labels are provided.
-        lambda_1: float
-            Coefficient of L1 penalty.
-        lambda_2: float
-            Coefficient of DAG penalty.
-        equal_variances: bool
-            Whether to assume equal noise variances
-            for likelibood objective. Default: True.
-        num_iter:int
-            Number of iterations for training.
-        learning_rate: float
-            Learning rate of Adam optimizer. Default: 1e-3.
-        seed: int
-            Random seed. Default: 1.
-        checkpoint_iter: int
-            Number of iterations between each checkpoint.
-            Set to None to disable. Default: None.
-        B_init: numpy.ndarray or None
-            [d, d] weighted matrix for initialization.
-            Set to None to disable. Default: None.
         """
 
         X = Tensor(data, columns=columns)
