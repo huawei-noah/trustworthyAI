@@ -274,6 +274,8 @@ def find_skeleton(data, alpha, ci_test, variant='original',
     variant : str, default 'original'
         variant of PC algorithm, contains [`original`, `stable`, `parallel`].
         If variant == 'parallel', need to provide the flowing 3 parameters.
+    priori_knowledge: PrioriKnowledge
+        a class object PrioriKnowledge
     base_skeleton : array, (n_features, n_features)
         prior matrix, must be undirected graph.
         The two conditionals `base_skeleton[i, j] == base_skeleton[j, i]`
@@ -371,10 +373,11 @@ def find_skeleton(data, alpha, ci_test, variant='original',
 
     # update skeleton based on priori knowledge
     for i, j in combinations(nodes, 2):
-        if priori_knowledge is not None and (
-                priori_knowledge.is_forbidden(i, j)
-                and priori_knowledge.is_forbidden(j, i)):
-            skeleton[i, j] = skeleton[j, i] = 0
+        if priori_knowledge is not None: 
+            if priori_knowledge.is_forbidden(i, j):
+                skeleton[i, j]=0
+            if priori_knowledge.is_forbidden(j, i):
+                skeleton[j, i] = 0
 
     sep_set = {}
     d = -1
