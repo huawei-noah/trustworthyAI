@@ -4,7 +4,7 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 import os
 import sys
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath('.')), 'gcastle'))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath('.')), 'gcastle','castle'))
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
