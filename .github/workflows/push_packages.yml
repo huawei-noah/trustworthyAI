@@ -14,7 +14,7 @@ jobs:
           cd gcastle
           pip3 install -r ./requirements.txt
           python3 setup.py sdist bdist_wheel
-          twine upload -u ${{ secrets.PYPI_USERNAME }} -p ${{ secrets.PYPI_PASSWORD }} dist/*
+          twine upload -u __token__ -p ${{ secrets.PYPI_API_TOKEN }} dist/*
           ls dist/*
 
   push_to_dockerhub:
