@@ -35,7 +35,7 @@ We will calculate your final ranking score based on the following steps:
 
 3. **Final Score Calculation**: 
    - If your solution passes both the material completeness check and functional testing, we will calculate the final score as follows:
-   
+     
      **Final_Score = 0.6 x Leaderboard_Score + 0.3 x Internal_Dataset_Score + 0.1 x Paper_Quality_Score** 
 
    - **Leaderboard_Score**: 
