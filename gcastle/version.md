@@ -1,4 +1,4 @@
-### v1.0.4.rc1 main updates
+### v1.0.4 main updates
 
 1. Fix for a deprecated PolynomialFeatures method for newer sklearn versions
 2. Linear SEM now supports a list of noise types
