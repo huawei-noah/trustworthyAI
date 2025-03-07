@@ -12,6 +12,7 @@ sys.path.insert(0, os.path.abspath('../..'))
 project = 'gCastle'
 copyright = "2025, Huawei Noah's Ark Lab"
 author = "Huawei Noah's Ark Lab"
+release = '1.0.4'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
