@@ -4,7 +4,7 @@
 
 [中文版本](https://github.com/huawei-noah/trustworthyAI/tree/master/gcastle/README.cn.md)
 
-Version 1.0.4 (2025/03/07)  
+Version 1.0.4 (2025/03/07|[Document](https://gcastle.readthedocs.io/en/latest/)) 
 
 [![PyPI - Version](https://img.shields.io/pypi/v/gcastle?logo=pypi&logoColor=FFE873)](https://pypi.org/project/gcastle/)
 [![codecov](https://codecov.io/gh/shaido987/trustworthyAI/graph/badge.svg?token=TS0BG6CEI1)](https://codecov.io/gh/shaido987/trustworthyAI)
