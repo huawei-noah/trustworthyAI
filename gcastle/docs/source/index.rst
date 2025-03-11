@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome gCastle's documentation
+Welcome to gCastle's documentation!
 ===============================
 .. image:: https://img.shields.io/pypi/v/gcastle?logo=pypi&logoColor=FFE873
    :target: https://pypi.org/project/gcastle/
@@ -80,16 +80,18 @@ Citation
 --------
 If you find gCastle useful in your research, please consider citing the following paper:
 
-@misc{zhang2021gcastle,
-   title={gCastle: A Python Toolbox for Causal Discovery},
-   author={Keli Zhang and Shengyu Zhu and Marcus Kalander and Ignavier Ng and Junjian Ye and Zhitang Chen and Lujia Pan},
-   year={2021},
-   eprint={2111.15155},
-   archivePrefix={arXiv},
-   primaryClass={cs.LG}}
+.. code-block:: bibtex
+
+   @misc{zhang2021gcastle,
+      title={gCastle: A Python Toolbox for Causal Discovery},
+      author={Keli Zhang and Shengyu Zhu and Marcus Kalander and Ignavier Ng and Junjian Ye and Zhitang Chen and Lujia Pan},
+      year={2021},
+      eprint={2111.15155},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG}
+   }
 
 
 Next Up & Contributing
 ----------------------
 We'll be continuously complementing and optimizing the code and documentation. We welcome new contributors of all experience levels, the specifications about how to contribute code will be coming out soon. If you have any questions or suggestions (such as contributing new algorithms, optimizing code, or improving documentation), please submit an issue here. We will get back to you as soon as possible.
-
