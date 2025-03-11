@@ -94,4 +94,4 @@ If you find gCastle useful in your research, please consider citing the followin
 
 Next Up & Contributing
 ----------------------
-We'll be continuously complementing and optimizing the code and documentation. We welcome new contributors of all experience levels, the specifications about how to contribute code will be coming out soon. If you have any questions or suggestions (such as contributing new algorithms, optimizing code, or improving documentation), please submit an issue here. We will get back to you as soon as possible.
+We'll be continuously complementing and optimizing the code and documentation. We welcome new contributors of all experience levels, the specifications about how to contribute code will be coming out soon. If you have any questions or suggestions (such as contributing new algorithms, optimizing code, or improving documentation), please submit an issue on our `GitHub <https://github.com/huawei-noah/trustworthyAI>`_. We will get back to you as soon as possible.
