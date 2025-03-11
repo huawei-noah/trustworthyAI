@@ -61,7 +61,7 @@
 
 ### PIP安装
 ```bash
-pip install gcastle==1.0.4rc1
+pip install gcastle
 ```
 
 ## 算法使用指导
