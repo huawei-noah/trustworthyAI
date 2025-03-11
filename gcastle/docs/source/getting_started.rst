@@ -30,7 +30,7 @@ Pip installation
 
 .. code-block:: bash
 
-   pip install gcastle==1.0.4rc1
+   pip install gcastle
 
 
 Usage Example (PC algorithm)
@@ -60,8 +60,8 @@ Usage Example (PC algorithm)
    # calculate metrics
    mt = MetricsDAG(pc.causal_matrix, true_causal_matrix)
    print(mt.metrics)
-You can visit examples to find more examples.
 
+You can visit examples to find more examples.
 
 .. toctree::
    :maxdepth: 2
