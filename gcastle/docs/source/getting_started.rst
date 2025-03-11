@@ -6,10 +6,6 @@
 Getting started
 ===============================
 
-
-Installation
-------------
-
 Dependencies
 -------------
 gCastle requires:
