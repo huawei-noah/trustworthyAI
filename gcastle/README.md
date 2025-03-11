@@ -62,7 +62,7 @@ gCastle requires:
 
 ### PIP installation
 ```bash
-pip install gcastle==1.0.4rc1
+pip install gcastle
 ```
 
 ## Usage Example (PC algorithm)
