@@ -178,7 +178,11 @@ class GraNDAG(BaseLearner):
     Examples
     --------
         Load data
-    >>> from castle.datasets import load_dataset
+    >>> from castle.common import GraphDAG
+    >>> from castle.metrics import MetricsDAG
+    >>> from castle.datasets import DAG, IIDSimulation
+    >>> from castle.algorithms import GraNDAG
+    
     >>> data, true_dag, _ = load_dataset('IID_Test')
 
     >>> gnd = GraNDAG(input_dim=data.shape[1])

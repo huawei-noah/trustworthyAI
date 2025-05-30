@@ -59,6 +59,7 @@ class PC(BaseLearner):
     >>> from castle.common import GraphDAG
     >>> from castle.metrics import MetricsDAG
     >>> from castle.datasets import load_dataset
+    >>> from castle.algorithms import PC
 
     >>> X, true_dag, _ = load_dataset(name='IID_Test')
     >>> pc = PC(variant='stable')

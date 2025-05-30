@@ -92,6 +92,28 @@ class GAE(BaseLearner):
         For single-device modules, ``device_ids`` can be int or str,
         e.g. 0 or '0', For multi-device modules, ``device_ids`` must be str,
         format like '0, 1'.
+    Examples
+    --------
+    >>> from castle.common import GraphDAG
+    >>> from castle.metrics import MetricsDAG
+    >>> from castle.datasets import DAG, IIDSimulation
+    >>> from castle.algorithms import GAE
+
+
+    >>> # simulate data for graph-auto-encoder
+    >>> weighted_random_dag = DAG.erdos_renyi(n_nodes=10, n_edges=20, weight_range=(0.5, 2.0), seed=1)
+    >>> dataset = IIDSimulation(W=weighted_random_dag, n=2000, method='linear', sem_type='gauss')
+    >>> true_dag, X = dataset.B, dataset.X
+
+    >>> ga = GAE(input_dim=10)
+    >>> ga.learn(X)
+
+    >>> # plot est_dag and true_dag
+    >>> GraphDAG(ga.causal_matrix, true_dag)
+
+    >>> # calculate accuracy
+    >>> met = MetricsDAG(ga.causal_matrix, true_dag)
+    >>> print(met.metrics)
     """
 
     def __init__(self,
