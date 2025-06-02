@@ -50,6 +50,7 @@ class GES(BaseLearner):
     >>> from castle.common import GraphDAG
     >>> from castle.metrics import MetricsDAG
     >>> from castle.datasets import load_dataset
+    >>> from castle.algorithms.ges.ges import GES
 
     >>> X, true_dag, _ = load_dataset(name='IID_Test')
     >>> algo = GES()
