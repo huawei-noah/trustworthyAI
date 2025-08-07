@@ -66,7 +66,7 @@ Once generated, the synthetic `.arrow` dataset can be used to pretrain your own 
 
 ## ❤️ Acknowledgements
 
-This work is the result of a great collaboration—thanks to all my amazing co-authors: Vasilii Feofanov, Marius Alonso, Ambroise Odonnat, Jianfeng Zhang and Ievgen Redko, for their guidance and support throughout this project. Thanks MOAKHER Yessin for propose some ideas to be faster and safe.
+This work is the result of a great collaboration—thanks to all my amazing co-authors: Vasilii Feofanov, Marius Alonso, Ambroise Odonnat, Jianfeng Zhang and Ievgen Redko, for their guidance and support throughout this project. Thanks MOAKHER Yessin for propose some ideas to be faster and safe. Thanks Keli Zhang and Lei Zan for the causal model guidence.
 
 If you have questions, collaboration ideas, or just want to discuss TSFMs, feel free to reach out:
 
