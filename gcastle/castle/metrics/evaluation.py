@@ -120,7 +120,11 @@ class MetricsDAG(object):
         d = B_true.shape[0]
         
         # linear index of nonzeros
-        pred_und = np.concatenate([np.flatnonzero(B_est == -1), np.flatnonzero(B_est.T == -1)])
+        # After the CPDAG normalisation above, -1 appears at exactly one of
+        # [i,j] or [j,i] per undirected edge (the other cell is set to 0).
+        # Including flatnonzero(B_est.T == -1) would add the mirror indices,
+        # double-counting each undirected edge and allowing TPR > 1.0 (issue #188).
+        pred_und = np.flatnonzero(B_est == -1)
         pred = np.flatnonzero(B_est == 1)
         cond = np.flatnonzero(B_true)
         cond_reversed = np.flatnonzero(B_true.T)
