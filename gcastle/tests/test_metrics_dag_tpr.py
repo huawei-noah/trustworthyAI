@@ -105,3 +105,92 @@ class TestMetricsDAGTPRBounded:
             f"Expected TPR=0.0 for disjoint bidirectional estimate, "
             f"got {metrics['tpr']}"
         )
+
+
+class TestMetricsDAGNNZAndFPR:
+    """nnz and fpr must also be correct after the fix (issue #188 inflated both)."""
+
+    def test_nnz_one_bidirectional_edge_counts_as_one(self):
+        """
+        nnz = len(pred) + len(pred_und).  One undirected edge is one edge — nnz must be 1,
+        not 2 as master produced (pred_und double-counted the mirror index).
+        B_true: 0->1
+        B_est:  0<->1 (bidirectional)
+        """
+        B_true = np.array([[0, 1],
+                           [0, 0]])
+        B_est = np.array([[0, 1],
+                          [1, 0]])
+        metrics = MetricsDAG(B_est=B_est, B_true=B_true).metrics
+        assert metrics['nnz'] == 1, (
+            f"Expected nnz=1 for one bidirectional edge, got {metrics['nnz']}"
+        )
+
+    def test_fpr_fp_undirected_edge_not_inflated(self):
+        """
+        fpr = (reverse + false_pos) / cond_neg_size.
+        One undirected FP edge should count as 1 false positive (not 2).
+        B_true: 0->1 (1 true edge, d=4 → cond_neg_size=5)
+        B_est:  2<->3 (completely disjoint bidirectional FP)
+        Expected fpr = 1 / 5 = 0.2, not 0.4 as master produced.
+        """
+        B_true = np.array([
+            [0, 1, 0, 0],
+            [0, 0, 0, 0],
+            [0, 0, 0, 0],
+            [0, 0, 0, 0],
+        ])
+        B_est = np.array([
+            [0, 0, 0, 0],
+            [0, 0, 0, 0],
+            [0, 0, 0, 1],
+            [0, 0, 1, 0],
+        ])
+        metrics = MetricsDAG(B_est=B_est, B_true=B_true).metrics
+        assert metrics['fpr'] == round(1 / 5, 4), (
+            f"Expected fpr=0.2 for one FP undirected edge (d=4, 1 true edge), "
+            f"got {metrics['fpr']}"
+        )
+        assert metrics['nnz'] == 1, (
+            f"Expected nnz=1 for one FP undirected edge, got {metrics['nnz']}"
+        )
+
+
+class TestMetricsDAGDirectedDAGRegression:
+    """For pure directed DAG inputs (no undirected edges), the fix must be a no-op."""
+
+    def test_directed_dag_perfect_estimate_unchanged(self):
+        """Perfect directed DAG estimate: all metrics identical to pre-fix behaviour."""
+        B_true = np.array([
+            [0, 1, 1, 0],
+            [0, 0, 1, 1],
+            [0, 0, 0, 1],
+            [0, 0, 0, 0],
+        ])
+        B_est = B_true.copy()
+        metrics = MetricsDAG(B_est=B_est, B_true=B_true).metrics
+        assert metrics['tpr'] == 1.0
+        assert metrics['fdr'] == 0.0
+        assert metrics['fpr'] == 0.0
+        assert metrics['shd'] == 0
+        assert metrics['nnz'] == int(B_true.sum())
+
+    def test_directed_dag_with_reversed_edge_unchanged(self):
+        """Reversed directed edge: shd=1, tpr correct, nnz unchanged by fix."""
+        B_true = np.array([
+            [0, 1, 1],
+            [0, 0, 1],
+            [0, 0, 0],
+        ])
+        # Reverse edge 0->1 to 1->0
+        B_est = np.array([
+            [0, 0, 1],
+            [1, 0, 1],
+            [0, 0, 0],
+        ])
+        metrics = MetricsDAG(B_est=B_est, B_true=B_true).metrics
+        assert metrics['shd'] == 1, f"Expected shd=1, got {metrics['shd']}"
+        assert metrics['nnz'] == int(B_est.sum()), (
+            f"nnz should equal number of directed edges in estimate, "
+            f"got {metrics['nnz']}"
+        )
