@@ -1,0 +1,50 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tabby-tsfm"
+version = "0.1.0"
+description = "Tabby time-series foundation model"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "einops>=0.7",
+  "numpy>=1.24",
+  "pandas>=1.5",
+  "torch>=2.1",
+  "transformers>=4.40",
+]
+
+[project.optional-dependencies]
+train = [
+  "datasets>=2.18",
+  "gluonts>=0.14",
+  "python-dotenv>=1.0",
+  "safetensors>=0.4",
+]
+forecast = [
+  "datasets>=2.18",
+  "gluonts>=0.14",
+  "python-dotenv>=1.0",
+  "safetensors>=0.4",
+]
+classification = [
+  "scikit-learn>=1.3",
+]
+anomaly = [
+  "TSB-AD",
+]
+dev = [
+  "pytest>=8",
+]
+
+[project.urls]
+Repository = "https://github.com/ShifengXIE/TabbyTSFM"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["tabby*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
