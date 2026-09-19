@@ -24,7 +24,7 @@ python benchmarks/forecasting/gift_eval/evaluate.py \
   --pretrain_ckpt /path/to/Tabby-Pretrain \
   --gift_eval_repo /path/to/gift-eval \
   --dataset_properties benchmarks/forecasting/gift_eval/dataset_properties.json \
-  --context_length 4000 \
+  --context_length 8096 \
   --datasets all \
   --out_csv tabby_zeroshot
 ```

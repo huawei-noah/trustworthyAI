@@ -27,6 +27,7 @@ GIFT=${GIFT:?"set GIFT to the gift-eval repository root"}
 PROPS=${PROPS:-${REPO_ROOT}/benchmarks/forecasting/gift_eval/dataset_properties.json}
 CTX=${CTX:-8096}
 BS=${BS:-256}
+PRECISION=${PRECISION:-bf16}
 DATASETS=${DATASETS:-all}
 OUT=${OUT:-tabby_${MODE}_ctx${CTX}}
 
@@ -36,11 +37,12 @@ if [ "${MODE}" = "prompt" ]; then
     EXTRA+=(--ckpt "${PROMPT}")
 fi
 
-echo "[cfg] mode=${MODE} ctx=${CTX} datasets=${DATASETS} out=${OUT}"
+echo "[cfg] mode=${MODE} ctx=${CTX} precision=${PRECISION} datasets=${DATASETS} out=${OUT}"
 
 CUDA_VISIBLE_DEVICES=${GPU} python benchmarks/forecasting/gift_eval/evaluate.py \
     --mode "${MODE}" "${EXTRA[@]}" \
     --pretrain_ckpt "${CKPT}" \
     --gift_eval_repo "${GIFT}" --dataset_properties "${PROPS}" \
-    --context_length ${CTX} --batch_size ${BS} \
+    --context_length "${CTX}" --batch_size "${BS}" \
+    --precision "${PRECISION}" \
     --datasets "${DATASETS}" --out_csv "${OUT}"

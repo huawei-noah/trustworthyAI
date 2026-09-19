@@ -138,7 +138,7 @@ python benchmarks/forecasting/gift_eval/evaluate.py \
   --gift_eval_repo /path/to/gift-eval \
   --dataset_properties benchmarks/forecasting/gift_eval/dataset_properties.json \
   --datasets all \
-  --context_length 4000 --batch_size 128 \
+  --context_length 8096 --batch_size 128 \
   --device cuda --precision bf16 \
   --out_csv tabby_zeroshot
 ```
