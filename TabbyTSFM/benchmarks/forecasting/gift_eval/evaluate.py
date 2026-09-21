@@ -224,8 +224,16 @@ def main():
     p.add_argument("--min_forecast_span", type=int, default=0)
     p.add_argument("--gift_eval_repo", type=str, required=True)
     p.add_argument("--dataset_properties", type=str, required=True)
-    p.add_argument("--context_length", type=int, default=4096,
-                   help="history cap Tc (model window is fixed 8192; [pad|hist|future])")
+    p.add_argument(
+        "--context_length",
+        type=int,
+        default=8096,
+        help=(
+            "maximum observed-history length; "
+            "the backbone model window is fixed at 8192 "
+            "and includes both history and future positions"
+        ),
+    )
     p.add_argument("--device", type=str, default="auto")
     p.add_argument("--precision", type=str, default="bf16", choices=["bf16", "fp32"])
     p.add_argument("--batch_size", type=int, default=256)
