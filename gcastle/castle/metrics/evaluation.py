@@ -234,8 +234,9 @@ class MetricsDAG(object):
             TP = (W_p + W_true).applymap(lambda elem:1 if elem==2 else 0).sum(axis=1).sum()
         TP_FP = W_p.sum(axis=1).sum()
         TP_FN = W_true.sum(axis=1).sum()
-        precision = TP/TP_FP
-        recall = TP/TP_FN
-        F1 = 2*(recall*precision)/(recall+precision)
+        # Score 0 instead of NaN when nothing is predicted or nothing is correct
+        precision = TP/TP_FP if TP_FP > 0 else 0.0
+        recall = TP/TP_FN if TP_FN > 0 else 0.0
+        F1 = 2*(recall*precision)/(recall+precision) if recall + precision > 0 else 0.0
         
         return precision, recall, F1
