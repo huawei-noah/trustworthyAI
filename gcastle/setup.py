@@ -1,9 +1,15 @@
 # -*- coding:utf-8 -*-
 """Setuptools of castle."""
+import os
 import setuptools
 import sys
 
-from castle import __version__
+here = os.path.abspath(os.path.dirname(__file__))
+about = {}
+with open(os.path.join(here, "castle", "_version.py"), encoding="utf-8") as f:
+    exec(f.read(), about)
+
+__version__ = about["__version__"]
 
 
 if sys.version_info < (3, 6):
