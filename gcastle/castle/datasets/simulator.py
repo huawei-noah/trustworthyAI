@@ -675,7 +675,7 @@ class THPSimulation(object):
             Xn = pd.DataFrame(event_group,
                               columns=['event', 'timestamp', 'duration'])
             Xn.insert(0, 'node', node)
-            Xn_list.append(Xn.reindex(columns=['event', 'timestamp', 'node']))
+            Xn_list.append(Xn)
         X = pd.concat(Xn_list, sort=False, ignore_index=True)
         return X
 
